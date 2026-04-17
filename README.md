@@ -29,31 +29,27 @@ Example Tailwind utilities:
 
 ## Installation Guide
 
-1. Open a terminal in the project folder:
 
-```bash
-cd final-project
-```
 
-2. Install dependencies:
+1. Install dependencies
 
 ```bash
 npm install
 ```
 
-3. Start the development server:
+2. Start the development server:
 
 ```bash
 npm run dev
 ```
 
-4. Build for production:
+3. Build for production:
 
 ```bash
 npm run build
 ```
 
-5. Preview the production build locally:
+4. Preview the production build locally:
 
 ```bash
 npm run preview
