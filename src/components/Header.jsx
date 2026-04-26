@@ -3,7 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom'
 
 const mainLinks = [
   { label: 'الرئيسية', to: '/' },
-  { label: 'التصريح', to: '/statment' },
+  { label: 'التصريح', to: '/StatmentUser' },
   { label: 'المصروفات', to: '/payment' },
   { label: 'حجز الأتوبيس', to: '/bus' },
   { label: 'الإجازات الرسمية', to: '/holyday' },

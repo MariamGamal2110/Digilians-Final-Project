@@ -1,3 +1,4 @@
+
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout'
 
@@ -20,7 +21,7 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <HomeUser /> },
-      { path: 'statment', element: <StatmentUser /> },
+      { path: 'StatmentUser', element: <StatmentUser /> },
       { path: 'payment', element: <PaymentUser /> },
       { path: 'punishment', element: <PunishmentUser /> },
       { path: 'bus', element: <BookUser /> },
