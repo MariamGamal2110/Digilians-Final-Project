@@ -4,10 +4,13 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary: '#362706',
-        secondary: '#464E2E',
-        accent: '#ACB992',
-        background: '#E9E5D6',
+        primary: '#2f2a1f',
+        secondary: '#676b59',
+        accent: '#7a8b5b',
+        background: '#f3f4ef',
+      },
+      fontFamily: {
+        headline: ['Cairo', 'Segoe UI', 'sans-serif'],
       },
     },
   },
