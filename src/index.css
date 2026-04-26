@@ -18,6 +18,9 @@
     font-family: "Cairo", "Segoe UI", sans-serif;
     color: rgb(var(--on-surface));
     background-color: rgb(var(--surface));
+    font-family: "Trebuchet MS", "Segoe UI", sans-serif;
+    color: #2f2a1f;;
+   background-color: #f3f4ef;
     font-synthesis: none;
     text-rendering: optimizeLegibility;
     -webkit-font-smoothing: antialiased;
@@ -40,6 +43,7 @@
       radial-gradient(circle at 8% 0%, rgba(128, 142, 98, 0.15), transparent 36%),
       radial-gradient(circle at 98% 100%, rgba(206, 212, 197, 0.42), transparent 34%),
       rgb(var(--surface));
+  background: #f3f4ef;
   }
 
   a {

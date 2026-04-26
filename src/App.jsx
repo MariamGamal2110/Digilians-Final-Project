@@ -1,30 +1,37 @@
-import React from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Layout from './components/Layout';
-import StatmentAdmin from './pages/Statment/StatmentAdmin';
-import StatmentUser from './pages/Statment/StatmentUser';
 
-// إذا لم يكن لديك CartProvider حالياً، قم بالتعليق عليه أو حذفه
-// import { CartProvider } from './context/CartContext'; 
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import Layout from './components/Layout'
 
-const routers = createBrowserRouter([
+import HomeUser from './pages/Home/HomeUser'
+import StatmentUser from './pages/Statment/StatmentUser'
+import PaymentUser from './pages/Payment/PaymentUser'
+import PunishmentUser from './pages/Punishment/PunishmentUser'
+import BookUser from './pages/Bus/BookUser'
+import HolydayUser from './pages/Holyday/HolydayUser'
+import ExecuseUser from './pages/Execuse/ExecuseUser'
+import ProfileUser from './pages/Profile/ProfileUser'
+import RelativesUser from './pages/RelativesFamily/RelativesUser'
+import MedicalUser from './pages/Medical/MedicalUser'
+
+const router = createBrowserRouter([
   {
     path: '/',
     element: <Layout />,
     children: [
-      { index: true, element: <StatmentUser /> },
+      { index: true, element: <HomeUser /> },
       { path: 'StatmentUser', element: <StatmentUser /> },
-      { path: 'StatmentAdmin', element: <StatmentAdmin /> },
-    ]
-  }
-]);
+      { path: 'payment', element: <PaymentUser /> },
+      { path: 'punishment', element: <PunishmentUser /> },
+      { path: 'bus', element: <BookUser /> },
+      { path: 'holyday', element: <HolydayUser /> },
+      { path: 'execuse', element: <ExecuseUser /> },
+      { path: 'profile', element: <ProfileUser /> },
+      { path: 'relatives', element: <RelativesUser /> },
+      { path: 'medical', element: <MedicalUser /> },
+    ],
+  },
+])
 
-function App() {
-  return (
-    // <CartProvider> 
-      <RouterProvider router={routers} />
-    // </CartProvider>
-  );
+export default function App() {
+  return <RouterProvider router={router} />
 }
-
-export default App;
