@@ -1,31 +1,37 @@
-import { createBrowserRouter } from 'react-router-dom'
 
-
-//////////////ADD YOUR PAGES HERE//////////////////////
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout'
 
+import HomeUser from './pages/Home/HomeUser'
+import StatmentUser from './pages/Statment/StatmentUser'
+import PaymentUser from './pages/Payment/PaymentUser'
+import PunishmentUser from './pages/Punishment/PunishmentUser'
+import BookUser from './pages/Bus/BookUser'
+import HolydayUser from './pages/Holyday/HolydayUser'
+import ExecuseUser from './pages/Execuse/ExecuseUser'
+import ProfileUser from './pages/Profile/ProfileUser'
+import RelativesUser from './pages/RelativesFamily/RelativesUser'
+import MedicalUser from './pages/Medical/MedicalUser'
 
-//   const routers = createBrowserRouter([
-//   {path:'/' , element :<Layout /> ,children:[
-//     { index: true, element: <Home /> },
-//     {path:'cart', element:<Cart  />}, // change this to your page
-//     {path:'*', element:<NotFound/>}  // 404 page lEFT BLANK FOR NOW 
+const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      { index: true, element: <HomeUser /> },
+      { path: 'StatmentUser', element: <StatmentUser /> },
+      { path: 'payment', element: <PaymentUser /> },
+      { path: 'punishment', element: <PunishmentUser /> },
+      { path: 'bus', element: <BookUser /> },
+      { path: 'holyday', element: <HolydayUser /> },
+      { path: 'execuse', element: <ExecuseUser /> },
+      { path: 'profile', element: <ProfileUser /> },
+      { path: 'relatives', element: <RelativesUser /> },
+      { path: 'medical', element: <MedicalUser /> },
+    ],
+  },
+])
 
-    
-//   ]}
-// ])
-
-  
-   return(<>
-   
-   
-  
-   
-      // <CartProvider> 
-      //      <RouterProvider router={routers} />
-      // </CartProvider>
- </>
-      
- );
-    
-export default App
+export default function App() {
+  return <RouterProvider router={router} />
+}
