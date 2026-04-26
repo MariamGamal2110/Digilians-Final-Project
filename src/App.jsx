@@ -9,7 +9,9 @@ import BookUser from './pages/Bus/BookUser'
 import HolydayUser from './pages/Holyday/HolydayUser'
 import ExecuseUser from './pages/Execuse/ExecuseUser'
 import ProfileUser from './pages/Profile/ProfileUser'
+import ProfileAdmin from './pages/Profile/ProfileAdmin'
 import RelativesUser from './pages/RelativesFamily/RelativesUser'
+import RelativesAdmin from './pages/RelativesFamily/RelativesAdmin'
 import MedicalUser from './pages/Medical/MedicalUser'
 
 const router = createBrowserRouter([
@@ -25,7 +27,9 @@ const router = createBrowserRouter([
       { path: 'holyday', element: <HolydayUser /> },
       { path: 'execuse', element: <ExecuseUser /> },
       { path: 'profile', element: <ProfileUser /> },
+      { path: 'profile-admin', element: <ProfileAdmin /> },
       { path: 'relatives', element: <RelativesUser /> },
+      { path: 'relatives-admin', element: <RelativesAdmin /> },
       { path: 'medical', element: <MedicalUser /> },
     ],
   },
