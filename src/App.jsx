@@ -1,31 +1,30 @@
-import { createBrowserRouter } from 'react-router-dom'
+import React from 'react';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import Layout from './components/Layout';
+import StatmentAdmin from './pages/Statment/StatmentAdmin';
+import StatmentUser from './pages/Statment/StatmentUser';
 
+// إذا لم يكن لديك CartProvider حالياً، قم بالتعليق عليه أو حذفه
+// import { CartProvider } from './context/CartContext'; 
 
-//////////////ADD YOUR PAGES HERE//////////////////////
-import Layout from './components/Layout'
+const routers = createBrowserRouter([
+  {
+    path: '/',
+    element: <Layout />,
+    children: [
+      { index: true, element: <StatmentUser /> },
+      { path: 'StatmentUser', element: <StatmentUser /> },
+      { path: 'StatmentAdmin', element: <StatmentAdmin /> },
+    ]
+  }
+]);
 
+function App() {
+  return (
+    // <CartProvider> 
+      <RouterProvider router={routers} />
+    // </CartProvider>
+  );
+}
 
-//   const routers = createBrowserRouter([
-//   {path:'/' , element :<Layout /> ,children:[
-//     { index: true, element: <Home /> },
-//     {path:'cart', element:<Cart  />}, // change this to your page
-//     {path:'*', element:<NotFound/>}  // 404 page lEFT BLANK FOR NOW 
-
-    
-//   ]}
-// ])
-
-  
-   return(<>
-   
-   
-  
-   
-      // <CartProvider> 
-      //      <RouterProvider router={routers} />
-      // </CartProvider>
- </>
-      
- );
-    
-export default App
+export default App;
