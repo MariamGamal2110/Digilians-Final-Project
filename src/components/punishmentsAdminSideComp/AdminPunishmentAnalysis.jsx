@@ -1,5 +1,6 @@
 import React from 'react'
-import { FiEdit2 ,FiClock, FiShield, FiSun,FiPlus } from 'react-icons/fi'
+import { FaMale,FaFemale } from 'react-icons/fa'
+import { FiAlertTriangle,FiMinusCircle,FiCheckCircle ,FiEdit2 ,FiClock, FiShield, FiSun,FiPlus } from 'react-icons/fi'
 function PunishmentIcon({ type }) {
   let icon = <FiClock size={18} />
 
@@ -92,91 +93,74 @@ export default function AdminPunishmentTable() {
         type:"uniform", 
         degree:5 },
   ]
+const maleCount = punishmentRecords.filter(p => p.gender === "male").length;
+const femaleCount = punishmentRecords.filter(p => p.gender === "female").length;
+
+console.log(maleCount, femaleCount);    const analysisCards = [
+      {
+        title: 'إجمالي عدد المخالفات',
+        value: punishmentRecords.length,
+        description: 'إجمالي المخالفات المسجلة',
+        icon: <FiAlertTriangle size={22} />,
+      },
+      {
+        title: ' عدد الطلاب  المخالفين',
+        value: maleCount,
+        description: 'إجمالي  عدد الذكور',
+        icon: <FaMale size={22} />,
+      },
+      {
+        title:' عدد الطالبات المخالفات ',
+        value: femaleCount,
+        description: 'إجمالي عدد الإناث',
+        icon: <FaFemale size={22} />,
+      },
+    ]  
+
   return (
-    <>
-    <div className="overflow-x-auto">
-        <table className="w-full text-sm text-right">
-          <thead>
-            <tr className="bg-[#f3f1e8] text-[#1f220f]">
-              <th className="px-5 py-3 font-bold w-[70px]"></th>
-              <th className="px-5 py-3 font-bold">اسم الطالب </th>
-              <th className="px-5 py-3 font-bold">الرقم العسكري</th>
-              <th className="px-5 py-3 font-bold">المخالفة</th>
-              <th className="px-5 py-3 font-bold">العقوبه</th>
-              <th className="px-5 py-3 font-bold text-center">
-                العقوبة بالدرجات
-              </th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {punishmentRecords.map((row, i) => (
-              <tr
-                key={i}
-                className="border-b border-gray-100 last:border-b-0 hover:bg-[#faf9f4] transition"
-              >
-                <td className="px-5 py-4 text-[#555d30] font-bold">
-                  {i + 1}
-                </td>
-                <td className="px-5 py-4">
-                    <div>
-                      <p className="text-[#1f220f] font-bold">
-                        {row.studentName}
-                      </p>
-                      </div>
-                  {/* </div> */}
-                </td>
-                <td className="px-5 py-4">
-                  <div className="flex items-center gap-3">
-                    {/* <PunishmentIcon type={row.type} /> */}
-
-                    <div>
-                      <p className="text-[#1f220f] font-bold">
-                        {row.milateryNum}
-                      </p>
-
-                      </div>
-                  </div>
-                </td>
-
-                <td className="px-5 py-4 text-[#1f220f] font-bold">
-                  {row.violation}
-                </td>
-                <td className="px-5 py-4 text-[#1f220f] font-bold">
-                  {row.punishment}
-                </td>
-
-                
-                <td className="px-5 py-4">
-                  <div className="flex justify-center">
-                    <span className="w-9 h-9 rounded-full bg-[#555d30] text-white flex items-center justify-center font-bold">
-                      {row.degree}
-                    </span>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div  className=' flex  p-5' >
-          <button className=" flex p-2  mx-2 rounded font-bold bg-[#f3f1e8] text-[#1f220f]">
-            <FiEdit2 />
-            <span className='mx-2'>
-
-            تعديل
-            </span>
-
-            </button>
-          <button className="p-2 rounded bg-[#555d30] text-white flex items-center justify-center font-bold">
-            <FiPlus />
-        <span className='mx-2'>
-                    إدخال عقوبة  
-        </span>
-
-          </button>
+<>
+    <div className="mb-6">
+      <div className="mb-6 text-right">
+        <h2 className="text-[#1f220f] text-3xl font-extrabold">
+          بيان مخالفات الطلاب 
+        </h2>
+        <p className="text-[#6b6f5a] text-sm mb-2">
+          ملخص المخالفات والسلوك
+        </p>
 
       </div>
-        </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        {analysisCards.map((card) => (
+          <div
+            key={card.title}
+            className="group bg-white border border-gray-200 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-1 hover:shadow-md hover:border-[#c8cdb8]"
+          >
+            <div className="flex items-start justify-between mb-5">
+              <div className="w-12 h-12 rounded-xl bg-[#f3f1e8] border border-[#e5dfd0] flex items-center justify-center text-[#1f220f] transition-all duration-300 group-hover:bg-[#555d30] group-hover:text-white">
+                {card.icon}
+              </div>
+
+              <div className="text-right">
+                <p className="text-[#6b6f5a] text-sm mb-2">
+                  {card.title}
+                </p>
+
+                <p className="text-[#1f220f] text-4xl font-extrabold">
+                  {card.value}
+                </p>
+              </div>
+            </div>
+
+            <div className="bg-[#faf9f4] rounded-xl px-4 py-3 text-right">
+              <p className="text-[#6b6f5a] text-sm">
+                {card.description}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   </>
   )
 }
