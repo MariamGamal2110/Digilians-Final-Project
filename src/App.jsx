@@ -6,6 +6,7 @@ import HomeUser from './pages/Home/HomeUser'
 import StatmentUser from './pages/Statment/StatmentUser'
 import PaymentUser from './pages/Payment/PaymentUser'
 import PunishmentUser from './pages/Punishment/PunishmentUser'
+import PunishmentAdmin from './pages/Punishment/PunishmentAdmin'
 import BookUser from './pages/Bus/BookUser'
 import HolydayUser from './pages/Holyday/HolydayUser'
 import ExecuseUser from './pages/Execuse/ExecuseUser'
@@ -23,7 +24,9 @@ const router = createBrowserRouter([
       { index: true, element: <HomeUser /> },
       { path: 'StatmentUser', element: <StatmentUser /> },
       { path: 'payment', element: <PaymentUser /> },
+      { path: 'payment', element: <PaymentUser /> },
       { path: 'punishment', element: <PunishmentUser /> },
+      { path: 'punishment-admin', element: <PunishmentAdmin/> },
       { path: 'bus', element: <BookUser /> },
       { path: 'holyday', element: <HolydayUser /> },
       { path: 'execuse', element: <ExecuseUser /> },

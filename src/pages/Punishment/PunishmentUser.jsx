@@ -1,5 +1,5 @@
-import UserPunishmentsAnalysis from "../../components/punishment.jsx/UserPunishmentsAnalysis";
-import UserPunishmentTable from "../../components/punishment.jsx/UserPunishmentTable";
+import UserPunishmentsAnalysis from "../../components/punishmentUserSideComp/UserPunishmentsAnalysis";
+import UserPunishmentTable from "../../components/punishmentUserSideComp/UserPunishmentTable";
 
 export default function PunishmentUser(){
       const mockUser = {
