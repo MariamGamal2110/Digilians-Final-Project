@@ -56,7 +56,6 @@ export default function AttendanceTrackerSection({ filters }) {
         const searchValue = filters.searchValue || ''
 
         return students.filter((student) => {
-            // البحث في الرقم القومي أو الرقم العسكري
             const matchesSearch = searchValue
                 ? student.nationalId.includes(searchValue) || student.militaryId.includes(searchValue)
                 : true
@@ -65,45 +64,36 @@ export default function AttendanceTrackerSection({ filters }) {
                 attendanceFilter === 'all' ||
                 (attendanceFilter === 'present' && student.status === 'present') ||
                 (attendanceFilter === 'late' && student.status === 'late') ||
-                (attendanceFilter === 'permit' && student.permitType === 'اعتيادي') ||
-                (attendanceFilter === 'vacation' && student.permitType !== 'اعتيادي')
+                (attendanceFilter === 'permit' && student.permitType === 'اعتيادي')
 
             return matchesSearch && matchesStatus
         })
     }, [attendanceFilter, filters.searchValue])
 
-    const buttonStyle = (key) =>
-        `px-5 py-2 rounded-md text-xs font-bold transition-colors ${attendanceFilter === key
-            ? 'satin-gradient text-white shadow'
-            : 'bg-white text-secondary border border-outline-variant/40 hover:bg-surface-container-high'
-        }`
-
     const toggleNoteEditor = (studentId) => {
         setOpenNoteForId((prev) => (prev === studentId ? null : studentId))
     }
 
-    const saveNote = (studentId) => {
+    const saveNote = () => {
         setOpenNoteForId(null)
     }
 
     return (
         <section className="mb-8">
             <div className="glass-card border border-outline-variant/20 rounded-2xl overflow-hidden">
+
+                {/* Filters */}
                 <div className="border-b border-outline-variant/30 px-4 py-4 md:px-6">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                         <div className="flex flex-wrap gap-2 shadow-lg rounded-sm">
                             {['all', 'present', 'late', 'permit'].map((filter) => (
                                 <button
                                     key={filter}
-                                    className={`
-                px-4 py-2 rounded-lg transition-all duration-200 text-black
-                 
-                ${attendanceFilter === filter
-                                            ? 'bg-[#434a26] ring-2 ring-white/30'
-                                            : 'opacity-90'}
-            `}
+                                    className={`px-4 py-2 rounded-lg transition-all text-black ${attendanceFilter === filter
+                                        ? 'bg-[#434a26] text-white'
+                                        : 'opacity-80'
+                                        }`}
                                     onClick={() => setAttendanceFilter(filter)}
-                                    type="button"
                                 >
                                     {filter === 'all' && 'الكل'}
                                     {filter === 'present' && 'حاضر'}
@@ -112,100 +102,92 @@ export default function AttendanceTrackerSection({ filters }) {
                                 </button>
                             ))}
                         </div>
-                        <button className="h-9 w-9 rounded-md border border-outline-variant/40 text-secondary grid place-items-center" type="button">
-                            <span className="material-symbols-outlined text-base">filter_alt</span>
-                        </button>
                     </div>
                 </div>
 
+                {/* Table */}
                 <div className="overflow-x-auto">
                     <table className="w-full min-w-[860px] text-right">
                         <thead>
-                            <tr className="border-b border-surface-dim/70 bg-white/30">
-                                <th className="py-4 px-4 text-xs font-bold text-secondary">الرقم العسكري</th>
-                                <th className="py-4 px-4 text-xs font-bold text-secondary">اسم الطالب</th>
-                                <th className="py-4 px-4 text-xs font-bold text-secondary">الرقم القومي</th>
-                                <th className="py-4 px-4 text-xs font-bold text-secondary">تاريخ الوصول</th>
-                                <th className="py-4 px-4 text-xs font-bold text-secondary">وقت الوصول</th>
-                                <th className="py-4 px-4 text-xs font-bold text-secondary">حالة الطلب</th>
-                                <th className="py-4 px-4 text-xs font-bold text-secondary">حالة الوصول</th>
-                                <th className="py-4 px-4 text-xs font-bold text-secondary">الإجراءات</th>
+                            <tr className="border-b bg-white/30">
+                                <th className="py-4 px-4 text-xs font-bold">الرقم العسكري</th>
+                                <th className="py-4 px-4 text-xs font-bold">اسم الطالب</th>
+                                <th className="py-4 px-4 text-xs font-bold">الرقم القومي</th>
+                                <th className="py-4 px-4 text-xs font-bold">تاريخ الوصول</th>
+                                <th className="py-4 px-4 text-xs font-bold">وقت الوصول</th>
+                                <th className="py-4 px-4 text-xs font-bold">حالة الطلب</th>
+                                <th className="py-4 px-4 text-xs font-bold">حالة الوصول</th>
+                                <th className="py-4 px-4 text-xs font-bold">الإجراءات</th>
                             </tr>
                         </thead>
-                        <tbody className="divide-y divide-surface-dim/30">
+
+                        <tbody>
                             {visibleStudents.map((student) => (
                                 <React.Fragment key={student.id}>
-                                    <tr className="hover:bg-surface-container-low/35 transition-colors">
-                                        <td className="py-5 px-4 text-sm font-black text-primary">{student.militaryId}</td>
-                                        <td className="py-5 px-4 text-sm font-semibold text-on-surface">
-                                            <div className="flex items-center justify-between gap-3">
-                                                <span>{student.name}</span>
-                                            </div>
-                                        </td>
-                                        <td className="py-5 px-4 text-sm text-secondary dir-ltr">{student.nationalId}</td>
-                                        <td className="py-5 px-4 text-sm text-secondary">{student.date}</td>
-                                        <td className="py-5 px-4 text-sm text-secondary">{student.time}</td>
-                                        <td className="py-5 px-4 text-sm">
-                                            <span className="px-2 py-1 rounded-full text-xs bg-surface-container-high text-primary font-semibold">
+                                    <tr className="hover:bg-gray-50">
+                                        <td className="py-4 px-4 font-bold">{student.militaryId}</td>
+                                        <td className="py-4 px-4">{student.name}</td>
+                                        <td className="py-4 px-4">{student.nationalId}</td>
+                                        <td className="py-4 px-4">{student.date}</td>
+                                        <td className="py-4 px-4">{student.time}</td>
+
+                                        <td className="py-4 px-4">
+                                            <span className="bg-gray-200 px-2 py-1 rounded text-xs">
                                                 {student.permitType}
                                             </span>
                                         </td>
-                                        <td className="py-5 px-4 text-sm font-bold">
-                                            {student.status === 'present' && (
-                                                <span className="inline-flex items-center gap-2 text-emerald-700">
-                                                    <span className="w-2.5 h-2.5 rounded-full bg-emerald-600" />في الموعد
-                                                </span>
-                                            )}
-                                            {student.status === 'late' && (
-                                                <span className="inline-flex items-center gap-2 text-rose-700">
-                                                    <span className="w-2.5 h-2.5 rounded-full bg-rose-600" />متأخر (45 د)
-                                                </span>
+
+                                        <td className="py-4 px-4 font-bold">
+                                            {student.status === 'present' ? (
+                                                <span className="text-green-600">في الموعد</span>
+                                            ) : (
+                                                <span className="text-red-600">متأخر</span>
                                             )}
                                         </td>
-                                        <td className="py-5 px-4 text-secondary">
+
+                                        {/* زر فتح التعليق */}
+                                        <td className="py-4 px-4">
                                             <button
-                                                className="h-8 w-8 rounded-full hover:bg-white/60"
+                                                className="p-2 rounded-full hover:bg-gray-200 flex items-center justify-center"
                                                 onClick={() => toggleNoteEditor(student.id)}
-                                                type="button"
                                             >
-                                                <span
-                                                    className="material-symbols-outlined text-base"
-                                                    onClick={() => toggleNoteEditor(student.id)}
-                                                >
+                                                <span className="material-symbols-outlined text-lg">
                                                     edit
                                                 </span>
                                             </button>
                                         </td>
                                     </tr>
 
+                                    {/* التعليق */}
                                     {openNoteForId === student.id && (
-                                        <tr className="bg-surface-container-low/35">
-                                            <td className="px-4 py-4" colSpan={8}>
-                                                <div className="rounded-xl border border-outline-variant/35 bg-white/80 p-4">
-                                                    <p className="text-xs font-bold text-secondary mb-2">ملاحظات الطالب</p>
+                                        <tr>
+                                            <td colSpan={8} className="p-4 bg-gray-50">
+                                                <div className="bg-white p-4 rounded-lg border shadow-sm">
+                                                    <p className="text-sm mb-2 font-bold">ملاحظات</p>
+
                                                     <textarea
-                                                        className="w-full min-h-24 resize-y rounded-lg border border-outline-variant/35 bg-white px-3 py-2 text-sm text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container/35"
-                                                        onChange={(event) =>
+                                                        className="w-full border rounded p-2 text-sm"
+                                                        rows="3"
+                                                        placeholder="اكتب ملاحظتك..."
+                                                        value={notesByStudent[student.id] || ''}
+                                                        onChange={(e) =>
                                                             setNotesByStudent((prev) => ({
                                                                 ...prev,
-                                                                [student.id]: event.target.value,
+                                                                [student.id]: e.target.value,
                                                             }))
                                                         }
-                                                        placeholder="اكتب كل الملاحظات الخاصة بالطالب هنا"
-                                                        value={notesByStudent[student.id] || ''}
                                                     />
-                                                    <div className="mt-3 flex justify-end gap-2">
+
+                                                    <div className="flex justify-end gap-2 mt-3">
                                                         <button
-                                                            className="px-3 py-1.5 rounded-lg text-xs font-bold border border-outline-variant/40 text-secondary hover:bg-surface-container-high"
+                                                            className="px-3 py-1 bg-gray-200 rounded"
                                                             onClick={() => setOpenNoteForId(null)}
-                                                            type="button"
                                                         >
                                                             إلغاء
                                                         </button>
                                                         <button
-                                                            className="px-3 py-1.5 rounded-lg text-xs font-bold satin-gradient text-white"
+                                                            className="px-3 py-1 bg-black text-white rounded"
                                                             onClick={() => saveNote(student.id)}
-                                                            type="button"
                                                         >
                                                             حفظ
                                                         </button>
@@ -220,23 +202,8 @@ export default function AttendanceTrackerSection({ filters }) {
                     </table>
 
                     {visibleStudents.length === 0 && (
-                        <p className="text-center text-sm text-secondary py-7">لا توجد نتائج مطابقة للفلاتر الحالية.</p>
+                        <p className="text-center py-6">لا توجد بيانات</p>
                     )}
-                </div>
-
-                <div className="px-5 py-4 border-t border-outline-variant/30">
-                    <div className="max-w-xs rounded-2xl bg-white/80 border border-outline-variant/30 px-4 py-3">
-                        <p className="text-xs font-bold text-primary mb-2">آخر حالة وصول</p>
-                        <div className="flex items-center justify-between">
-                            <div className="text-right">
-                                <p className="text-sm font-semibold text-primary">الطالب / خالد الفقي</p>
-                                <p className="text-[11px] text-emerald-700">تم تسجيل الدخول - 09:10 ص</p>
-                            </div>
-                            <div className="h-10 w-10 rounded-xl bg-surface-container-high text-primary grid place-items-center">
-                                <span className="material-symbols-outlined text-lg">person</span>
-                            </div>
-                        </div>
-                    </div>
                 </div>
             </div>
         </section>
