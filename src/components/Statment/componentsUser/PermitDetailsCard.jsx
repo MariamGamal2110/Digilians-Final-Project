@@ -35,10 +35,10 @@ export default function PermitDetailsCard() {
               <div className="w-3 h-3 rounded-full bg-emerald-500 animate-pulse"></div>
               <span className="text-sm font-medium text-on-surface">تصريح نشط</span>
             </div>
-            <button className="satin-gradient text-white px-6 py-2.5 rounded shadow-lg text-sm font-semibold flex items-center gap-2">
+            {/* <button className="satin-gradient text-white px-6 py-2.5 rounded shadow-lg text-sm font-semibold flex items-center gap-2">
               <span className="material-symbols-outlined text-base">download</span>
               تحميل البطاقة
-            </button>
+            </button> */}
           </div>
         </div>
       </div>

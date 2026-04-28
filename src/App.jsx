@@ -3,7 +3,12 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout'
 
 import HomeUser from './pages/Home/HomeUser'
+
 import HomeAdmin from './pages/Home/HomeAdmin'
+=======
+// import HomeAdmin from './pages/Home/HomeAdmin'
+import StatmentAdmin from './pages/Statment/StatmentAdmin'
+
 import StatmentUser from './pages/Statment/StatmentUser'
 import PaymentUser from './pages/Payment/PaymentUser'
 import PunishmentUser from './pages/Punishment/PunishmentUser'
@@ -24,6 +29,7 @@ const router = createBrowserRouter([
       { index: true, element: <HomeUser /> },
       { path: 'admin-home', element: <HomeAdmin /> },
       { path: 'StatmentUser', element: <StatmentUser /> },
+      { path: 'StatmentAdmin', element: <StatmentAdmin /> },
       { path: 'payment', element: <PaymentUser /> },
       { path: 'punishment', element: <PunishmentUser /> },
       { path: 'bus', element: <BookUser /> },

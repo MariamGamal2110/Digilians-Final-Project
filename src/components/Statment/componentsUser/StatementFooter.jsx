@@ -11,7 +11,6 @@ export default function StatementFooter() {
           <span className="w-1.5 h-1.5 rounded-full bg-outline-variant/40"></span>
           <span>الوطن</span>
         </div>
-        <p className="text-secondary/50 text-[10px] max-w-md mx-auto">نظام إدارة سجلات الطلاب الموحد - الأكاديمية العسكرية ٢٠٢٣. جميع الحقوق محفوظة.</p>
       </div>
     </footer>
   )
