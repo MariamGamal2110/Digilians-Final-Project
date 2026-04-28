@@ -3,14 +3,10 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout'
 
 import HomeUser from './pages/Home/HomeUser'
-// import HomeAdmin from './pages/Home/HomeAdmin'
 import StatmentAdmin from './pages/Statment/StatmentAdmin'
-import HomeAdmin from './pages/Home/HomeAdmin'
 
 import HomeAdmin from './pages/Home/HomeAdmin'
-=======
 // import HomeAdmin from './pages/Home/HomeAdmin'
-import StatmentAdmin from './pages/Statment/StatmentAdmin'
 
 import StatmentUser from './pages/Statment/StatmentUser'
 import PaymentUser from './pages/Payment/PaymentUser'
