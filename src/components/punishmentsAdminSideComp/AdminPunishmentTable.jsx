@@ -1,24 +1,46 @@
-import React from 'react'
-import { FiEdit2 ,FiClock, FiShield, FiSun,FiPlus } from 'react-icons/fi'
-function PunishmentIcon({ type }) {
-  let icon = <FiClock size={18} />
+import { FiEye,FiTrash2  ,FiEdit2 ,FiClock, FiShield, FiSun,FiPlus } from 'react-icons/fi'
+import { useState } from "react";
+import AdminAddPunishmentModal from "./AdminAddPunishmentModal";
 
-  if (type === 'uniform') {
-    icon = <FiShield size={18} />
-  }
+// function PunishmentsPage() {
+//   const [showModal, setShowModal] = useState(false);
+//   const [punishments, setPunishments] = useState([]);
 
-  if (type === 'sleep') {
-    icon = <FiSun size={18} />
-  }
+//   const handleAddPunishment = (newPunishment) => {
+//     setPunishments([...punishments, newPunishment]);
+//     setShowModal(false);
+//   };
 
-  return (
-    <div className="w-9 h-9 rounded-lg bg-[#f3f1e8] border border-[#e5dfd0] flex items-center justify-center text-[#1f220f]">
-      {icon}
-    </div>
-  )
-}
+//   return (
+//     <div>
+//       <button onClick={() => setShowModal(true)}>
+//         إضافة عقوبة جديدة
+//       </button>
+
+//       {showModal && (
+//         <AddPunishmentModal
+//           onClose={() => setShowModal(false)}
+//           onSave={handleAddPunishment}
+//         />
+//       )}
+
+//       {/* الجدول */}
+//       {punishments.map((p, index) => (
+//         <div key={index}>{p.studentName}</div>
+//       ))}
+//     </div>
+//   );
+// }
 
 export default function AdminPunishmentTable() {
+    const [showModal, setShowModal] = useState(false);
+    const [punishments, setPunishments] = useState([]);
+
+    const handleAddPunishment = (newPunishment) => {
+    setPunishments([...punishments, newPunishment]);
+    setShowModal(false);
+  };
+
     const punishmentRecords = [
     { studentName : "محمد حسن على " ,
       milateryNum:22589 ,
@@ -91,8 +113,10 @@ export default function AdminPunishmentTable() {
         punishment: 'تأخير ساعتين عن نزول الإجازات' , 
         type:"uniform", 
         degree:5 },
-  ]
-  return (
+  ];
+
+
+  return(
     <>
     <div className="overflow-x-auto">
         <table className="w-full text-sm text-right">
@@ -106,6 +130,8 @@ export default function AdminPunishmentTable() {
               <th className="px-5 py-3 font-bold text-center">
                 العقوبة بالدرجات
               </th>
+              <th className="py-3 px-4 font-bold">إجراءات</th>
+
             </tr>
           </thead>
 
@@ -154,29 +180,55 @@ export default function AdminPunishmentTable() {
                     </span>
                   </div>
                 </td>
+                 <td className="py-4 px-4">
+                        <div className="flex items-center justify-center gap-2">
+                        <button onClick={setShowModal(true)} 
+                                className="w-9 h-9 rounded-full flex items-center justify-center text-[#6b5b3e] hover:bg-[#f3efe4] hover:scale-105 transition"
+                                title="عرض"
+                            >
+                                <FiEye size={18} />
+                            </button>
+
+                            <button
+                                // onClick={() => openEditModal(student)}
+                                className="w-9 h-9 rounded-full flex items-center justify-center text-[#6b5b3e] hover:bg-[#f3efe4] hover:scale-105 transition"
+                                title="تعديل"
+                            >
+                                <FiEdit2 size={17} />
+                            </button>
+
+                            <button
+                                // onClick={() => deletePunishment(student.id)}
+                                className="w-9 h-9 rounded-full flex items-center justify-center text-[#6b5b3e] hover:bg-[#f3efe4] hover:scale-105 transition"
+                                title="حذف"
+                            >
+                                <FiTrash2 size={17} />
+                            </button>
+                        </div>
+                    </td>
               </tr>
             ))}
           </tbody>
         </table>
-        <div  className=' flex  p-5' >
-          <button className=" flex p-2  mx-2 rounded font-bold bg-[#f3f1e8] text-[#1f220f]">
-            <FiEdit2 />
-            <span className='mx-2'>
-
-            تعديل
-            </span>
-
-            </button>
-          <button className="p-2 rounded bg-[#555d30] text-white flex items-center justify-center font-bold">
+        <div  className='p-5' >
+          <button onClick={() => setShowModal(true)} className="p-2 rounded bg-[#555d30] text-white flex items-center justify-center font-bold">
             <FiPlus />
         <span className='mx-2'>
                     إدخال عقوبة  
         </span>
 
           </button>
+                {showModal && (
+        <AddPunishmentModal
+          onClose={() => setShowModal(false)}
+          onSave={handleAddPunishment}
+        />
+      )}
+
 
       </div>
         </div>
   </>
   )
 }
+
