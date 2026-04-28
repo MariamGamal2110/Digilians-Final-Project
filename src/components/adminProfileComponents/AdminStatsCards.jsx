@@ -1,0 +1,78 @@
+import { FiAlertTriangle, FiBell, FiUserX } from 'react-icons/fi'
+
+const statsCards = [
+  {
+    title: 'طلاب حصلوا على إنذار واحد',
+    count: 18,
+    description: 'طلاب لديهم إنذار أول ويحتاجون متابعة بسيطة',
+    level: 'متابعة عادية',
+    percent: 60,
+    icon: <FiBell size={26} />,
+  },
+  {
+    title: 'طلاب حصلوا على إنذارين',
+    count: 9,
+    description: 'طلاب يحتاجون متابعة عاجلة قبل الفصل من الدورة',
+    level: 'متابعة عاجلة',
+    percent: 35,
+    icon: <FiAlertTriangle size={26} />,
+  },
+  {
+    title: 'طلاب مفصولون من الدورة',
+    count: 3,
+    description: 'طلاب تم فصلهم بسبب تكرار المخالفات أو عدم الالتزام',
+    level: 'إجراء نهائي',
+    percent: 15,
+    icon: <FiUserX size={26} />,
+  },
+]
+
+export default function AdminStatsCards() {
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+      {statsCards.map((card) => (
+        <div
+          key={card.title}
+          className="relative overflow-hidden bg-white border border-gray-200 rounded-2xl p-6 min-h-[190px] hover:shadow-lg hover:-translate-y-1 transition"
+        >
+          <div className="absolute top-0 right-0 w-24 h-24 bg-[#f4f1e8] rounded-bl-[70px]"></div>
+
+          <div className="relative flex items-start justify-between mb-6">
+            <div className="w-14 h-14 rounded-2xl bg-[#f4f1e8] border border-[#ddd6c8] flex items-center justify-center text-[#555d30] shadow-sm">
+              {card.icon}
+            </div>
+
+            <div className="text-right">
+              <h2 className="text-[#1f220f] font-extrabold text-lg leading-7">
+                {card.title}
+              </h2>
+
+              <span className="inline-block mt-2 rounded-full bg-[#f3f1e8] px-3 py-1 text-xs font-bold text-[#555d30]">
+                {card.level}
+              </span>
+            </div>
+          </div>
+
+          <div className="relative flex items-end justify-between gap-4">
+            <div className="text-right flex-1">
+              <p className="text-[#6b6f5a] text-sm leading-7 mb-4">
+                {card.description}
+              </p>
+
+              <div className="w-full bg-[#eee9dc] rounded-full h-2 overflow-hidden">
+                <div
+                  className="bg-[#555d30] h-full rounded-full"
+                  style={{ width: `${card.percent}%` }}
+                ></div>
+              </div>
+            </div>
+
+            <div className="w-20 h-20 rounded-full bg-[#555d30] text-white flex items-center justify-center text-4xl font-extrabold shadow-md shrink-0">
+              {card.count}
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
