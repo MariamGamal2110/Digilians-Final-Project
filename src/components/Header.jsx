@@ -6,7 +6,7 @@ const mainLinks = [
   { label: 'التصريح', to: '/StatmentUser' },
   { label: 'المصروفات', to: '/payment' },
   { label: 'حجز الأتوبيس', to: '/bus' },
-  { label: 'الإجازات الرسمية', to: '/holyday' },
+  { label: 'الإجازات الرسمية', to: '/HolidayUser' },
   { label: 'الالتماسات', to: '/execuse' },
   { label: 'المخالفات', to: '/punishment' },
 ]
