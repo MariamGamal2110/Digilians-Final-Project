@@ -1,31 +1,44 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import PaymentUser from './pages/Payment/PaymentUser'
+import PaymentAdmin from './pages/Payment/PaymentAdmin'
+import MedicalUser from './pages/Medical/MedicalUser'
+import MedicalAdmin from './pages/Medical/MedicalAdmin'
+import SignUp from './pages/Register/SignUp'
+import SignIn from './pages/Register/SignIn'
 
-
-//////////////ADD YOUR PAGES HERE//////////////////////
-import Layout from './components/Layout'
-
-
-//   const routers = createBrowserRouter([
-//   {path:'/' , element :<Layout /> ,children:[
-//     { index: true, element: <Home /> },
-//     {path:'cart', element:<Cart  />}, // change this to your page
-//     {path:'*', element:<NotFound/>}  // 404 page lEFT BLANK FOR NOW 
-
-    
-//   ]}
-// ])
+function App() {
+  const routers = createBrowserRouter([
+    {
+      path: '/Signup',
+      element: <SignUp />
+    },
+    {
+      path: '/signin',
+      element: <SignIn />
+    },
+    {
+      path: '/paymentuser',
+      element: <PaymentUser />, 
+    },
+      {
+      path: '/paymentadmin',
+      element: <PaymentAdmin />
+    },
+    {
+      path: '/medicaluser',
+      element: <MedicalUser />
+    },
+    {
+      path: '/medicaladmin',
+      element: <MedicalAdmin />
+    }
 
   
-   return(<>
-   
-   
-  
-   
-      // <CartProvider> 
-      //      <RouterProvider router={routers} />
-      // </CartProvider>
- </>
-      
- );
-    
-export default App
+  ]);
+
+  return (
+    <RouterProvider router={routers} />
+  );
+}
+
+export default App;
