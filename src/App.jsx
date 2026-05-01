@@ -1,6 +1,6 @@
-
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout'
+import HelloPage from './pages/Hello/HelloPage'
 
 import HomeUser from './pages/Home/HomeUser'
 import HomeAdmin from './pages/Home/HomeAdmin'
@@ -17,13 +17,19 @@ import RelativesAdmin from './pages/RelativesFamily/RelativesAdmin'
 import MedicalUser from './pages/Medical/MedicalUser'
 
 const router = createBrowserRouter([
+  // صفحة الترحيب - منفصلة بدون Layout
   {
     path: '/',
+    element: <HelloPage />,
+  },
+  // باقي الصفحات - مع Layout
+  {
+    path: '/app',
     element: <Layout />,
     children: [
       { index: true, element: <HomeUser /> },
       { path: 'admin-home', element: <HomeAdmin /> },
-      { path: 'StatmentUser', element: <StatmentUser /> },
+      { path: 'statment', element: <StatmentUser /> },
       { path: 'payment', element: <PaymentUser /> },
       { path: 'punishment', element: <PunishmentUser /> },
       { path: 'bus', element: <BookUser /> },
