@@ -1,4 +1,5 @@
 
+
 import { createBrowserRouter, RouterProvider } from 'react-router-dom'
 import Layout from './components/Layout'
 
@@ -18,9 +19,14 @@ import ProfileUser from './pages/Profile/ProfileUser'
 import ProfileAdmin from './pages/Profile/ProfileAdmin'
 import RelativesUser from './pages/RelativesFamily/RelativesUser'
 import RelativesAdmin from './pages/RelativesFamily/RelativesAdmin'
-import MedicalUser from './pages/Medical/MedicalUser'
 import HolidayAdmin from './pages/Holiday/HolidayAdmin'
 import HolidayUser from './pages/Holiday/HolidayUser'
+import SignIn from './pages/Register/SignIn'
+import SignUp from './pages/Register/SignUp'
+import PaymenUser from './pages/Payment/PaymentUser'
+import PaymentAdmin from './pages/Payment/PaymentAdmin'
+import MedicalUser from './pages/Medical/MedicalUser'
+import MedicalAdmin from './pages/Medical/MedicalAdmin'
 
 const router = createBrowserRouter([
   {
@@ -28,7 +34,13 @@ const router = createBrowserRouter([
     element: <Layout />,
     children: [
       { index: true, element: <HomeUser /> },
-      { path: 'admin-home', element: <HomeAdmin /> },
+      { path: 'adminHome', element: <HomeAdmin /> },
+      {path: 'signIn', element: <SignIn />},
+      {path: 'signUp', element: <SignUp />},
+      {path: 'medicalUser', element: <MedicalUser />},
+      {path: 'medicalAdmin', element: <MedicalAdmin />},
+      {path: 'paymentUser', element: <PaymentUser />},
+      {path: 'paymentAdmin', element: <PaymentAdmin />},
       { path: 'StatmentUser', element: <StatmentUser /> },
       { path: 'StatmentAdmin', element: <StatmentAdmin /> },
       { path: 'payment', element: <PaymentUser /> },

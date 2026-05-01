@@ -4,17 +4,25 @@ import { NavLink, useLocation } from 'react-router-dom'
 const mainLinks = [
   { label: 'الرئيسية', to: '/' },
   { label: 'التصريح', to: '/StatmentUser' },
-  { label: 'المصروفات', to: '/payment' },
+  { label: 'المصروفات', to: '/PaymentUser' },
   { label: 'حجز الأتوبيس', to: '/bus' },
   { label: 'الإجازات الرسمية', to: '/HolidayUser' },
   { label: 'الالتماسات', to: '/execuse' },
   { label: 'المخالفات', to: '/punishment' },
+
+    // {path: 'signIn', element: <SignIn />},
+    //   {path: 'signUp', element: <SignUp />},
+    //   {path: 'medicalUser', element: <MedicalUser />},
+    //   {path: 'medicalAdmin', element: <MedicalAdmin />},
+    //   {path: 'payment', element: <PaymentUser />},
+    //   {path: 'paymentAdmin', element: <PaymentAdmin />},
+  
 ]
 
 const moreLinks = [
   { label: 'الملف الشخصي', to: '/profile' },
   { label: 'سجلات الأقارب', to: '/relatives' },
-  { label: 'السجل الطبي', to: '/medical' },
+  { label: 'السجل الطبي', to: '/MedicalUser' },
 ]
 
 export default function Header() {
