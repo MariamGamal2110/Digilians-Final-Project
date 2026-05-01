@@ -4,7 +4,7 @@ import { MdEventNote } from 'react-icons/md'
 export default function HolidayPageHeader() {
   return (
     <div dir="rtl" className="mb-8">
-      <div className="bg-gradient-to-r from-accent to-[#5f6f41] rounded-2xl p-8 text-white shadow-lg">
+      <div className="bg-gradient-to-r bg-[#555d30]  rounded-2xl p-8 text-white shadow-lg">
         <div className="flex items-center gap-6">
           <div className="bg-white bg-opacity-20 p-4 rounded-xl backdrop-blur">
             <MdEventNote className="w-12 h-12" />

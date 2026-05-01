@@ -33,9 +33,13 @@ export default function HolidayForm({ formData, onFormChange, onSubmit, onCancel
     <div dir="rtl" className="bg-white rounded-2xl p-8 shadow-md border border-gray-100 mt-8">
       {/* Section Header */}
       <div className="mb-6 pb-6 border-b-2 border-gray-200">
-        <h3 className="text-2xl font-bold text-primary mb-2">
-          بيانات الطالب (من لا يرغب في الدخول للإجازة الأسبوعية)
+      
+<h3 className="text-2xl font-bold text-primary mb-2">
+          تأكيد طلب الدخول للإجازة الأسبوعية
         </h3>
+
+
+
         <p className="text-sm text-gray-600">
           يرجى تصفية البيانات التالية مع توضيح سبب عدم الدخول للإجازة الأسبوعية
         </p>
@@ -126,7 +130,7 @@ export default function HolidayForm({ formData, onFormChange, onSubmit, onCancel
         <div className="flex gap-4 pt-6 border-t-2 border-gray-200">
           <button
             type="submit"
-            className="flex-1 bg-accent text-white px-8 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-all duration-200 flex items-center justify-center gap-2"
+            className="flex-1 bg-[#555d30]  text-white px-8 py-3 rounded-lg font-bold hover:bg-opacity-90 transition-all duration-200 flex items-center justify-center gap-2"
           >
             <span>✓</span>
             <span>إرسال الطلب</span>
