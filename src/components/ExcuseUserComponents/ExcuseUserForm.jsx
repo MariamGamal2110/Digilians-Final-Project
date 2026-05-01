@@ -25,7 +25,7 @@ const [formData, setFormData] = useState({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white p-6 rounded-2xl shadow-md w-full"
+      className="bg-white p-6 rounded-2xl shadow-sm w-full h-full flex flex-col justify-between"
     >
      
 
@@ -67,11 +67,10 @@ const [formData, setFormData] = useState({
         name="details"
         placeholder="يرجى شرح المبررات بالتفصيل..."
         onChange={handleChange}
-        className="border p-3 rounded-lg w-full mb-4 h-32"
-      />
+ className="border p-3 rounded-lg w-full mb-4 min-h-[120px] flex-grow"      />
 
       {/* Upload */}
-      <div className="border-2 border-dashed p-6 rounded-lg text-center mb-4">
+      <div className="border-2 border-dashed p-6 rounded-lg text-center mb-4  h-80">
         <input
           type="file"
           name="file"
