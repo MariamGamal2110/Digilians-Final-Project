@@ -1,33 +1,18 @@
 import { FiAlertTriangle, FiBell, FiUserX } from 'react-icons/fi'
 
-const statsCards = [
-  {
-    title: 'طلاب حصلوا على إنذار واحد',
-    count: 18,
-    description: 'طلاب لديهم إنذار أول ويحتاجون متابعة بسيطة',
-    level: 'متابعة عادية',
-    percent: 60,
-    icon: <FiBell size={26} />,
-  },
-  {
-    title: 'طلاب حصلوا على إنذارين',
-    count: 9,
-    description: 'طلاب يحتاجون متابعة عاجلة قبل الفصل من الدورة',
-    level: 'متابعة عاجلة',
-    percent: 35,
-    icon: <FiAlertTriangle size={26} />,
-  },
-  {
-    title: 'طلاب مفصولون من الدورة',
-    count: 3,
-    description: 'طلاب تم فصلهم بسبب تكرار المخالفات أو عدم الالتزام',
-    level: 'إجراء نهائي',
-    percent: 15,
-    icon: <FiUserX size={26} />,
-  },
-]
+function getCardIcon(type) {
+  if (type === 'warning-one') {
+    return <FiBell size={26} />
+  }
 
-export default function AdminStatsCards() {
+  if (type === 'warning-two') {
+    return <FiAlertTriangle size={26} />
+  }
+
+  return <FiUserX size={26} />
+}
+
+export default function AdminStatsCards({ statsCards = [] }) {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
       {statsCards.map((card) => (
@@ -39,7 +24,7 @@ export default function AdminStatsCards() {
 
           <div className="relative flex items-start justify-between mb-6">
             <div className="w-14 h-14 rounded-2xl bg-[#f4f1e8] border border-[#ddd6c8] flex items-center justify-center text-[#555d30] shadow-sm">
-              {card.icon}
+              {getCardIcon(card.type)}
             </div>
 
             <div className="text-right">

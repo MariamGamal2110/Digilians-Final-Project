@@ -1,8 +1,6 @@
 import InfoCard from './InfoCard'
 
-export default function DurationCard() {
-  const selectedDuration = '4 أشهر'
-
+export default function DurationCard({ selectedDuration }) {
   const durations = [
     '4 أشهر',
     '9 أشهر',

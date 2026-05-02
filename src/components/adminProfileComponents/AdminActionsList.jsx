@@ -1,553 +1,355 @@
 import { useState } from 'react'
-import { FiFileText, FiPrinter, FiX } from 'react-icons/fi'
+import {
+  FiFileText,
+  FiList,
+  FiPrinter,
+  FiUsers,
+  FiX,
+} from 'react-icons/fi'
 
-const actions = [
-  {
-    id: 1,
-    title: 'عدد الطلاب الواقع عليهم المخالفات',
-    time: 'منذ يومين',
-    reportType: 'المخالفات بجميع أنواعها',
-    detailLabel: 'نوع المخالفة',
-    punishmentLabel: 'العقوبة',
-    students: [
-      {
-        name: 'أحمد محمد',
-        detail: 'تأخير عن الطابور',
-        punishment: 'تأخير 3 ساعات',
-      },
-      {
-        name: 'محمد عبد الرحمن',
-        detail: 'عدم الالتزام بالزي',
-        punishment: 'حرمان من الإجازة',
-      },
-      {
-        name: 'ياسين إبراهيم',
-        detail: 'غياب بدون إذن',
-        punishment: 'إنذار إداري',
-      },
-      {
-        name: 'محمود علي',
-        detail: 'مخالفة تعليمات السكن',
-        punishment: 'خصم درجات سلوك',
-      },
-    ],
-  },
-  {
-    id: 2,
-    title: 'عدد الطلاب الغير مسددين للمصروفات',
-    time: 'منذ 4 أيام',
-    reportType: 'عدم سداد المصروفات',
-    detailLabel: 'حالة السداد',
-    punishmentLabel: 'ملاحظات',
-    students: [
-      {
-        name: 'أحمد محمد',
-        detail: ' لم يتم السداد',
-        punishment: 'جاري ارسال المندوب',
-      },
-      {
-        name: 'سيف خالد',
-        detail: 'لم يتم السداد ',
-        punishment: 'تم ارسال المندوب',
-      },
-      {
-        name: 'عبد الله سعيد',
-        detail: 'لم يتم السداد  ',
-        punishment: 'تم ارسال المندوب',
-      },
-      {
-        name: 'مروان حسن',
-        detail: 'لم يتم السداد ',
-        punishment: 'جاري ارسال المندوب',
-      },
-      {
-        name: 'يوسف إبراهيم',
-        detail: 'لم يتم السداد   ',
-        punishment: 'تم ارسال المندوب',
-      },
-    ],
-  },
-  {
-    id: 3,
-    title: 'عدد الطلاب المتقدمين بالالتماسات',
-    time: 'منذ 5 أيام',
-    reportType: 'طلبات الالتماس ',
-    detailLabel: 'نوع الالتماس',
-    punishmentLabel: 'الحالة',
-    students: [
-      {
-        name: 'ياسين إبراهيم',
-        detail: 'الالتماس بالخروج لأداء الامتحانات',
-        punishment: 'قيد المراجعة',
-      },
-      {
-        name: 'كريم محمود',
-        detail: 'الالتماس بالخروج لحاله وفاه',
-        punishment: 'تم الاستلام',
-      },
-      {
-        name: 'حسن سمير',
-        detail: 'الالتماس بالخروج لمناسبه من الدرجه الاولي ',
-        punishment: 'قيد المراجعة',
-      },
-    ],
-  },
-  {
-    id: 4,
-    title: 'عدد طلبات الراغبين في حجز الأتوبيس',
-    time: 'منذ أسبوع',
-    reportType: 'طلبات حجز الأتوبيس',
-    detailLabel: 'خط السير',
-    punishmentLabel: 'حالة الحجز',
-    students: [
-      {
-        name: 'أحمد محمد',
-        detail: ' موقف السلام ',
-        punishment: 'مؤكد',
-      },
-      {
-        name: 'محمد عبد الرحمن',
-        detail: ' موقف السلام ',
-        punishment: 'مؤكد',
-      },
-      {
-        name: 'يوسف إبراهيم',
-        detail: ' موقف عبود ',
-        punishment: 'قيد المراجعة',
-      },
-    ],
-  },
-  {
-    id: 5,
-    title: 'عدد الطلاب بالأجازات الرسميه ',
-    time: 'منذ 3 أيام',
-    reportType: 'الرغبه في الأجازات',
-    detailLabel: 'الرغبه',
-    punishmentLabel: 'الحالة',
-    students: [
-      {
-        name: 'سيف خالد',
-        detail: 'يرغب في النزول  ',
-        punishment: 'موافق عليه',
-      },
-      {
-        name: 'مروان حسن',
-        detail: 'يرغب في النزول   ',
-        punishment: 'موافق عليه',
-      },
-      {
-        name: 'عبد الله سعيد',
-        detail: '  لا يرغب في النزول',
-        punishment: 'غير موافق عليه',
-      },
-      {
-        name: 'كريم محمود',
-        detail: '  لا يرغب في النزول',
-        punishment: 'موافق عليه',
-      },
-    ],
-  },
-]
+function ActionReportModal({ action, onClose }) {
+  if (!action) return null
 
-export default function AdminActionsList() {
-  const [selectedAction, setSelectedAction] = useState(null)
-  const [showAllActions, setShowAllActions] = useState(false)
+  const students = action.students || []
 
-  function openActionDetails(action) {
-    setSelectedAction(action)
-  }
-
-  function closeActionDetails() {
-    setSelectedAction(null)
-  }
-
-  function openAllActions() {
-    setShowAllActions(true)
-  }
-
-  function closeAllActions() {
-    setShowAllActions(false)
-  }
-
-  function openDetailsFromAllActions(action) {
-    setShowAllActions(false)
-    setSelectedAction(action)
-  }
-
-  function printReport() {
-    if (!selectedAction) {
-      return
-    }
-
-    const studentsRows = selectedAction.students
-      .map((student, index) => {
-        return `
-          <tr>
-            <td>${index + 1}</td>
-            <td>${student.name}</td>
-            <td>${student.detail}</td>
-            <td>${student.punishment}</td>
-          </tr>
-        `
-      })
-      .join('')
-
-    const printWindow = window.open('', '_blank')
-
-    printWindow.document.write(`
-      <html dir="rtl">
-        <head>
-          <title>${selectedAction.title}</title>
-          <style>
-            body {
-              font-family: Arial, sans-serif;
-              padding: 30px;
-              direction: rtl;
-            }
-
-            h1 {
-              font-size: 24px;
-              margin-bottom: 10px;
-            }
-
-            p {
-              font-size: 16px;
-              margin-bottom: 20px;
-            }
-
-            table {
-              width: 100%;
-              border-collapse: collapse;
-              margin-top: 20px;
-            }
-
-            th,
-            td {
-              border: 1px solid #ddd;
-              padding: 12px;
-              text-align: center;
-              font-size: 15px;
-            }
-
-            th {
-              background: #f3f1e8;
-            }
-
-            .total {
-              margin-top: 20px;
-              font-size: 18px;
-              font-weight: bold;
-            }
-          </style>
-        </head>
-
-        <body>
-          <h1>${selectedAction.title}</h1>
-          <p>نوع التقرير: ${selectedAction.reportType}</p>
-          <p>عدد الطلاب: ${selectedAction.students.length}</p>
-
-          <table>
-            <thead>
-              <tr>
-                <th>رقم</th>
-                <th>اسم الطالب</th>
-                <th>${selectedAction.detailLabel}</th>
-                <th>${selectedAction.punishmentLabel}</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              ${studentsRows}
-            </tbody>
-          </table>
-
-          <p class="total">إجمالي عدد الطلاب: ${selectedAction.students.length} طلاب</p>
-        </body>
-      </html>
-    `)
-
-    printWindow.document.close()
-    printWindow.focus()
-    printWindow.print()
+  function handlePrint() {
+    window.print()
   }
 
   return (
-    <>
-      <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
-          <h2 className="text-[#1f220f] font-bold text-right">
-            أحدث الإجراءات الإدارية
+    <div className="fixed inset-0 z-[60] bg-black/45 flex items-center justify-center px-4">
+      <div
+        dir="rtl"
+        className="bg-white w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden border border-[#e8e5dc]"
+      >
+        <div className="relative px-8 py-7 text-right border-b border-[#e8e5dc] bg-[#f8f6f0]">
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute left-6 top-6 w-10 h-10 rounded-full border border-[#e8e5dc] flex items-center justify-center text-[#1f220f] hover:bg-[#f3f1e8] transition"
+          >
+            <FiX size={20} />
+          </button>
+
+          <p className="text-[#7b815f] text-sm font-bold mb-2">
+            تقرير إداري تفصيلي
+          </p>
+
+          <h2 className="text-[#1f220f] text-2xl font-extrabold mb-2">
+            {action.title}
           </h2>
 
-          <p className="text-[#555d30] text-sm">
-            آخر 30 يوم
+          <p className="text-[#7b815f] text-sm">
+            قائمة الطلاب المرتبطين بهذا الإجراء
           </p>
         </div>
 
-        <div>
-          {actions.slice(0, 3).map((action) => (
-            <button
-              key={action.id}
-              onClick={() => openActionDetails(action)}
-              className="w-full flex items-center justify-between px-6 py-5 border-b border-gray-200 hover:bg-[#faf9f4] transition text-right"
-            >
-              <div className="text-right">
-                <p className="text-[#1f220f] font-bold text-sm mb-1">
-                  {action.title}
-                </p>
+        <div className="p-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="border border-[#e8e5dc] rounded-2xl p-5 text-center">
+              <p className="text-[#7b815f] text-sm mb-2">نوع التقرير</p>
 
-                <p className="text-[#555d30] text-xs">
-                  {action.time}
-                </p>
-              </div>
-
-              <div className="w-11 h-11 rounded-lg bg-[#e8e5dc] flex items-center justify-center text-[#555d30]">
-                <FiFileText size={20} />
-              </div>
-            </button>
-          ))}
-        </div>
-
-        <button
-          onClick={openAllActions}
-          className="w-full bg-[#f3f1e8] text-[#1f220f] py-4 font-bold hover:bg-[#e8e5dc] transition"
-        >
-          عرض جميع الإجراءات الموثقة
-        </button>
-      </div>
-
-      {selectedAction && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4">
-          <div
-            dir="rtl"
-            className="w-full max-w-4xl overflow-hidden rounded-[24px] border border-[#e6e1d5] bg-white shadow-[0_20px_60px_rgba(0,0,0,0.16)]"
-          >
-            <div className="border-b border-[#ece7dc] bg-gradient-to-l from-[#f8f6f0] to-white px-6 py-5">
-              <div className="flex items-start justify-between gap-4">
-                <button
-                  onClick={closeActionDetails}
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-[#ddd6c8] text-[#6b5b3e] transition hover:bg-[#f3efe4]"
-                  title="إغلاق"
-                >
-                  <FiX size={21} />
-                </button>
-
-                <div className="flex-1 text-center">
-                  <p className="mb-1 text-sm font-medium text-[#8a7a58]">
-                    تقرير إداري تفصيلي
-                  </p>
-
-                  <h3 className="text-2xl font-extrabold text-[#1f220f]">
-                    {selectedAction.title}
-                  </h3>
-
-                  <p className="mt-2 text-sm text-[#7a7a68]">
-                    قائمة الطلاب المرتبطين بهذا الإجراء
-                  </p>
-                </div>
-
-                <div className="w-10 h-10"></div>
-              </div>
+              <p className="text-[#1f220f] font-extrabold">
+                {action.reportType}
+              </p>
             </div>
 
-            <div className="bg-[#fcfbf8] px-6 py-5">
-              <div className="mb-5 grid grid-cols-1 gap-3 md:grid-cols-3">
-                <div className="rounded-xl border border-[#e7e1d5] bg-white p-4 text-center shadow-sm">
-                  <p className="mb-2 text-sm font-medium text-[#7a7a68]">
-                    نوع التقرير
-                  </p>
+            <div className="border border-[#e8e5dc] rounded-2xl p-5 text-center">
+              <p className="text-[#7b815f] text-sm mb-2">عدد الطلاب</p>
 
-                  <p className="text-base font-bold text-[#1f220f]">
-                    {selectedAction.reportType}
-                  </p>
-                </div>
+              <p className="text-[#555d30] font-extrabold text-3xl">
+                {students.length}
+              </p>
+            </div>
 
-                <div className="rounded-xl border border-[#e7e1d5] bg-white p-4 text-center shadow-sm">
-                  <p className="mb-2 text-sm font-medium text-[#7a7a68]">
-                    عدد الطلاب
-                  </p>
+            <div className="border border-[#e8e5dc] rounded-2xl p-5 text-center">
+              <p className="text-[#7b815f] text-sm mb-2">حالة البيانات</p>
 
-                  <p className="text-2xl font-extrabold text-[#5d6631]">
-                    {selectedAction.students.length}
-                  </p>
-                </div>
+              <p className="text-[#1f220f] font-extrabold">
+                محدثة
+              </p>
+            </div>
+          </div>
 
-                <div className="rounded-xl border border-[#e7e1d5] bg-white p-4 text-center shadow-sm">
-                  <p className="mb-2 text-sm font-medium text-[#7a7a68]">
-                    حالة البيانات
-                  </p>
+          <div className="border border-[#e8e5dc] rounded-2xl overflow-hidden mb-5">
+            <div className="bg-[#f3f1e8] px-5 py-4">
+              <h3 className="text-[#1f220f] font-extrabold">
+                قائمة الطلاب
+              </h3>
+            </div>
 
-                  <p className="text-base font-bold text-[#1f220f]">
-                    محدثة
-                  </p>
-                </div>
-              </div>
+            <table className="w-full text-sm text-right">
+              <thead>
+                <tr className="bg-[#faf9f4] border-b border-[#e8e5dc]">
+                  <th className="px-5 py-4 font-bold text-[#1f220f]">
+                    الرقم
+                  </th>
 
-              <div className="overflow-hidden rounded-2xl border border-[#e7e1d5] bg-white shadow-sm">
-                <div className="border-b border-[#ece7dc] bg-[#f4f1e8] px-5 py-3">
-                  <h4 className="text-base font-bold text-[#1f220f]">
-                    قائمة الطلاب
-                  </h4>
-                </div>
+                  <th className="px-5 py-4 font-bold text-[#1f220f]">
+                    اسم الطالب
+                  </th>
 
-                <div className="overflow-hidden">
-                  <div className="grid grid-cols-4 bg-[#faf8f2] px-5 py-3 text-sm font-bold text-[#1f220f]">
-                    <div className="text-center">الرقم</div>
-                    <div className="text-right">اسم الطالب</div>
-                    <div className="text-right">{selectedAction.detailLabel}</div>
-                    <div className="text-right">{selectedAction.punishmentLabel}</div>
-                  </div>
+                  <th className="px-5 py-4 font-bold text-[#1f220f]">
+                    {action.detailLabel || 'التفاصيل'}
+                  </th>
 
-                  {selectedAction.students.map((student, index) => (
-                    <div
+                  <th className="px-5 py-4 font-bold text-[#1f220f]">
+                    {action.punishmentLabel || 'الإجراء'}
+                  </th>
+                </tr>
+              </thead>
+
+              <tbody>
+                {students.length > 0 ? (
+                  students.map((student, index) => (
+                    <tr
                       key={`${student.name}-${index}`}
-                      className={
-                        index !== selectedAction.students.length - 1
-                          ? 'grid grid-cols-4 px-5 py-3 text-sm transition hover:bg-[#faf9f4] border-t border-[#f0ece3]'
-                          : 'grid grid-cols-4 px-5 py-3 text-sm transition hover:bg-[#faf9f4]'
-                      }
+                      className="border-b border-[#f1eee5] last:border-b-0 hover:bg-[#faf9f4] transition"
                     >
-                      <div className="text-center font-bold text-[#5d6631]">
+                      <td className="px-5 py-4 text-[#555d30] font-bold">
                         {index + 1}
-                      </div>
+                      </td>
 
-                      <div className="text-right font-medium text-[#1f220f]">
+                      <td className="px-5 py-4 text-[#1f220f] font-bold">
                         {student.name}
-                      </div>
+                      </td>
 
-                      <div className="text-right text-[#555d30] font-bold">
+                      <td className="px-5 py-4 text-[#555d30] font-medium">
                         {student.detail}
-                      </div>
+                      </td>
 
-                      <div className="text-right text-[#1f220f] font-bold">
+                      <td className="px-5 py-4 text-[#1f220f] font-medium">
                         {student.punishment}
-                      </div>
-                    </div>
-                  ))}
+                      </td>
+                    </tr>
+                  ))
+                ) : (
+                  <tr>
+                    <td
+                      colSpan="4"
+                      className="px-5 py-8 text-center text-[#7b815f] font-medium"
+                    >
+                      لا توجد بيانات طلاب لهذا الإجراء
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
 
-                  <div className="border-t border-[#e8e2d6] bg-[#f4f1e8] px-5 py-4">
-                    <div className="flex items-center justify-between">
-                      <div className="text-right">
-                        <p className="text-[#7a7a68] text-xs font-medium mb-1">
-                          ملخص القائمة
-                        </p>
+            <div className="bg-[#f3f1e8] px-6 py-5 flex items-center justify-between">
+              <p className="text-[#1f220f] font-extrabold">
+                إجمالي عدد الطلاب
+              </p>
 
-                        <p className="text-[#1f220f] font-extrabold text-xl">
-                          إجمالي عدد الطلاب
-                        </p>
-                      </div>
-
-                      <div className="w-14 h-14 rounded-full bg-[#5d6631] text-white flex items-center justify-center font-extrabold text-2xl shadow-md">
-                        {selectedAction.students.length}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="mt-4 flex flex-col items-start justify-between gap-4 rounded-xl border border-[#ebe5d9] bg-white px-5 py-4 md:flex-row md:items-center">
-                <div className="text-right">
-                  <p className="text-sm text-[#7a7a68]">
-                    هذا التقرير يعرض أسماء الطلاب المرتبطين بهذا الإجراء الإداري.
-                  </p>
-                </div>
-
-                <div className="flex gap-3">
-                  <button
-                    onClick={closeActionDetails}
-                    className="rounded-lg border border-[#d9d2c4] px-5 py-2 text-sm font-bold text-[#6b5b3e] transition hover:bg-[#f6f2e8]"
-                  >
-                    إغلاق
-                  </button>
-
-                  <button
-                    onClick={printReport}
-                    className="rounded-lg bg-[#5d6631] px-5 py-2 text-sm font-bold text-white transition hover:bg-[#4f5728] flex items-center gap-2"
-                  >
-                    طباعة التقرير
-                    <FiPrinter />
-                  </button>
-                </div>
+              <div className="w-12 h-12 rounded-full bg-[#555d30] text-white flex items-center justify-center font-extrabold text-lg">
+                {students.length}
               </div>
             </div>
           </div>
-        </div>
-      )}
 
-      {showAllActions && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4">
-          <div
-            dir="rtl"
-            className="w-full max-w-3xl overflow-hidden rounded-2xl border border-[#e6e1d5] bg-white shadow-xl"
-          >
-            <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 bg-[#f8f6f0]">
+          <div className="flex items-center justify-between gap-4 border border-[#e8e5dc] rounded-2xl px-5 py-4">
+            <p className="text-[#7b815f] text-sm leading-7">
+              هذا التقرير يعرض أسماء الطلاب المرتبطين بهذا الإجراء الإداري.
+            </p>
+
+            <div className="flex items-center gap-3">
               <button
-                onClick={closeAllActions}
-                className="w-10 h-10 rounded-full flex items-center justify-center text-[#6b5b3e] hover:bg-[#f3efe4] transition"
-                title="إغلاق"
+                type="button"
+                onClick={handlePrint}
+                className="bg-[#555d30] text-white rounded-xl px-5 py-3 text-sm font-bold flex items-center gap-2 hover:bg-[#454c27] transition"
               >
-                <FiX size={21} />
+                <FiPrinter />
+                طباعة التقرير
               </button>
 
-              <div className="text-right">
-                <h3 className="text-[#1f220f] text-xl font-extrabold">
-                  جميع الإجراءات الموثقة
-                </h3>
-
-                <p className="text-[#7a7a68] text-sm mt-1">
-                  قائمة مختصرة بكل الإجراءات الإدارية المسجلة
-                </p>
-              </div>
-            </div>
-
-            <div className="p-6 bg-[#fcfbf8] max-h-[70vh] overflow-y-auto">
-              <div className="space-y-4">
-                {actions.map((action) => (
-                  <div
-                    key={action.id}
-                    className="bg-white border border-[#e7e1d5] rounded-xl p-5 hover:shadow-sm transition"
-                  >
-                    <div className="flex items-center justify-between gap-4">
-                      <div className="text-right">
-                        <h4 className="text-[#1f220f] font-bold mb-2">
-                          {action.title}
-                        </h4>
-
-                        <p className="text-[#555d30] text-sm mb-1">
-                          نوع التقرير: {action.reportType}
-                        </p>
-
-                        <p className="text-[#7a7a68] text-xs">
-                          {action.time}
-                        </p>
-                      </div>
-
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-[#5d6631] text-white flex items-center justify-center font-extrabold text-lg">
-                          {action.students.length}
-                        </div>
-
-                        <button
-                          onClick={() => openDetailsFromAllActions(action)}
-                          className="bg-[#e8e5dc] text-[#1f220f] px-4 py-2 rounded-lg font-bold text-sm hover:bg-[#d8d4c7] transition"
-                        >
-                          عرض التفاصيل
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-
               <button
-                onClick={closeAllActions}
-                className="w-full mt-6 border border-[#d9d2c4] text-[#6b5b3e] rounded-lg py-3 font-bold hover:bg-[#f6f2e8] transition"
+                type="button"
+                onClick={onClose}
+                className="border border-[#e8e5dc] text-[#1f220f] rounded-xl px-5 py-3 text-sm font-bold hover:bg-[#f3f1e8] transition"
               >
                 إغلاق
               </button>
             </div>
           </div>
         </div>
+      </div>
+    </div>
+  )
+}
+
+function AllActionsModal({ actions, onClose, onSelectAction }) {
+  return (
+    <div className="fixed inset-0 z-50 bg-black/45 flex items-center justify-center px-4">
+      <div
+        dir="rtl"
+        className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden border border-[#e8e5dc] max-h-[85vh] flex flex-col"
+      >
+        <div className="relative px-8 py-6 border-b border-[#e8e5dc] bg-[#f8f6f0]">
+          <div className="text-right">
+            <h2 className="text-[#1f220f] text-2xl font-extrabold mb-2">
+              جميع الإجراءات الموثقة
+            </h2>
+
+            <p className="text-[#7b815f] text-sm">
+              قائمة مختصرة بكل الإجراءات الإدارية المسجلة
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="absolute left-6 top-6 w-10 h-10 rounded-full border border-[#e8e5dc] flex items-center justify-center text-[#1f220f] hover:bg-[#f3f1e8] transition"
+          >
+            <FiX size={20} />
+          </button>
+        </div>
+
+        <div className="p-6 bg-[#fcfbf8] overflow-y-auto">
+          <div className="space-y-4">
+            {actions.map((action) => (
+              <div
+                key={action.id}
+                className="bg-white border border-[#e7e1d5] rounded-xl p-5 hover:shadow-sm transition"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <div className="text-right">
+                    <h4 className="text-[#1f220f] font-bold mb-2">
+                      {action.title}
+                    </h4>
+
+                    <p className="text-[#555d30] text-sm mb-1">
+                      نوع التقرير: {action.reportType}
+                    </p>
+
+                    <p className="text-[#7a7a68] text-xs">
+                      {action.time}
+                    </p>
+                  </div>
+
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-[#5d6631] text-white flex items-center justify-center font-extrabold text-lg">
+                      {action.students?.length || 0}
+                    </div>
+
+                    <button
+                      type="button"
+                      onClick={() => onSelectAction(action)}
+                      className="bg-[#e8e5dc] text-[#1f220f] px-4 py-2 rounded-lg font-bold text-sm hover:bg-[#d8d4c7] transition"
+                    >
+                      عرض التفاصيل
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-full mt-6 border border-[#d9d2c4] text-[#6b5b3e] rounded-lg py-3 font-bold hover:bg-[#f6f2e8] transition"
+          >
+            إغلاق
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function AdminActionsList({ actions = [] }) {
+  const [selectedAction, setSelectedAction] = useState(null)
+  const [showAllActionsModal, setShowAllActionsModal] = useState(false)
+
+  const safeActions = Array.isArray(actions) ? actions : []
+  const latestActions = safeActions.slice(0, 3)
+
+  function openActionFromAllActions(action) {
+    setShowAllActionsModal(false)
+    setSelectedAction(action)
+  }
+
+  return (
+    <>
+      <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+          <div>
+            <h2 className="text-[#1f220f] text-xl font-extrabold">
+              أحدث الإجراءات الإدارية
+            </h2>
+
+            <p className="text-[#7b815f] text-sm mt-1">
+              آخر 30 يوم
+            </p>
+          </div>
+
+          <div className="w-11 h-11 rounded-xl bg-[#f3f1e8] text-[#555d30] flex items-center justify-center">
+            <FiList size={20} />
+          </div>
+        </div>
+
+        <div>
+          {latestActions.length > 0 ? (
+            latestActions.map((action) => (
+              <button
+                key={action.id}
+                type="button"
+                onClick={() => setSelectedAction(action)}
+                className="w-full flex items-center justify-between gap-5 px-6 py-5 border-b border-gray-100 last:border-b-0 hover:bg-[#faf9f4] transition text-right"
+              >
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-xl bg-[#f3f1e8] text-[#555d30] flex items-center justify-center shrink-0">
+                    <FiFileText size={20} />
+                  </div>
+
+                  <div>
+                    <h3 className="text-[#1f220f] font-extrabold text-sm mb-1">
+                      {action.title}
+                    </h3>
+
+                    <p className="text-[#7b815f] text-xs">
+                      {action.time}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-[#555d30] font-bold text-sm">
+                  <FiUsers size={17} />
+                  {action.students?.length || 0}
+                </div>
+              </button>
+            ))
+          ) : (
+            <div className="px-6 py-10 text-center">
+              <p className="text-[#7b815f] font-medium">
+                لا توجد إجراءات إدارية حاليًا
+              </p>
+            </div>
+          )}
+        </div>
+
+        <button
+          type="button"
+          onClick={() => setShowAllActionsModal(true)}
+          className="w-full bg-[#f3f1e8] text-[#1f220f] font-extrabold py-4 hover:bg-[#e8e5dc] transition"
+        >
+          عرض جميع الإجراءات الموثقة
+        </button>
+      </div>
+
+      {showAllActionsModal && (
+        <AllActionsModal
+          actions={safeActions}
+          onClose={() => setShowAllActionsModal(false)}
+          onSelectAction={openActionFromAllActions}
+        />
+      )}
+
+      {selectedAction && (
+        <ActionReportModal
+          action={selectedAction}
+          onClose={() => setSelectedAction(null)}
+        />
       )}
     </>
   )

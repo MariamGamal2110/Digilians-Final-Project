@@ -11,26 +11,37 @@ import EditProfileModal from '../../components/profileComponents/EditProfileModa
 export default function ProfileUser() {
   const [showEditModal, setShowEditModal] = useState(false)
 
-  const [student, setStudent] = useState({
-    name: 'أحمد محمد',
-    militaryId: '36581',
-    email: 'ahmed.m@gmail.com',
-  })
-  const [grades, setGrades] = useState({
-    behavior: 75,
-  })
+  const [studentProfile, setStudentProfile] = useState({
+    student: {
+      name: 'أحمد محمد',
+      militaryId: '36581',
+      email: 'ahmed.m@gmail.com',
+    },
 
-  const specializationDuration = '4 أشهر'
+    specializationDuration: '4 أشهر',
+
+    attendance: {
+      absenceDays: 3,
+    },
+
+    grades: {
+      behavior: 75,
+      history: [
+        { label: 'الشهر الأول', value: 100 },
+        { label: 'الشهر الثاني', value: 93 },
+        { label: 'الشهر الثالث', value: 85 },
+        { label: 'الشهر الرابع', value: 80 },
+      ],
+    },
+  })
 
   const behaviorChartData = [
-    { label: 'الشهر الأول', value: 100 },
-    { label: 'الشهر الثاني', value: 93 },
-    { label: 'الشهر الثالث', value: 85 },
-    { label: 'الشهر الرابع', value: 80 },
-    { label: 'الإجمالي', value: grades.behavior },
+    ...studentProfile.grades.history,
+    {
+      label: 'الإجمالي',
+      value: studentProfile.grades.behavior,
+    },
   ]
-
-
 
   function openEditModal() {
     setShowEditModal(true)
@@ -41,7 +52,15 @@ export default function ProfileUser() {
   }
 
   function saveStudentData(newData) {
-    setStudent(newData)
+    setStudentProfile((prev) => ({
+      ...prev,
+      student: {
+        ...prev.student,
+        name: newData.name,
+        email: newData.email,
+      },
+    }))
+
     setShowEditModal(false)
   }
 
@@ -52,7 +71,7 @@ export default function ProfileUser() {
 
         <div className="p-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
-            <ProfileInfo student={student} />
+            <ProfileInfo student={studentProfile.student} />
 
             <button
               onClick={openEditModal}
@@ -64,10 +83,11 @@ export default function ProfileUser() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <DurationCard selectedDuration={studentProfile.specializationDuration} />
 
-            <DurationCard selectedDuration={specializationDuration} />
-            <GradesCard behaviorGrade={grades.behavior} />
-            <AttendanceCard />
+            <GradesCard behaviorGrade={studentProfile.grades.behavior} />
+
+            <AttendanceCard absenceDays={studentProfile.attendance.absenceDays} />
           </div>
 
           <AcademicChart chartData={behaviorChartData} />
@@ -76,7 +96,7 @@ export default function ProfileUser() {
 
       {showEditModal && (
         <EditProfileModal
-          student={student}
+          student={studentProfile.student}
           onClose={closeEditModal}
           onSave={saveStudentData}
         />

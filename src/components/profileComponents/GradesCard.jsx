@@ -1,6 +1,6 @@
 import InfoCard from './InfoCard'
 
-export default function GradesCard() {
+export default function GradesCard({ behaviorGrade }) {
   return (
     <div className="rounded-xl transition-transform duration-300 ease-out hover:-translate-y-1">
       <InfoCard title="درجات السلوك">
@@ -11,7 +11,7 @@ export default function GradesCard() {
             </p>
 
             <p className="text-[#1f220f] font-bold text-4xl">
-              75
+              {behaviorGrade}
             </p>
           </div>
         </div>
