@@ -1,6 +1,7 @@
-import { FiAlertTriangle, FiShield } from 'react-icons/fi'
-import UserPunishmentsAnalysis from "../../components/punishment.jsx/UserPunishmentsAnalysis";
-import UserPunishmentTable from "../../components/punishment.jsx/UserPunishmentTable";
+import { FiShield, FiAlertTriangle } from "react-icons/fi";
+import UserPunishmentsAnalysis from "../../components/punishmentUserSideComp/UserPunishmentsAnalysis";
+import UserPunishmentTable from "../../components/punishmentUserSideComp/UserPunishmentTable";
+
 
 export default function PunishmentUser() {
   const mockUser = {

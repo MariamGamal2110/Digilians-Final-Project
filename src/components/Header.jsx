@@ -9,6 +9,13 @@ const mainLinks = [
   { label: 'الإجازات الرسمية', to: '/app/holyday' },
   { label: 'الالتماسات', to: '/app/execuse' },
   { label: 'المخالفات', to: '/app/punishment' },
+  { label: 'الرئيسية', to: '/' },
+  { label: 'التصريح', to: '/StatmentUser' },
+  { label: 'المصروفات', to: '/payment' },
+  { label: 'حجز الأتوبيس', to: '/bus' },
+  { label: 'الإجازات الرسمية', to: '/HolidayUser' },
+  { label: 'الالتماسات', to: '/execuse' },
+  { label: 'المخالفات', to: '/punishment' },
 ]
 
 const moreLinks = [

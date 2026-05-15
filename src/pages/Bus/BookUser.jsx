@@ -1,13 +1,12 @@
 import { useState } from 'react'
 
-const divisions = ['ماجستير العلوم 24 شهراً',' الماجستير المهني  12 شهراً', ' الدبلوم المتخصص 9 أشهر', ' الدبلوم المكثف 4 أشهر']
-const stations = ['محطة الصعود', 'محطة الإسكندرية', 'محطة الكاندرد', 'محطة الهبوط']
-
+const divisions = ['ماجستير العلوم 24 شهراً', 'الماجستير المهني 12 شهراً', 'الدبلوم المتخصص 9 أشهر', 'الدبلوم المكثف 4 أشهر']
+const stations = ['محطة الإسكندرية', 'محطة الكاندرد', 'محطة المرج', 'محطة عبود']
 const returnTimes = ['09:00 مساءً الخميس', '10:00 مساءً الخميس', '09:00 مساءً الجمعة']
 
 const previousBookings = [
-  { date: '18 يناير 2023', destination: 'الكاندرد', returnStatus: 'هلة وذم' },
-  { date: '05 ونزن 2023', destination: 'الاسكندرية', returnStatus: 'هلة وذم' },
+  { date: '18 يناير 2023', destination: 'الكاندرد', status: 'تم الحجز' },
+  { date: '05 يونيو 2023', destination: 'الإسكندرية', status: 'تم الحجز' },
 ]
 
 export default function BookUser() {
@@ -16,7 +15,7 @@ export default function BookUser() {
     studentId: '',
     boardingStation: '',
     alightingStation: '',
-    departureTime: '',
+    departureTime: '02:00 ظهراً', // قيمة افتراضية
     returnTime: '',
   })
   const [submitted, setSubmitted] = useState(false)
@@ -26,34 +25,32 @@ export default function BookUser() {
   }
 
   const handleSubmit = () => {
-    if (!form.division || !form.studentId || !form.boardingStation || !form.alightingStation) {
-      alert('يرجى تعبئة جميع الحقول المطلوبة')
+    if (!form.division || !form.studentId || !form.boardingStation || !form.alightingStation || !form.returnTime) {
+      alert('يرجى تعبئة جميع الحقول المطلوبة واختيار وقت العودة')
       return
     }
     setSubmitted(true)
   }
 
   return (
-    <div dir="rtl" className="min-h-screen bg-background">
-
+    <div dir="rtl" className="min-h-screen bg-background font-headline">
       {/* هيدر الصفحة */}
       <div className="relative bg-secondary overflow-hidden">
         <div className="px-8 py-12">
           <h1 className="text-background font-bold text-4xl leading-relaxed mb-3">
-            احجز مكائك في
+            احجز مكانك في
             <br />
             حافلة الإجازة الأسبوعية
           </h1>
           <p className="text-accent text-sm leading-relaxed max-w-sm">
-            نظام الكاديمية الإلكتروني لحجز الحلالب العسكرية
+            نظام الأكاديمية الإلكتروني لحجز الحافلات العسكرية
             <br />
-            لاحدهمان مريحة واتحة من واي جدانه.
+            لضمان رحلة مريحة وآمنة لجميع أبنائنا.
           </p>
         </div>
       </div>
 
-      <div className="p-6 flex gap-6">
-
+      <div className="p-6 flex flex-col lg:flex-row gap-6">
         {/* يمين - بيانات الحجز */}
         <div className="flex-1 bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
           <h2 className="text-primary font-bold text-lg mb-5 flex items-center gap-2">
@@ -61,136 +58,81 @@ export default function BookUser() {
             بيانات الحجز
           </h2>
 
-          {/* القسم الأكبر */}
-          <div className="mb-4">
-            <label className="text-secondary text-xs mb-1 block">القسم الأكبر</label>
-            <select
-              value={form.division}
-              onChange={(e) => handleChange('division', e.target.value)}
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-primary bg-background focus:outline-none focus:border-accent"
-            >
-              <option value="">اختر القسم</option>
-              {divisions.map((d) => <option key={d} value={d}>{d}</option>)}
-            </select>
-          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="mb-2">
+              <label className="text-secondary text-xs mb-1 block">القسم الدراسي</label>
+              <select value={form.division} onChange={(e) => handleChange('division', e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-background focus:ring-1 focus:ring-accent outline-none">
+                <option value="">اختر القسم</option>
+                {divisions.map((d) => <option key={d} value={d}>{d}</option>)}
+              </select>
+            </div>
 
-          {/* رقم الطالب */}
-          <div className="mb-4">
-            <label className="text-secondary text-xs mb-1 block">رقم الطالب</label>
-            <input
-              type="text"
-              value={form.studentId}
-              onChange={(e) => handleChange('studentId', e.target.value)}
-              placeholder="أدخل رقمك العسكري"
-              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-primary bg-background focus:outline-none focus:border-accent"
-            />
-          </div>
+            <div className="mb-2">
+              <label className="text-secondary text-xs mb-1 block">الرقم العسكري</label>
+              <input type="text" value={form.studentId} onChange={(e) => handleChange('studentId', e.target.value)} placeholder="أدخل رقمك العسكري" className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-background focus:ring-1 focus:ring-accent outline-none" />
+            </div>
 
-          {/* محطة الصعود والهبوط */}
-          <div className="flex gap-3 mb-4">
-            <div className="flex-1">
+            <div className="mb-2">
               <label className="text-secondary text-xs mb-1 block">محطة الصعود</label>
-              <select
-                value={form.boardingStation}
-                onChange={(e) => handleChange('boardingStation', e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-primary bg-background focus:outline-none focus:border-accent"
-              >
-                <option value="">اختر</option>
+              <select value={form.boardingStation} onChange={(e) => handleChange('boardingStation', e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-background focus:ring-1 focus:ring-accent outline-none">
+                <option value="">اختر المحطة</option>
                 {stations.map((s) => <option key={s} value={s}>{s}</option>)}
               </select>
             </div>
-            <div className="flex-1">
-              <label className="text-secondary text-xs mb-1 block">محطة الهبوط</label>
-              <select
-                value={form.alightingStation}
-                onChange={(e) => handleChange('alightingStation', e.target.value)}
-                className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm text-primary bg-background focus:outline-none focus:border-accent"
-              >
-                <option value="">اختر</option>
-                {stations.map((s) => <option key={s} value={s}>{s}</option>)}
+
+            <div className="mb-2">
+              <label className="text-secondary text-xs mb-1 block">وقت العودة المطلوب</label>
+              <select value={form.returnTime} onChange={(e) => handleChange('returnTime', e.target.value)} className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm bg-background focus:ring-1 focus:ring-accent outline-none">
+                <option value="">اختر الموعد</option>
+                {returnTimes.map((t) => <option key={t} value={t}>{t}</option>)}
               </select>
             </div>
           </div>
 
-          {/* زر التأكيد */}
-          <button
-            onClick={handleSubmit}
-            className="w-full bg-primary text-background font-bold py-3 rounded-xl hover:bg-secondary transition-colors"
-          >
+          <button onClick={handleSubmit} className="w-full mt-6 bg-primary text-background font-bold py-4 rounded-xl hover:bg-secondary transition-all shadow-md">
             تأكيد عملية الحجز
           </button>
 
-          {submitted && (
-            <p className="text-accent text-sm text-center mt-3 font-medium">✅ تم الحجز بنجاح!</p>
-          )}
+          {submitted && <p className="text-accent text-center mt-4 font-bold">✅ تم إرسال طلب الحجز بنجاح!</p>}
         </div>
 
         {/* يسار - تفاصيل + سجل */}
-        <div className="w-72 flex flex-col gap-4">
-
-          {/* تفاصيل الحجز */}
+        <div className="w-full lg:w-80 flex flex-col gap-4">
           <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
             <div className="flex items-center gap-2 mb-4">
               <span className="w-8 h-8 bg-accent/10 rounded-lg flex items-center justify-center text-sm">🚌</span>
-              <span className="text-primary font-bold text-sm">تفاصيل الحجز</span>
+              <span className="text-primary font-bold text-sm">ملخص الحجز</span>
             </div>
-            <div className="space-y-2 text-xs">
-              <div className="flex justify-between">
-                <span className="text-secondary">الذر رثمر</span>
-                <span className="text-primary font-medium">AC-4427</span>
-              </div>
-              <div className="flex justify-between items-center">
-                <span className="text-secondary">الرخطة</span>
-                <span className="w-2 h-2 bg-accent rounded-full"></span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-secondary">واو التمريس</span>
-                <span className="text-primary font-medium">{form.departureTime || '—'}</span>
-              </div>
-              <div className="flex justify-between">
-                <span className="text-secondary">وقت العودة</span>
-                <span className="text-primary font-medium">{form.returnTime || '—'}</span>
-              </div>
-              <hr className="border-gray-100 my-2" />
-              <div className="flex justify-between">
-                <span className="text-secondary">ارجملك الوجملة</span>
-                <span className="text-primary font-bold text-base">50 م.م</span>
-              </div>
-            </div>
-            <div className="mt-3 bg-background rounded-xl p-3 text-xs text-secondary text-center">
-              حجزك الحشتري تصوريت الخسكرية الحجو الحتية 0.0
+            <div className="space-y-3 text-xs">
+              <div className="flex justify-between"><span className="text-secondary">رقم الحافلة</span><span className="text-primary font-medium">AC-4427</span></div>
+              <div className="flex justify-between"><span className="text-secondary">وقت التحرك</span><span className="text-primary font-medium">{form.departureTime}</span></div>
+              <div className="flex justify-between"><span className="text-secondary">وقت العودة</span><span className="text-primary font-medium">{form.returnTime || '—'}</span></div>
+              <hr className="border-gray-100" />
+              <div className="flex justify-between items-center"><span className="text-secondary text-sm">إجمالي التكلفة</span><span className="text-primary font-bold text-lg">50 ج.م</span></div>
             </div>
           </div>
 
-          {/* إلح الحجوزات */}
-          <div className="bg-primary rounded-2xl p-5">
-            <p className="text-background font-bold text-sm mb-1">إلح الحجوزات</p>
-            <p className="text-accent text-xs">إركس الرجالقة</p>
-          </div>
-
-          {/* سجل الحجوزات السابقة */}
           <div className="bg-white rounded-2xl p-5 shadow-sm border border-gray-100">
             <h3 className="text-primary font-bold text-sm mb-3">سجل الحجوزات السابقة</h3>
-            <table className="w-full text-xs">
+            <table className="w-full text-[10px]">
               <thead>
-                <tr className="border-b border-gray-100">
-                  <th className="text-right text-secondary font-medium pb-2">الخارج</th>
-                  <th className="text-right text-secondary font-medium pb-2">الدريبة</th>
-                  <th className="text-right text-secondary font-medium pb-2">الخارج</th>
+                <tr className="border-b border-gray-100 text-secondary">
+                  <th className="text-right pb-2">التاريخ</th>
+                  <th className="text-right pb-2">الوجهة</th>
+                  <th className="text-right pb-2">الحالة</th>
                 </tr>
               </thead>
               <tbody>
                 {previousBookings.map((b, i) => (
-                  <tr key={i} className="border-b border-gray-50">
-                    <td className="py-2 text-secondary">{b.returnStatus}</td>
-                    <td className="py-2 text-primary font-medium">{b.destination}</td>
+                  <tr key={i} className="border-b border-gray-50 last:border-0">
                     <td className="py-2 text-secondary">{b.date}</td>
+                    <td className="py-2 text-primary font-medium">{b.destination}</td>
+                    <td className="py-2 text-accent">{b.status}</td>
                   </tr>
                 ))}
               </tbody>
             </table>
           </div>
-
         </div>
       </div>
     </div>

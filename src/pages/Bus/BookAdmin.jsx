@@ -1,102 +1,95 @@
 import { useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
 
-const sideLinks = [
-  { label: 'التصريح', to: '/app/admin-home', icon: '✅' },
-  { label: 'المصروفات', to: '/app/admin-payment', icon: '💰' },
-  { label: 'حجز الأرشيف', to: '/app/admin-bus', icon: '🚌' },
-  { label: 'الإعلانات', to: '/app/admin-announcements', icon: '📢' },
-  { label: 'الملف الشخصي', to: '/app/profile-admin', icon: '👤' },
+const initialBookings = [
+  { id: 1, name: 'خالد منصور السعدي', militaryId: '36971', destination: 'يرسمي', status: 'تم الحجز' },
+  { id: 2, name: 'ياسين فهد القحطاني', militaryId: '23891', destination: 'المرج', status: 'تم الحجز' },
+  { id: 3, name: 'إبراهيم سعيد العمودي', militaryId: '45678', destination: 'عبود', status: 'تم الحجز' },
+  { id: 4, name: 'عمر حسن الجابري', militaryId: '23589', destination: 'السلام', status: 'تم الحجز' },
 ]
 
-export default function LayoutAdmin() {
-  const [search, setSearch] = useState('')
+export default function BookAdmin() {
+  const [bookingList, setBookingList] = useState(initialBookings)
+
+  // حساب الإحصائيات ديناميكياً
+  const stats = [
+    { label: 'يرسمي', count: bookingList.filter(b => b.destination === 'يرسمي').length },
+    { label: 'المرج', count: bookingList.filter(b => b.destination === 'المرج').length },
+    { label: 'عبود', count: bookingList.filter(b => b.destination === 'عبود').length },
+    { label: 'السلام', count: bookingList.filter(b => b.destination === 'السلام').length },
+    { label: 'الغياب', count: 0 }, // يمكن ربطها بحالة معينة لاحقاً
+  ]
+
+  const handleConfirm = (id) => {
+    setBookingList(bookingList.map(b =>
+      b.id === id ? { ...b, status: 'مؤكد' } : b
+    ))
+  }
+
+  const handleCancel = (id) => {
+    setBookingList(bookingList.map(b =>
+      b.id === id ? { ...b, status: 'اعتذار' } : b
+    ))
+  }
 
   return (
-    <div dir="rtl" className="min-h-screen bg-background flex">
-
-      {/* Sidebar */}
-      <aside className="w-52 bg-white border-l border-gray-200 flex flex-col fixed right-0 top-0 h-full z-40">
-        
-        {/* لوجو */}
-        <div className="p-5 border-b border-gray-100">
-          <div className="flex items-center gap-2">
-            <div className="w-9 h-9 bg-accent/20 rounded-lg flex items-center justify-center text-accent font-bold">
-              🏛
+    <div dir="rtl" className="p-6">
+      <div className="mb-6">
+        <h2 className="text-primary font-bold text-lg mb-4 font-headline">إحصائيات وجهات الطلاب</h2>
+        <div className="flex gap-3 flex-wrap">
+          {stats.map((s) => (
+            <div key={s.label} className="bg-white border border-gray-200 rounded-2xl px-6 py-4 text-center shadow-sm flex-1 min-w-[120px]">
+              <p className="text-secondary text-xs mb-1">{s.label}</p>
+              <p className="text-primary font-bold text-2xl">{s.count}</p>
             </div>
-            <div>
-              <p className="text-primary font-bold text-xs leading-tight">لوحة التحكم</p>
-              <p className="text-secondary text-xs">نظام الإدارة بالأكاديمية</p>
-            </div>
-          </div>
-        </div>
-
-        {/* روابط */}
-        <nav className="flex-1 p-3 flex flex-col gap-1">
-          {sideLinks.map((link) => (
-            <NavLink
-              key={link.to}
-              to={link.to}
-              className={({ isActive }) =>
-                isActive
-                  ? 'flex items-center gap-3 px-4 py-3 rounded-xl bg-accent text-white font-bold text-sm'
-                  : 'flex items-center gap-3 px-4 py-3 rounded-xl text-secondary hover:bg-background text-sm transition-colors'
-              }
-            >
-              <span>{link.icon}</span>
-              <span>{link.label}</span>
-            </NavLink>
           ))}
-        </nav>
-
-        {/* فوتر السايدبار */}
-        <div className="p-4 border-t border-gray-100 text-center">
-          <p className="text-primary font-bold text-xs">الواجب • الشرف • الوطن</p>
-          <p className="text-secondary text-xs mt-1">© 2026 نظام سجل السيادة</p>
         </div>
-      </aside>
+      </div>
 
-      {/* المحتوى الرئيسي */}
-      <div className="flex-1 mr-52 flex flex-col">
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
+        <div className="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+          <h2 className="text-primary font-bold text-lg font-headline">طلبات الحجز الواردة</h2>
+          <span className="text-secondary text-sm">إجمالي الطلاب: {bookingList.length}</span>
+        </div>
 
-        {/* هيدر */}
-        <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between sticky top-0 z-30">
-          <div className="flex items-center gap-2">
-            <p className="text-primary font-bold text-sm">سجل السيادة</p>
-          </div>
-
-          {/* بحث */}
-          <div className="flex items-center gap-3">
-            <div className="flex items-center gap-2 bg-background border border-gray-200 rounded-xl px-4 py-2">
-              <span className="text-secondary text-sm">🔍</span>
-              <input
-                type="text"
-                placeholder="بحث ..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="bg-transparent text-sm text-primary outline-none w-40"
-              />
-            </div>
-            <button className="text-secondary hover:text-primary text-xl transition-colors">🔔</button>
-          </div>
-
-          {/* اسم المسؤول */}
-          <NavLink to="/app/profile-admin" className="flex items-center gap-2 hover:opacity-80 transition">
-            <div className="text-right">
-              <p className="text-primary font-bold text-sm">أحمد المنصور</p>
-              <p className="text-secondary text-xs">نظام الإدارة بالأكاديمية</p>
-            </div>
-            <div className="w-10 h-10 rounded-full bg-accent/20 border-2 border-accent flex items-center justify-center text-accent font-bold">
-              أ
-            </div>
-          </NavLink>
-        </header>
-
-        {/* الصفحات */}
-        <main className="flex-1 p-6">
-          <Outlet />
-        </main>
-
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-100 bg-background/50">
+                <th className="text-right text-secondary font-medium px-6 py-3">اسم الطالب</th>
+                <th className="text-right text-secondary font-medium px-6 py-3">الرقم العسكري</th>
+                <th className="text-right text-secondary font-medium px-6 py-3">الوجهة</th>
+                <th className="text-right text-secondary font-medium px-6 py-3">الإجراء</th>
+              </tr>
+            </thead>
+            <tbody>
+              {bookingList.map((b) => (
+                <tr key={b.id} className="border-b border-gray-50 hover:bg-background transition-colors">
+                  <td className="px-6 py-4 text-primary font-bold">{b.name}</td>
+                  <td className="px-6 py-4 text-secondary">{b.militaryId}</td>
+                  <td className="px-6 py-4 text-secondary">{b.destination}</td>
+                  <td className="px-6 py-4">
+                    <div className="flex items-center gap-2">
+                      {b.status === 'مؤكد' ? (
+                        <span className="text-accent text-xs font-bold">✅ مؤكد</span>
+                      ) : b.status === 'اعتذار' ? (
+                        <span className="text-red-500 text-xs font-bold">❌ اعتذار</span>
+                      ) : (
+                        <>
+                          <button onClick={() => handleConfirm(b.id)} className="bg-accent text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-secondary transition-colors">
+                            تأكيد الحجز
+                          </button>
+                          <button onClick={() => handleCancel(b.id)} className="border border-gray-200 text-secondary text-xs px-4 py-2 rounded-lg hover:bg-gray-100 transition-colors">
+                            اعتذار
+                          </button>
+                        </>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   )
