@@ -81,7 +81,9 @@ function mapStudentForSearch(student) {
     name: student.name,
     militaryId: student.militaryId || '',
     email: student.email || '',
-    avatar: student.image || '/images/student-avatar.png',
+    avatar: student.image?.includes('ui-avatars.com')
+      ? '/images/student-avatar.png'
+      : student.image || '/images/student-avatar.png',
   }
 }
 
@@ -92,8 +94,9 @@ function mapStudentSummary(data) {
     name: data.student?.name || 'طالب',
     militaryId: data.student?.militaryId || '',
     email: data.student?.email || '',
-    avatar: data.student?.image || '/images/student-avatar.png',
-    duration: data.specializationDuration || 'غير محدد',
+    avatar: data.student?.image?.includes('ui-avatars.com')
+      ? '/images/student-avatar.png'
+      : data.student?.image || '/images/student-avatar.png', duration: data.specializationDuration || 'غير محدد',
     behaviorGrade: data.summary?.behaviorGrade || data.grades?.behavior || 0,
     absenceDays: data.summary?.absenceDays || data.attendance?.absenceDays || 0,
     busRequests: [],
@@ -133,7 +136,13 @@ export default function ProfileAdmin() {
 
     fetchAdminData()
   }, [])
+  async function handleSearchStudents(searchValue) {
+    const data = await apiRequest(
+      `/profile/commander/students?search=${encodeURIComponent(searchValue)}`
+    )
 
+    return (data.students || []).map(mapStudentForSearch)
+  }
   async function handleSelectStudent(student) {
     try {
       setStudentLoading(true)
@@ -210,8 +219,8 @@ export default function ProfileAdmin() {
           admin={adminProfile.admin}
           students={students}
           onSelectStudent={handleSelectStudent}
+          onSearchStudents={handleSearchStudents}
         />
-
         <div className="p-8">
           {error && (
             <div className="mb-6 bg-red-50 border border-red-200 text-red-700 text-sm font-bold rounded-xl px-4 py-3">
