@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import ProfileTopBar from '../../components/profileComponents/ProfileTopBar'
 import ProfileInfo from '../../components/profileComponents/ProfileInfo'
@@ -7,41 +7,32 @@ import GradesCard from '../../components/profileComponents/GradesCard'
 import AttendanceCard from '../../components/profileComponents/AttendanceCard'
 import AcademicChart from '../../components/profileComponents/AcademicChart'
 import EditProfileModal from '../../components/profileComponents/EditProfileModal'
+import { apiRequest } from '../../api/client'
 
 export default function ProfileUser() {
   const [showEditModal, setShowEditModal] = useState(false)
+  const [studentProfile, setStudentProfile] = useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState('')
 
-  const [studentProfile, setStudentProfile] = useState({
-    student: {
-      name: 'أحمد محمد',
-      militaryId: '36581',
-      email: 'ahmed.m@gmail.com',
-    },
+  useEffect(() => {
+    async function fetchStudentProfile() {
+      try {
+        setLoading(true)
+        setError('')
 
-    specializationDuration: '4 أشهر',
+        const data = await apiRequest('/profile/student/me')
 
-    attendance: {
-      absenceDays: 3,
-    },
+        setStudentProfile(data)
+      } catch (err) {
+        setError(err.message || 'حدث خطأ أثناء تحميل بيانات الطالب')
+      } finally {
+        setLoading(false)
+      }
+    }
 
-    grades: {
-      behavior: 75,
-      history: [
-        { label: 'الشهر الأول', value: 100 },
-        { label: 'الشهر الثاني', value: 93 },
-        { label: 'الشهر الثالث', value: 85 },
-        { label: 'الشهر الرابع', value: 80 },
-      ],
-    },
-  })
-
-  const behaviorChartData = [
-    ...studentProfile.grades.history,
-    {
-      label: 'الإجمالي',
-      value: studentProfile.grades.behavior,
-    },
-  ]
+    fetchStudentProfile()
+  }, [])
 
   function openEditModal() {
     setShowEditModal(true)
@@ -64,6 +55,44 @@ export default function ProfileUser() {
     setShowEditModal(false)
   }
 
+  if (loading) {
+    return (
+      <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8 flex items-center justify-center">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-8 py-6 text-[#555d30] font-bold">
+          جاري تحميل بيانات الطالب...
+        </div>
+      </section>
+    )
+  }
+
+  if (error) {
+    return (
+      <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8 flex items-center justify-center">
+        <div className="bg-red-50 border border-red-200 rounded-2xl shadow-sm px-8 py-6 text-red-700 font-bold">
+          {error}
+        </div>
+      </section>
+    )
+  }
+
+  if (!studentProfile) {
+    return (
+      <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8 flex items-center justify-center">
+        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-8 py-6 text-gray-700 font-bold">
+          لا توجد بيانات للطالب
+        </div>
+      </section>
+    )
+  }
+
+  const behaviorChartData = [
+    ...(studentProfile.grades?.history || []),
+    {
+      label: 'الإجمالي',
+      value: studentProfile.grades?.behavior || 0,
+    },
+  ]
+
   return (
     <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8">
       <div className="max-w-6xl mx-auto bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
@@ -85,9 +114,9 @@ export default function ProfileUser() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <DurationCard selectedDuration={studentProfile.specializationDuration} />
 
-            <GradesCard behaviorGrade={studentProfile.grades.behavior} />
+            <GradesCard behaviorGrade={studentProfile.grades?.behavior || 0} />
 
-            <AttendanceCard absenceDays={studentProfile.attendance.absenceDays} />
+            <AttendanceCard absenceDays={studentProfile.attendance?.absenceDays || 0} />
           </div>
 
           <AcademicChart chartData={behaviorChartData} />
