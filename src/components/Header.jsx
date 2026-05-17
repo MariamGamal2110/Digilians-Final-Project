@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+import { getSavedUser } from '../api/client'
 
 const mainLinks = [
   { label: 'الرئيسية', to: '/' },
@@ -9,14 +10,6 @@ const mainLinks = [
   { label: 'الإجازات الرسمية', to: '/HolidayUser' },
   { label: 'الالتماسات', to: '/execuse' },
   { label: 'المخالفات', to: '/punishment' },
-
-    // {path: 'signIn', element: <SignIn />},
-    //   {path: 'signUp', element: <SignUp />},
-    //   {path: 'medicalUser', element: <MedicalUser />},
-    //   {path: 'medicalAdmin', element: <MedicalAdmin />},
-    //   {path: 'payment', element: <PaymentUser />},
-    //   {path: 'paymentAdmin', element: <PaymentAdmin />},
-  
 ]
 
 const moreLinks = [
@@ -25,26 +18,71 @@ const moreLinks = [
   { label: 'السجل الطبي', to: '/MedicalUser' },
 ]
 
+function getRoleLabel(role, isAdminPage) {
+  if (role === 'student') {
+    return 'طالب عسكري'
+  }
+
+  if (role === 'commander') {
+    return 'مسؤول عام'
+  }
+
+  if (role === 'admin') {
+    return 'مسؤول عام'
+  }
+
+  if (role === 'super_admin') {
+    return 'مدير النظام'
+  }
+
+  return isAdminPage ? 'مسؤول عام' : 'طالب عسكري'
+}
+
+function getDefaultUser(isAdminPage) {
+  if (isAdminPage) {
+    return {
+      name: 'القائد',
+      role: 'مسؤول عام',
+      image: '/images/admin-avatar.png',
+    }
+  }
+
+  return {
+    name: 'الطالب',
+    role: 'طالب عسكري',
+    image: '/images/student-avatar.png',
+  }
+}
+
 export default function Header() {
   const location = useLocation()
   const [moreOpen, setMoreOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [currentUser, setCurrentUser] = useState(null)
 
-  const isAdminPage = location.pathname.includes('admin')
-
-  const currentUser = isAdminPage
-    ? {
-        name: 'أحمد المنصور',
-        role: 'مسؤول عام',
-        image: '/images/admin-avatar.png',
-      }
-    : {
-        name: 'أحمد محمد',
-        role: 'طالب عسكري',
-        image: '/images/student-avatar.png',
-      }
-
+  const isAdminPage = location.pathname.toLowerCase().includes('admin')
   const profileLink = isAdminPage ? '/profile-admin' : '/profile'
+
+  useEffect(() => {
+    const savedUser = getSavedUser()
+
+    if (savedUser) {
+      setCurrentUser({
+        name: savedUser.name || getDefaultUser(isAdminPage).name,
+        role: getRoleLabel(savedUser.role, isAdminPage),
+        image: savedUser.image?.includes('ui-avatars.com')
+          ? isAdminPage
+            ? '/images/admin-avatar.png'
+            : '/images/student-avatar.png'
+          : savedUser.image ||
+          (isAdminPage ? '/images/admin-avatar.png' : '/images/student-avatar.png'),
+      })
+
+      return
+    }
+
+    setCurrentUser(getDefaultUser(isAdminPage))
+  }, [isAdminPage, location.pathname])
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -68,6 +106,8 @@ export default function Header() {
     return 'text-[#676b59] hover:bg-[#f3f4ef] hover:text-[#1f220f] px-4 py-2 rounded-full text-base transition'
   }
 
+  const userToShow = currentUser || getDefaultUser(isAdminPage)
+
   return (
     <header dir="rtl" className="bg-[#f3f4ef]">
       <div className="w-full bg-white border-b border-gray-200 shadow-sm px-8 py-3">
@@ -77,18 +117,18 @@ export default function Header() {
             className="flex items-center gap-3 rounded-xl px-2 py-1 hover:bg-[#f3f4ef] transition"
           >
             <img
-              src={currentUser.image}
-              alt={currentUser.name}
+              src={userToShow.image}
+              alt={userToShow.name}
               className="w-11 h-11 rounded-full object-cover border-2 border-[#6b7440] cursor-pointer hover:opacity-90 transition"
             />
 
             <div className="text-right">
               <p className="text-[#1f220f] font-bold text-base leading-tight">
-                {currentUser.name}
+                {userToShow.name}
               </p>
 
               <p className="text-[#676b59] text-sm">
-                {currentUser.role}
+                {userToShow.role}
               </p>
             </div>
           </NavLink>
