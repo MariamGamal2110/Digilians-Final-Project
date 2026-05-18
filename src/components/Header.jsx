@@ -2,6 +2,13 @@ import { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 
 const mainLinks = [
+  { label: 'الرئيسية', to: '/app' },
+  { label: 'التصريح', to: '/app/statment' },
+  { label: 'المصروفات', to: '/app/payment' },
+  { label: 'حجز الأتوبيس', to: '/app/bus' },
+  { label: 'الإجازات الرسمية', to: '/app/holyday' },
+  { label: 'الالتماسات', to: '/app/execuse' },
+  { label: 'المخالفات', to: '/app/punishment' },
   { label: 'الرئيسية', to: '/' },
   { label: 'التصريح', to: '/StatmentUser' },
   { label: 'المصروفات', to: '/PaymentUser' },
@@ -20,9 +27,15 @@ const mainLinks = [
 ]
 
 const moreLinks = [
+<<<<<<< HEAD
   { label: 'الملف الشخصي', to: '/profile' },
   { label: 'سجلات الأقارب', to: '/relatives' },
   { label: 'السجل الطبي', to: '/MedicalUser' },
+=======
+  { label: 'الملف الشخصي', to: '/app/profile' },
+  { label: 'سجلات الأقارب', to: '/app/relatives' },
+  { label: 'السجل الطبي', to: '/app/medical' },
+>>>>>>> 128990dcfc299e6dc17df32a16bf9e8c7077d31f
 ]
 
 export default function Header() {
@@ -44,7 +57,7 @@ export default function Header() {
         image: '/images/student-avatar.png',
       }
 
-  const profileLink = isAdminPage ? '/profile-admin' : '/profile'
+const profileLink = isAdminPage ? '/app/profile-admin' : '/app/profile'
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -98,7 +111,7 @@ export default function Header() {
               <NavLink
                 key={link.to}
                 to={link.to}
-                end={link.to === '/'}
+                end={link.to === '/app'}
                 className={getLinkClass}
               >
                 {link.label}
