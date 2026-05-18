@@ -1,9 +1,16 @@
 import React, { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { apiRequest, saveAuthData } from '../../api/client'
+
+const adminRoles = ['commander', 'admin', 'super_admin']
 
 const SignIn = () => {
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams()
+
+  const selectedRole = searchParams.get('role')
+  const isStudentGate = selectedRole === 'student'
+  const isAdminGate = selectedRole === 'commander'
 
   const [formData, setFormData] = useState({
     email: '',
@@ -12,6 +19,15 @@ const SignIn = () => {
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
+  const pageTitle = isStudentGate ? 'بوابة الطالب' : 'بوابة المسؤول'
+  const pageDescription = isStudentGate
+    ? 'يرجى تسجيل الدخول للوصول إلى خدمات الطالب داخل الأكاديمية.'
+    : 'يرجى تسجيل الدخول للوصول إلى لوحة إدارة الأكاديمية.'
+
+  const emailPlaceholder = isStudentGate
+    ? 'atlas-test-student@test.com'
+    : 'commander-atlas@test.com'
 
   const handleChange = (e) => {
     const { name, value } = e.target
@@ -34,26 +50,32 @@ const SignIn = () => {
         body: JSON.stringify(formData),
       })
 
+      const userRole = data.user?.role
+
+      if (isStudentGate && userRole !== 'student') {
+        throw new Error('هذا الحساب ليس حساب طالب، يرجى الدخول من بوابة المسؤول')
+      }
+
+      if (isAdminGate && !adminRoles.includes(userRole)) {
+        throw new Error('هذا الحساب ليس حساب مسؤول، يرجى الدخول من بوابة الطالب')
+      }
+
       saveAuthData({
         token: data.token,
         user: data.user,
       })
 
-      if (data.user.role === 'student') {
-        navigate('/profile')
+      if (userRole === 'student') {
+        navigate('/home', { replace: true })
         return
       }
 
-      if (
-        data.user.role === 'commander' ||
-        data.user.role === 'admin' ||
-        data.user.role === 'super_admin'
-      ) {
-        navigate('/profile-admin')
+      if (adminRoles.includes(userRole)) {
+        navigate('/adminHome', { replace: true })
         return
       }
 
-      navigate('/profile')
+      navigate('/', { replace: true })
     } catch (err) {
       setError(err.message || 'حدث خطأ أثناء تسجيل الدخول')
     } finally {
@@ -79,11 +101,13 @@ const SignIn = () => {
 
             <div className="relative z-10 p-16 flex flex-col justify-end h-full text-[rgb(var(--on-primary-container))]">
               <div className="mb-6 w-16 h-1 border-t-4 border-[rgb(var(--on-primary-container))] opacity-50"></div>
+
               <h1 className="text-4xl font-black tracking-tight leading-tight mb-4">
                 نظام إدارة <br /> الأكاديمية العسكرية
               </h1>
+
               <p className="text-[rgb(var(--on-primary-container))] opacity-80 text-lg leading-relaxed max-w-sm font-medium">
-                البوابة الإدارية المركزية للتحكم وإدارة كل ما يتعلق بالدورات المدنية داخل الأكاديمية العسكرية.
+                البوابة المركزية للتحكم وإدارة كل ما يتعلق بالدورات المدنية داخل الأكاديمية العسكرية.
               </p>
             </div>
 
@@ -102,12 +126,16 @@ const SignIn = () => {
                 </span>
               </div>
 
+              <p className="text-[rgb(var(--primary-container))] font-black text-sm mb-2">
+                {pageTitle}
+              </p>
+
               <h2 className="text-3xl font-black text-[rgb(var(--primary-container))] mb-2 tracking-tight">
                 التحقق من الهوية
               </h2>
 
               <p className="text-[rgb(var(--on-surface))] opacity-60 font-bold text-sm">
-                يرجى إكمال خطوات التحقق للوصول إلى السجلات الرسمية.
+                {pageDescription}
               </p>
             </div>
 
@@ -120,7 +148,7 @@ const SignIn = () => {
                 <div className="relative group">
                   <input
                     className="w-full bg-[rgb(var(--surface-container-low))] border-b-2 border-[rgb(var(--outline-variant))/0.3] focus:border-[rgb(var(--primary-container))] px-4 py-4 outline-none transition-all font-bold text-lg text-right rounded-t-xl"
-                    placeholder="admin@academy.mil.gov"
+                    placeholder={emailPlaceholder}
                     type="email"
                     name="email"
                     value={formData.email}
@@ -137,7 +165,7 @@ const SignIn = () => {
               <div className="space-y-3">
                 <div className="flex justify-between items-center pr-1">
                   <label className="block text-[11px] font-black uppercase tracking-[0.2em] text-[rgb(var(--outline-variant))]">
-                    كلمة المرور المشفرة
+                    كلمة المرور
                   </label>
 
                   <button
@@ -191,7 +219,7 @@ const SignIn = () => {
               </div>
 
               <p className="text-[10px] text-[rgb(var(--on-surface))] opacity-50 leading-relaxed font-bold uppercase tracking-widest">
-                هذا النظام مخصص للموظفين المعتمدين فقط. <br /> جميع العمليات مسجلة ومراقبة.
+                هذا النظام مخصص للمستخدمين المعتمدين فقط. <br /> جميع العمليات مسجلة ومراقبة.
               </p>
             </div>
           </div>

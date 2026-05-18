@@ -2,23 +2,40 @@ import { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
 import { getSavedUser } from '../api/client'
 
-const mainLinks = [
-  { label: 'الرئيسية', to: '/' },
+const adminRoles = ['commander', 'admin', 'super_admin']
+
+const studentMainLinks = [
+  { label: 'الرئيسية', to: '/home' },
   { label: 'التصريح', to: '/StatmentUser' },
-  { label: 'المصروفات', to: '/PaymentUser' },
+  { label: 'المصروفات', to: '/paymentUser' },
   { label: 'حجز الأتوبيس', to: '/bus' },
   { label: 'الإجازات الرسمية', to: '/HolidayUser' },
   { label: 'الالتماسات', to: '/execuse' },
   { label: 'المخالفات', to: '/punishment' },
 ]
 
-const moreLinks = [
+const studentMoreLinks = [
   { label: 'الملف الشخصي', to: '/profile' },
   { label: 'سجلات الأقارب', to: '/relatives' },
-  { label: 'السجل الطبي', to: '/MedicalUser' },
+  { label: 'السجل الطبي', to: '/medicalUser' },
 ]
 
-function getRoleLabel(role, isAdminPage) {
+const adminMainLinks = [
+  { label: 'الرئيسية', to: '/adminHome' },
+  { label: 'التصريح', to: '/StatmentAdmin' },
+  { label: 'المصروفات', to: '/paymentAdmin' },
+  { label: 'الإجازات الرسمية', to: '/HolidayAdmin' },
+  { label: 'الالتماسات', to: '/execuse-admin' },
+  { label: 'المخالفات', to: '/punishment-admin' },
+]
+
+const adminMoreLinks = [
+  { label: 'الملف الشخصي', to: '/profile-admin' },
+  { label: 'سجلات الأقارب', to: '/relatives-admin' },
+  { label: 'السجل الطبي', to: '/medicalAdmin' },
+]
+
+function getRoleLabel(role, isAdminMode) {
   if (role === 'student') {
     return 'طالب عسكري'
   }
@@ -35,11 +52,11 @@ function getRoleLabel(role, isAdminPage) {
     return 'مدير النظام'
   }
 
-  return isAdminPage ? 'مسؤول عام' : 'طالب عسكري'
+  return isAdminMode ? 'مسؤول عام' : 'طالب عسكري'
 }
 
-function getDefaultUser(isAdminPage) {
-  if (isAdminPage) {
+function getDefaultUser(isAdminMode) {
+  if (isAdminMode) {
     return {
       name: 'القائد',
       role: 'مسؤول عام',
@@ -54,35 +71,31 @@ function getDefaultUser(isAdminPage) {
   }
 }
 
+function isAdminRoute(pathname) {
+  const path = pathname.toLowerCase()
+
+  return (
+    path.includes('admin') ||
+    path.includes('profile-admin') ||
+    path.includes('punishment-admin') ||
+    path.includes('relatives-admin') ||
+    path.includes('statmentadmin') ||
+    path.includes('holidayadmin') ||
+    path.includes('paymentadmin') ||
+    path.includes('medicaladmin')
+  )
+}
+
 export default function Header() {
   const location = useLocation()
+
   const [moreOpen, setMoreOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [currentUser, setCurrentUser] = useState(null)
-
-  const isAdminPage = location.pathname.toLowerCase().includes('admin')
-  const profileLink = isAdminPage ? '/profile-admin' : '/profile'
+  const [currentUser, setCurrentUser] = useState(() => getSavedUser())
 
   useEffect(() => {
-    const savedUser = getSavedUser()
-
-    if (savedUser) {
-      setCurrentUser({
-        name: savedUser.name || getDefaultUser(isAdminPage).name,
-        role: getRoleLabel(savedUser.role, isAdminPage),
-        image: savedUser.image?.includes('ui-avatars.com')
-          ? isAdminPage
-            ? '/images/admin-avatar.png'
-            : '/images/student-avatar.png'
-          : savedUser.image ||
-          (isAdminPage ? '/images/admin-avatar.png' : '/images/student-avatar.png'),
-      })
-
-      return
-    }
-
-    setCurrentUser(getDefaultUser(isAdminPage))
-  }, [isAdminPage, location.pathname])
+    setCurrentUser(getSavedUser())
+  }, [location.pathname])
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -98,6 +111,26 @@ export default function Header() {
     }
   }, [moreOpen])
 
+  const isAdminMode =
+    adminRoles.includes(currentUser?.role) ||
+    (!currentUser?.role && isAdminRoute(location.pathname))
+
+  const mainLinks = isAdminMode ? adminMainLinks : studentMainLinks
+  const moreLinks = isAdminMode ? adminMoreLinks : studentMoreLinks
+  const profileLink = isAdminMode ? '/profile-admin' : '/profile'
+
+  const defaultUser = getDefaultUser(isAdminMode)
+
+  const userImage = currentUser?.image?.includes('ui-avatars.com')
+    ? defaultUser.image
+    : currentUser?.image || defaultUser.image
+
+  const userToShow = {
+    name: currentUser?.name || defaultUser.name,
+    role: getRoleLabel(currentUser?.role, isAdminMode),
+    image: userImage,
+  }
+
   function getLinkClass({ isActive }) {
     if (isActive) {
       return 'bg-[#eef0e4] text-[#1f220f] font-bold px-4 py-2 rounded-full text-base'
@@ -105,8 +138,6 @@ export default function Header() {
 
     return 'text-[#676b59] hover:bg-[#f3f4ef] hover:text-[#1f220f] px-4 py-2 rounded-full text-base transition'
   }
-
-  const userToShow = currentUser || getDefaultUser(isAdminPage)
 
   return (
     <header dir="rtl" className="bg-[#f3f4ef]">
@@ -138,7 +169,6 @@ export default function Header() {
               <NavLink
                 key={link.to}
                 to={link.to}
-                end={link.to === '/'}
                 className={getLinkClass}
               >
                 {link.label}
@@ -191,7 +221,6 @@ export default function Header() {
               <NavLink
                 key={link.to}
                 to={link.to}
-                end={link.to === '/'}
                 onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
                   isActive
