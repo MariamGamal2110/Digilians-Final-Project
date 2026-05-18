@@ -1,29 +1,17 @@
 import { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+import { getSavedUser } from '../api/client'
 
-const mainLinks = [
-  { label: 'الرئيسية', to: '/app' },
-  { label: 'التصريح', to: '/app/statment' },
-  { label: 'المصروفات', to: '/app/payment' },
-  { label: 'حجز الأتوبيس', to: '/app/bus' },
-  { label: 'الإجازات الرسمية', to: '/app/holyday' },
-  { label: 'الالتماسات', to: '/app/execuse' },
-  { label: 'المخالفات', to: '/app/punishment' },
-  { label: 'الرئيسية', to: '/' },
+const adminRoles = ['commander', 'admin', 'super_admin']
+
+const studentMainLinks = [
+  { label: 'الرئيسية', to: '/home' },
   { label: 'التصريح', to: '/StatmentUser' },
-  { label: 'المصروفات', to: '/PaymentUser' },
+  { label: 'المصروفات', to: '/paymentUser' },
   { label: 'حجز الأتوبيس', to: '/bus' },
   { label: 'الإجازات الرسمية', to: '/HolidayUser' },
   { label: 'الالتماسات', to: '/execuse' },
   { label: 'المخالفات', to: '/punishment' },
-
-    // {path: 'signIn', element: <SignIn />},
-    //   {path: 'signUp', element: <SignUp />},
-    //   {path: 'medicalUser', element: <MedicalUser />},
-    //   {path: 'medicalAdmin', element: <MedicalAdmin />},
-    //   {path: 'payment', element: <PaymentUser />},
-    //   {path: 'paymentAdmin', element: <PaymentAdmin />},
-  
 ]
 
 const moreLinks = [
@@ -31,33 +19,23 @@ const moreLinks = [
   { label: 'الملف الشخصي', to: '/profile' },
   { label: 'سجلات الأقارب', to: '/relatives' },
   { label: 'السجل الطبي', to: '/MedicalUser' },
-=======
+=========
   { label: 'الملف الشخصي', to: '/app/profile' },
   { label: 'سجلات الأقارب', to: '/app/relatives' },
   { label: 'السجل الطبي', to: '/app/medical' },
->>>>>>> 128990dcfc299e6dc17df32a16bf9e8c7077d31f
+>>>>>>>>> Temporary merge branch 2
 ]
 
 export default function Header() {
   const location = useLocation()
+
   const [moreOpen, setMoreOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [currentUser, setCurrentUser] = useState(() => getSavedUser())
 
-  const isAdminPage = location.pathname.includes('admin')
-
-  const currentUser = isAdminPage
-    ? {
-        name: 'أحمد المنصور',
-        role: 'مسؤول عام',
-        image: '/images/admin-avatar.png',
-      }
-    : {
-        name: 'أحمد محمد',
-        role: 'طالب عسكري',
-        image: '/images/student-avatar.png',
-      }
-
-const profileLink = isAdminPage ? '/app/profile-admin' : '/app/profile'
+  useEffect(() => {
+    setCurrentUser(getSavedUser())
+  }, [location.pathname])
 
   useEffect(() => {
     function handleClickOutside(event) {
@@ -72,6 +50,26 @@ const profileLink = isAdminPage ? '/app/profile-admin' : '/app/profile'
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [moreOpen])
+
+  const isAdminMode =
+    adminRoles.includes(currentUser?.role) ||
+    (!currentUser?.role && isAdminRoute(location.pathname))
+
+  const mainLinks = isAdminMode ? adminMainLinks : studentMainLinks
+  const moreLinks = isAdminMode ? adminMoreLinks : studentMoreLinks
+  const profileLink = isAdminMode ? '/profile-admin' : '/profile'
+
+  const defaultUser = getDefaultUser(isAdminMode)
+
+  const userImage = currentUser?.image?.includes('ui-avatars.com')
+    ? defaultUser.image
+    : currentUser?.image || defaultUser.image
+
+  const userToShow = {
+    name: currentUser?.name || defaultUser.name,
+    role: getRoleLabel(currentUser?.role, isAdminMode),
+    image: userImage,
+  }
 
   function getLinkClass({ isActive }) {
     if (isActive) {
@@ -90,18 +88,18 @@ const profileLink = isAdminPage ? '/app/profile-admin' : '/app/profile'
             className="flex items-center gap-3 rounded-xl px-2 py-1 hover:bg-[#f3f4ef] transition"
           >
             <img
-              src={currentUser.image}
-              alt={currentUser.name}
+              src={userToShow.image}
+              alt={userToShow.name}
               className="w-11 h-11 rounded-full object-cover border-2 border-[#6b7440] cursor-pointer hover:opacity-90 transition"
             />
 
             <div className="text-right">
               <p className="text-[#1f220f] font-bold text-base leading-tight">
-                {currentUser.name}
+                {userToShow.name}
               </p>
 
               <p className="text-[#676b59] text-sm">
-                {currentUser.role}
+                {userToShow.role}
               </p>
             </div>
           </NavLink>
@@ -111,7 +109,6 @@ const profileLink = isAdminPage ? '/app/profile-admin' : '/app/profile'
               <NavLink
                 key={link.to}
                 to={link.to}
-                end={link.to === '/app'}
                 className={getLinkClass}
               >
                 {link.label}
@@ -164,7 +161,6 @@ const profileLink = isAdminPage ? '/app/profile-admin' : '/app/profile'
               <NavLink
                 key={link.to}
                 to={link.to}
-                end={link.to === '/'}
                 onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
                   isActive
