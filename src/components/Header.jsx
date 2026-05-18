@@ -14,16 +14,11 @@ const studentMainLinks = [
   { label: 'المخالفات', to: '/punishment' },
 ]
 
-const moreLinks = [
-<<<<<<< HEAD
+
+const studentMoreLinks = [
   { label: 'الملف الشخصي', to: '/profile' },
   { label: 'سجلات الأقارب', to: '/relatives' },
   { label: 'السجل الطبي', to: '/MedicalUser' },
-=========
-  { label: 'الملف الشخصي', to: '/app/profile' },
-  { label: 'سجلات الأقارب', to: '/app/relatives' },
-  { label: 'السجل الطبي', to: '/app/medical' },
->>>>>>>>> Temporary merge branch 2
 ]
 
 export default function Header() {
