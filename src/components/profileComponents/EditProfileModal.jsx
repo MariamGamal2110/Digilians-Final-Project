@@ -1,75 +1,113 @@
 import { useState } from 'react'
 
 export default function EditProfileModal({ student, onClose, onSave }) {
-  const [name, setName] = useState(student.name)
-  const [militaryId, setMilitaryId] = useState(student.militaryId)
-  const [email, setEmail] = useState(student.email)
+  const [formData, setFormData] = useState({
+    name: student.name || '',
+    email: student.email || '',
+  })
 
-  function handleSave() {
+  function handleChange(event) {
+    const { name, value } = event.target
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }))
+  }
+
+  function handleSubmit(event) {
+    event.preventDefault()
+
     onSave({
-      name: name,
-      militaryId: militaryId,
-      email: email,
+      name: formData.name,
+      email: formData.email,
     })
   }
 
   return (
-    <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
-      <div className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
-        <h2 className="text-[#1f220f] text-xl font-bold mb-6 text-center">
-          تعديل بيانات الطالب
-        </h2>
-
-        <div className="space-y-4">
+    <div className="fixed inset-0 z-50 bg-black/40 flex items-center justify-center px-4">
+      <div className="bg-white rounded-2xl shadow-xl border border-gray-200 w-full max-w-lg overflow-hidden" dir="rtl">
+        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200">
           <div>
-            <label className="block text-sm font-bold text-[#555d30] mb-2">
+            <h2 className="text-[#1f220f] text-xl font-extrabold">
+              تعديل بيانات الطالب
+            </h2>
+          </div>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="w-9 h-9 rounded-full bg-[#f3f1e8] text-[#1f220f] flex items-center justify-center font-bold hover:bg-[#e8e5dc] transition"
+          >
+            ×
+          </button>
+        </div>
+
+        <form onSubmit={handleSubmit} className="p-6 space-y-5">
+          <div>
+            <label className="block text-[#1f220f] font-bold text-sm mb-2">
               الاسم
             </label>
+
             <input
-              value={name}
-              onChange={(event) => setName(event.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-[#555d30]"
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#555d30]"
+              placeholder="اكتب اسم الطالب"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-bold text-[#555d30] mb-2">
-              الرقم العسكري
-            </label>
-            <input
-              value={militaryId}
-              onChange={(event) => setMilitaryId(event.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-[#555d30]"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-bold text-[#555d30] mb-2">
+            <label className="block text-[#1f220f] font-bold text-sm mb-2">
               البريد الإلكتروني
             </label>
+
             <input
-              value={email}
-              onChange={(event) => setEmail(event.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-4 py-3 outline-none focus:border-[#555d30]"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#555d30]"
+              placeholder="اكتب البريد الإلكتروني"
             />
           </div>
-        </div>
 
-        <div className="flex items-center justify-between gap-4 mt-7">
-          <button
-            onClick={onClose}
-            className="w-full border border-gray-300 text-[#1f220f] rounded-lg py-3 font-bold hover:bg-gray-100 transition"
-          >
-            إلغاء
-          </button>
+          <div>
+            <label className="block text-[#1f220f] font-bold text-sm mb-2">
+              الرقم العسكري
+            </label>
 
-          <button
-            onClick={handleSave}
-            className="w-full bg-[#555d30] text-white rounded-lg py-3 font-bold hover:bg-[#3f4723] transition"
-          >
-            حفظ
-          </button>
-        </div>
+            <div className="w-full border border-[#e8e5dc] bg-[#f8f7f2] rounded-xl px-4 py-3 text-sm text-[#555d30] font-bold flex items-center justify-between">
+              <span>{student.militaryId}</span>
+              <span className="text-xs text-[#7b815f]">
+                غير قابل للتعديل
+              </span>
+            </div>
+
+            <p className="text-[#7b815f] text-xs mt-2">
+              الرقم العسكري يتم تحديده من الإدارة ولا يمكن تعديله من الطالب.
+            </p>
+          </div>
+
+          <div className="flex items-center justify-end gap-3 pt-3">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-3 rounded-xl border border-gray-200 text-[#1f220f] font-bold hover:bg-[#f8f7f2] transition"
+            >
+              إلغاء
+            </button>
+
+            <button
+              type="submit"
+              className="px-8 py-3 rounded-xl bg-[#555d30] text-white font-bold hover:bg-[#454c27] transition"
+            >
+              حفظ التعديل
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   )

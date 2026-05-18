@@ -26,10 +26,12 @@ function AttendanceCalendarIcon() {
   )
 }
 
-export default function AttendanceCard() {
+export default function AttendanceCard({ absenceDays }) {
+  const formattedAbsenceDays = String(absenceDays).padStart(2, '0')
+
   return (
-<div className="rounded-xl transition-transform duration-300 ease-out hover:-translate-y-1">
-        <InfoCard title="سجل الحضور">
+    <div className="rounded-xl transition-transform duration-300 ease-out hover:-translate-y-1">
+      <InfoCard title="سجل الحضور">
         <div className="flex items-center justify-center gap-6 py-2">
           <div className="text-center">
             <p className="text-[#555d30] text-sm mb-2">
@@ -37,7 +39,7 @@ export default function AttendanceCard() {
             </p>
 
             <p className="text-[#1f220f] font-bold text-4xl">
-              03
+              {formattedAbsenceDays}
             </p>
           </div>
 
