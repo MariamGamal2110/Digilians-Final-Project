@@ -1,35 +1,69 @@
 import { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
-import { getSavedUser } from '../api/client'
-
-const adminRoles = ['commander', 'admin', 'super_admin']
 
 const studentMainLinks = [
   { label: 'الرئيسية', to: '/home' },
-  { label: 'التصريح', to: '/StatmentUser' },
-  { label: 'المصروفات', to: '/paymentUser' },
+  { label: 'التصريح', to: '/statment' },
+  { label: 'المصروفات', to: '/payment' },
   { label: 'حجز الأتوبيس', to: '/bus' },
-  { label: 'الإجازات الرسمية', to: '/HolidayUser' },
+  { label: 'الإجازات الرسمية', to: '/holiday' },
   { label: 'الالتماسات', to: '/execuse' },
   { label: 'المخالفات', to: '/punishment' },
 ]
 
-
 const studentMoreLinks = [
   { label: 'الملف الشخصي', to: '/profile' },
   { label: 'سجلات الأقارب', to: '/relatives' },
-  { label: 'السجل الطبي', to: '/MedicalUser' },
+  { label: 'السجل الطبي', to: '/medical' },
 ]
+
+const adminMainLinks = [
+  { label: 'الرئيسية', to: '/admin/home' },
+  { label: 'التصريح', to: '/admin/statment' },
+  { label: 'المصروفات', to: '/admin/payment' },
+  { label: 'حجز الأتوبيس', to: '/admin/bus' },
+  { label: 'الإجازات الرسمية', to: '/admin/holiday' },
+  { label: 'الالتماسات', to: '/admin/execuse' },
+  { label: 'المخالفات', to: '/admin/punishment' },
+]
+
+const adminMoreLinks = [
+  { label: 'الملف الشخصي', to: '/admin/profile' },
+  { label: 'سجلات الأقارب', to: '/admin/relatives' },
+  { label: 'السجل الطبي', to: '/admin/medical' },
+]
+
+function getDefaultUser(isAdminMode) {
+  if (isAdminMode) {
+    return {
+      name: 'Admin',
+      role: 'لوحة التحكم',
+      image: 'https://ui-avatars.com/api/?name=Admin&background=6b7440&color=fff',
+    }
+  }
+
+  return {
+    name: 'Student',
+    role: 'طالب',
+    image: 'https://ui-avatars.com/api/?name=Student&background=6b7440&color=fff',
+  }
+}
 
 export default function Header() {
   const location = useLocation()
-
   const [moreOpen, setMoreOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
-  const [currentUser, setCurrentUser] = useState(() => getSavedUser())
+
+  const isAdminMode = location.pathname.startsWith('/admin')
+
+  const mainLinks = isAdminMode ? adminMainLinks : studentMainLinks
+  const moreLinks = isAdminMode ? adminMoreLinks : studentMoreLinks
+  const userToShow = getDefaultUser(isAdminMode)
+  const profileLink = isAdminMode ? '/admin/profile' : '/profile'
 
   useEffect(() => {
-    setCurrentUser(getSavedUser())
+    setMoreOpen(false)
+    setMobileOpen(false)
   }, [location.pathname])
 
   useEffect(() => {
@@ -45,26 +79,6 @@ export default function Header() {
       document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [moreOpen])
-
-  const isAdminMode =
-    adminRoles.includes(currentUser?.role) ||
-    (!currentUser?.role && isAdminRoute(location.pathname))
-
-  const mainLinks = isAdminMode ? adminMainLinks : studentMainLinks
-  const moreLinks = isAdminMode ? adminMoreLinks : studentMoreLinks
-  const profileLink = isAdminMode ? '/profile-admin' : '/profile'
-
-  const defaultUser = getDefaultUser(isAdminMode)
-
-  const userImage = currentUser?.image?.includes('ui-avatars.com')
-    ? defaultUser.image
-    : currentUser?.image || defaultUser.image
-
-  const userToShow = {
-    name: currentUser?.name || defaultUser.name,
-    role: getRoleLabel(currentUser?.role, isAdminMode),
-    image: userImage,
-  }
 
   function getLinkClass({ isActive }) {
     if (isActive) {
@@ -101,11 +115,7 @@ export default function Header() {
 
           <nav className="hidden md:flex items-center gap-2">
             {mainLinks.map((link) => (
-              <NavLink
-                key={link.to}
-                to={link.to}
-                className={getLinkClass}
-              >
+              <NavLink key={link.to} to={link.to} className={getLinkClass}>
                 {link.label}
               </NavLink>
             ))}
@@ -126,7 +136,6 @@ export default function Header() {
                     <NavLink
                       key={link.to}
                       to={link.to}
-                      onClick={() => setMoreOpen(false)}
                       className={({ isActive }) =>
                         isActive
                           ? 'block px-5 py-3 text-sm text-[#1f220f] font-bold bg-[#eef0e4]'
@@ -156,7 +165,6 @@ export default function Header() {
               <NavLink
                 key={link.to}
                 to={link.to}
-                onClick={() => setMobileOpen(false)}
                 className={({ isActive }) =>
                   isActive
                     ? 'bg-[#eef0e4] text-[#1f220f] font-bold px-4 py-3 rounded-xl text-sm'

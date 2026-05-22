@@ -1,6 +1,6 @@
 import { useState } from "react";
-import RequestsTable from "../../components/ExcuseAdminComponents/RequestsTable";
-import ExcuseSidebar from "../../components/ExcuseAdminComponents/ExcuseSidebar";
+import RequestsTable from "../../components/ExcuseAdminComponents/RequestsTable ";
+import ExcuseSidebar from './../../components/ExcuseAdminComponents/ExcuseSidebar';
 
 const initialData = [
   {
@@ -40,18 +40,20 @@ export default function ExecuseAdmin() {
   const [data, setData] = useState(initialData);
   const [selectedId, setSelectedId] = useState(null);
 
-  const selectedRequest = data.find((request) => request.id === selectedId) ?? null;
+  // always derive selectedRequest from data so it reflects latest status
+  const selectedRequest = data.find((r) => r.id === selectedId) ?? null;
 
   function handleSelect(row) {
     setSelectedId(row.id);
   }
 
+  // called from ExcuseSidebar when admin approves or rejects
   function handleDecision(id, decision, note) {
     setData((prev) =>
-      prev.map((request) =>
-        request.id === id
-          ? { ...request, status: decision, adminNote: note }
-          : request
+      prev.map((r) =>
+        r.id === id
+          ? { ...r, status: decision, adminNote: note }
+          : r
       )
     );
   }
@@ -59,17 +61,20 @@ export default function ExecuseAdmin() {
   return (
     <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8">
       <div className="max-w-[1300px] mx-auto">
+
+        {/* Page Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-extrabold mb-2 text-[#555d30]">
             إدارة الالتماسات النشطة
           </h1>
-
           <p className="text-sm leading-7 max-w-xl text-gray-600">
             مراجعة والبت في طلبات الإجازات الاستثنائية والالتماسات المقدمة
           </p>
         </div>
 
+        {/* Content */}
         <div className="flex gap-4 items-start">
+          {/* Table takes remaining width */}
           <div className="flex-1 min-w-0">
             <RequestsTable
               data={data}
@@ -78,6 +83,7 @@ export default function ExecuseAdmin() {
             />
           </div>
 
+          {/* Sidebar fixed width */}
           <div className="w-80 flex-shrink-0">
             <ExcuseSidebar
               request={selectedRequest}
@@ -85,6 +91,7 @@ export default function ExecuseAdmin() {
             />
           </div>
         </div>
+
       </div>
     </section>
   );

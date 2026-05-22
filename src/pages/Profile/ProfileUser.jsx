@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 import ProfileTopBar from '../../components/profileComponents/ProfileTopBar'
 import ProfileInfo from '../../components/profileComponents/ProfileInfo'
@@ -7,32 +7,32 @@ import GradesCard from '../../components/profileComponents/GradesCard'
 import AttendanceCard from '../../components/profileComponents/AttendanceCard'
 import AcademicChart from '../../components/profileComponents/AcademicChart'
 import EditProfileModal from '../../components/profileComponents/EditProfileModal'
-import { apiRequest } from '../../api/client'
+
+const defaultStudentProfile = {
+  student: {
+    name: 'أحمد محمد علي',
+    email: 'student@academy.com',
+    militaryId: '2024001',
+  },
+  specializationDuration: '9 أشهر',
+  grades: {
+    behavior: 85,
+    history: [
+      { label: 'يناير', value: 70 },
+      { label: 'فبراير', value: 78 },
+      { label: 'مارس', value: 82 },
+      { label: 'أبريل', value: 80 },
+    ],
+  },
+  attendance: {
+    absenceDays: 3,
+  },
+}
 
 export default function ProfileUser() {
   const [showEditModal, setShowEditModal] = useState(false)
-  const [studentProfile, setStudentProfile] = useState(null)
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState('')
-
-  useEffect(() => {
-    async function fetchStudentProfile() {
-      try {
-        setLoading(true)
-        setError('')
-
-        const data = await apiRequest('/profile/student/me')
-
-        setStudentProfile(data)
-      } catch (err) {
-        setError(err.message || 'حدث خطأ أثناء تحميل بيانات الطالب')
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchStudentProfile()
-  }, [])
+  const [studentProfile, setStudentProfile] = useState(defaultStudentProfile)
+  const [searchText, setSearchText] = useState('')
 
   function openEditModal() {
     setShowEditModal(true)
@@ -55,36 +55,6 @@ export default function ProfileUser() {
     setShowEditModal(false)
   }
 
-  if (loading) {
-    return (
-      <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8 flex items-center justify-center">
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-8 py-6 text-[#555d30] font-bold">
-          جاري تحميل بيانات الطالب...
-        </div>
-      </section>
-    )
-  }
-
-  if (error) {
-    return (
-      <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8 flex items-center justify-center">
-        <div className="bg-red-50 border border-red-200 rounded-2xl shadow-sm px-8 py-6 text-red-700 font-bold">
-          {error}
-        </div>
-      </section>
-    )
-  }
-
-  if (!studentProfile) {
-    return (
-      <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8 flex items-center justify-center">
-        <div className="bg-white border border-gray-200 rounded-2xl shadow-sm px-8 py-6 text-gray-700 font-bold">
-          لا توجد بيانات للطالب
-        </div>
-      </section>
-    )
-  }
-
   const behaviorChartData = [
     ...(studentProfile.grades?.history || []),
     {
@@ -96,13 +66,17 @@ export default function ProfileUser() {
   return (
     <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8">
       <div className="max-w-6xl mx-auto bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-        <ProfileTopBar />
+        <ProfileTopBar
+          searchText={searchText}
+          setSearchText={setSearchText}
+        />
 
         <div className="p-8">
           <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
             <ProfileInfo student={studentProfile.student} />
 
             <button
+              type="button"
               onClick={openEditModal}
               className="bg-[#555d30] text-white rounded-md px-8 py-4 text-sm font-bold flex items-center gap-3 hover:bg-[#3f4723] transition"
             >

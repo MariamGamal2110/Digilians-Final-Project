@@ -1,22 +1,13 @@
-
-
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import { createBrowserRouter, Navigate, RouterProvider, useSearchParams } from 'react-router-dom'
 import Layout from './components/Layout'
 
 import HelloPage from './pages/Hello/HelloPage'
+
 import HomeUser from './pages/Home/HomeUser'
 import HomeAdmin from './pages/Home/HomeAdmin'
 
-import StatmentAdmin from './pages/Statment/StatmentAdmin'
-import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import Layout from "./components/Layout";
-import LayoutAdmin from './components/Layout'; // لو الملف اسمه Layout.jsx فعلاً
-import HelloPage from "./pages/Hello/HelloPage";
-
-import HomeAdmin from './pages/Home/HomeAdmin'
-// import HomeAdmin from './pages/Home/HomeAdmin'
-
 import StatmentUser from './pages/Statment/StatmentUser'
+import StatmentAdmin from './pages/Statment/StatmentAdmin'
 
 import PaymentUser from './pages/Payment/PaymentUser'
 import PaymentAdmin from './pages/Payment/PaymentAdmin'
@@ -25,9 +16,10 @@ import PunishmentUser from './pages/Punishment/PunishmentUser'
 import PunishmentAdmin from './pages/Punishment/PunishmentAdmin'
 
 import BookUser from './pages/Bus/BookUser'
+import BookAdmin from './pages/Bus/BookAdmin'
 
-import ExecuseUser from './pages/Execuse/ExecuseUser.jsx'
-// import ExecuseAdmin from './pages/Execuse/ExecuseAdmin.jsx'
+import ExecuseUser from './pages/Execuse/ExecuseUser'
+import ExecuseAdmin from './pages/Execuse/ExecuseAdmin'
 
 import ProfileUser from './pages/Profile/ProfileUser'
 import ProfileAdmin from './pages/Profile/ProfileAdmin'
@@ -35,103 +27,79 @@ import ProfileAdmin from './pages/Profile/ProfileAdmin'
 import RelativesUser from './pages/RelativesFamily/RelativesUser'
 import RelativesAdmin from './pages/RelativesFamily/RelativesAdmin'
 
-import HolidayAdmin from './pages/Holiday/HolidayAdmin'
 import HolidayUser from './pages/Holiday/HolidayUser'
-
-import SignIn from './pages/Register/SignIn'
-import SignUp from './pages/Register/SignUp'
+import HolidayAdmin from './pages/Holiday/HolidayAdmin'
 
 import MedicalUser from './pages/Medical/MedicalUser'
 import MedicalAdmin from './pages/Medical/MedicalAdmin'
 
-function ExecuseAdminPlaceholder() {
-  return (
-    <section dir="rtl" className="min-h-screen bg-[#fafafa] px-6 py-8">
-      <div className="max-w-6xl mx-auto bg-white border border-gray-200 rounded-2xl shadow-sm p-8">
-        <h1 className="text-3xl font-bold text-[#1f220f] mb-3">
-          إدارة الالتماسات
-        </h1>
+function LoginRedirect() {
+  const [searchParams] = useSearchParams()
+  const role = searchParams.get('role')
 
-        <p className="text-[#676b59] text-sm leading-7">
-          صفحة الالتماسات الخاصة بالأدمن موجودة، لكن الكومبوننتات المرتبطة بها لم يتم رفعها على GitHub بعد.
-        </p>
+  const isAdmin =
+    role === 'admin' ||
+    role === 'commander' ||
+    role === 'super_admin'
 
-        <div className="mt-6 bg-yellow-50 border border-yellow-200 text-yellow-800 rounded-xl px-5 py-4 text-sm font-bold leading-7">
-          المطلوب رفع فولدر:
-          <br />
-          src/components/ExcuseAdminComponents
-        </div>
-      </div>
-    </section>
-  )
+  return <Navigate to={isAdmin ? '/admin/home' : '/home'} replace />
 }
 
 const router = createBrowserRouter([
+  { path: '/', element: <HelloPage /> },
+
+  { path: '/signIn', element: <LoginRedirect /> },
+  { path: '/signin', element: <LoginRedirect /> },
+  { path: '/login', element: <LoginRedirect /> },
+  { path: '/signUp', element: <Navigate to="/home" replace /> },
+  { path: '/signup', element: <Navigate to="/home" replace /> },
+
   {
-    path: '/',
     element: <Layout />,
     children: [
-      { index: true, element: <HomeUser /> },
-      { path: 'adminHome', element: <HomeAdmin /> },
+      // User pages
+      { path: '/home', element: <HomeUser /> },
+      { path: '/statment', element: <StatmentUser /> },
+      { path: '/payment', element: <PaymentUser /> },
+      { path: '/punishment', element: <PunishmentUser /> },
+      { path: '/bus', element: <BookUser /> },
+      { path: '/execuse', element: <ExecuseUser /> },
+      { path: '/profile', element: <ProfileUser /> },
+      { path: '/relatives', element: <RelativesUser /> },
+      { path: '/holiday', element: <HolidayUser /> },
+      { path: '/medical', element: <MedicalUser /> },
 
-      { path: 'profile', element: <ProfileUser /> },
-      { path: 'profile-admin', element: <ProfileAdmin /> },
+      // Admin pages
+      { path: '/admin', element: <Navigate to="/admin/home" replace /> },
+      { path: '/admin/home', element: <HomeAdmin /> },
+      { path: '/admin/statment', element: <StatmentAdmin /> },
+      { path: '/admin/payment', element: <PaymentAdmin /> },
+      { path: '/admin/punishment', element: <PunishmentAdmin /> },
+      { path: '/admin/bus', element: <BookAdmin /> },
+      { path: '/admin/execuse', element: <ExecuseAdmin /> },
+      { path: '/admin/profile', element: <ProfileAdmin /> },
+      { path: '/admin/relatives', element: <RelativesAdmin /> },
+      { path: '/admin/holiday', element: <HolidayAdmin /> },
+      { path: '/admin/medical', element: <MedicalAdmin /> },
 
-      { path: 'medicalUser', element: <MedicalUser /> },
-      { path: 'medicalAdmin', element: <MedicalAdmin /> },
-      { path: 'medical', element: <MedicalUser /> },
-
-      { path: 'paymentUser', element: <PaymentUser /> },
-      { path: 'paymentAdmin', element: <PaymentAdmin /> },
-      { path: 'payment', element: <PaymentUser /> },
-
-      { path: 'StatmentUser', element: <StatmentUser /> },
-      { path: 'StatmentAdmin', element: <StatmentAdmin /> },
-
-      { path: 'punishment', element: <PunishmentUser /> },
-      { path: 'punishment-admin', element: <PunishmentAdmin /> },
-
-      { path: 'bus', element: <BookUser /> },
-
-      { path: 'execuse', element: <ExecuseUser /> },
-      { path: 'execuse-admin', element: <ExecuseAdminPlaceholder /> },
-
-      { path: 'relatives', element: <RelativesUser /> },
-      { path: 'relatives-admin', element: <RelativesAdmin /> },
-
-      { path: 'HolidayAdmin', element: <HolidayAdmin /> },
-      { path: 'HolidayUser', element: <HolidayUser /> },
-      { path: "statment", element: <StatmentUser /> },
-      { path: "payment", element: <PaymentUser /> },
-      { path: "punishment", element: <PunishmentUser /> },
-      { path: "bus", element: <BookUser /> },
-      { path: "execuse", element: <ExecuseUser /> },
-      { path: "profile", element: <ProfileUser /> },
-      { path: "relatives", element: <RelativesUser /> },
-      { path: "medical", element: <MedicalUser /> },
-      { path: "holiday", element: <HolidayUser /> }, 
+      // Old paths redirects
+      { path: '/adminHome', element: <Navigate to="/admin/home" replace /> },
+      { path: '/StatmentUser', element: <Navigate to="/statment" replace /> },
+      { path: '/StatmentAdmin', element: <Navigate to="/admin/statment" replace /> },
+      { path: '/paymentUser', element: <Navigate to="/payment" replace /> },
+      { path: '/paymentAdmin', element: <Navigate to="/admin/payment" replace /> },
+      { path: '/punishment-admin', element: <Navigate to="/admin/punishment" replace /> },
+      { path: '/execuse-admin', element: <Navigate to="/admin/execuse" replace /> },
+      { path: '/profile-admin', element: <Navigate to="/admin/profile" replace /> },
+      { path: '/relatives-admin', element: <Navigate to="/admin/relatives" replace /> },
+      { path: '/HolidayUser', element: <Navigate to="/holiday" replace /> },
+      { path: '/HolidayAdmin', element: <Navigate to="/admin/holiday" replace /> },
+      { path: '/MedicalUser', element: <Navigate to="/medical" replace /> },
+      { path: '/MedicalAdmin', element: <Navigate to="/admin/medical" replace /> },
     ],
   },
-  // صفحات الأدمن
-  {
-    path: "/admin",
-    element: <LayoutAdmin />,
-    children: [
-      { index: true, element: <HomeAdmin /> },
-      { path: "bus", element: <BookAdmin /> },
-      // تم حذف سطر bus المكرر الخاص بـ BookUser
-      { path: "statment", element: <StatmentAdmin /> },
-      { path: "punishment", element: <PunishmentAdmin /> },
-      { path: "profile", element: <ProfileAdmin /> },
-      { path: "relatives", element: <RelativesAdmin /> },
-      { path: "holiday", element: <HolidayAdmin /> }, // تم تصحيح الاسبيلنج
-    ],
-  },
-  // مسار احتياطي في حال كتابة لينك خطأ
-  {
-    path: "*",
-    element: <HelloPage />, // أو صفحة 404 مخصصة
-  },
+
+  { path: '*', element: <Navigate to="/" replace /> },
 ])
 
 export default function App() {
