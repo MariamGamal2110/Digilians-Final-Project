@@ -6,34 +6,31 @@ export default function AdminViewPunishmentModal({ record, onClose }) {
     { label: "المخالفة", value: record.violation },
     { label: "العقوبة", value: record.punishment },
     { label: "الدرجات", value: record.degree },
+    { label: "تعليق الأدمن", value: record.comment || "لا يوجد تعليق" },
   ];
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
       <div dir="rtl" className="bg-white rounded-2xl shadow-lg w-full max-w-md p-6">
-
-        {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <h2 className="text-[#1f220f] text-lg font-bold">تفاصيل العقوبة</h2>
           <button
             onClick={onClose}
             className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 text-gray-500 transition"
           >
-            ✕
+            ×
           </button>
         </div>
 
-        {/* Details */}
         <div className="divide-y divide-gray-100">
           {rows.map(({ label, value }) => (
-            <div key={label} className="flex items-center justify-between py-3">
+            <div key={label} className="flex items-center justify-between gap-4 py-3">
               <span className="text-xs text-gray-500">{label}</span>
-              <span className="text-sm font-bold text-[#1f220f]">{value}</span>
+              <span className="text-sm font-bold text-[#1f220f] text-left">{value}</span>
             </div>
           ))}
         </div>
 
-        {/* Footer */}
         <div className="mt-6">
           <button
             onClick={onClose}
@@ -42,7 +39,6 @@ export default function AdminViewPunishmentModal({ record, onClose }) {
             إغلاق
           </button>
         </div>
-
       </div>
     </div>
   );

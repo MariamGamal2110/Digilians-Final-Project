@@ -7,6 +7,7 @@ const emptyForm = {
   violation: "",
   punishment: "",
   degree: "",
+  comment: "",
 };
 
 const requiredFields = [
@@ -55,6 +56,7 @@ export default function AdminAddPunishmentModal({ onClose, onSave, initialData =
       violation: form.violation.trim(),
       punishment: form.punishment.trim(),
       degree: Number(form.degree),
+      comment: form.comment?.trim() || "",
     });
   }
 

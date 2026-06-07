@@ -1,10 +1,16 @@
 import { useState } from 'react'
 import { FiEye, FiEdit2, FiTrash2 } from 'react-icons/fi'
 import AddRelativeModal from './AddRelativeModal'
+import { getSavedUser } from '../../api/client'
 
 export default function RelativesTable({ searchText }) {
     const [showModal, setShowModal] = useState(false)
     const [selectedRelative, setSelectedRelative] = useState(null)
+    
+    // Check authorization
+    const user = getSavedUser('admin')
+    const adminRoles = ["admin", "commander", "super_admin"]
+    const isAuthorized = user && adminRoles.includes(user.role)
 
     const [relatives, setRelatives] = useState([
         {
@@ -77,7 +83,16 @@ export default function RelativesTable({ searchText }) {
         closeModal()
     }
 
-    function deleteRelative(relativeId) {
+function deleteRelative(relativeId) {
+        // Check authorization before delete
+        const user = getSavedUser('admin')
+        const adminRoles = ["admin", "commander", "super_admin"]
+        
+        if (!user || !adminRoles.includes(user.role)) {
+            alert("غير مصرح لك بالدخول لهذه العملية")
+            return
+        }
+        
         const confirmDelete = confirm('هل أنتِ متأكدة من حذف هذا السجل؟')
 
         if (!confirmDelete) {

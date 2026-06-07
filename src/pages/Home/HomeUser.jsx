@@ -3,21 +3,27 @@ import ScheduleTimeline from '../../components/userhomeComponents/ScheduleTimeli
 import BehaviorGradeCard from '../../components/userhomeComponents/BehaviorGradeCard'
 import AcademyCard from '../../components/userhomeComponents/AcademyCard'
 import StudentAlertsCard from '../../components/userhomeComponents/StudentAlertsCard'
+import { getSavedUser } from '../../api/client'
 
 export default function HomeUser() {
-  const mockUser = {
-    name: 'أحمد محمد',
-    militaryId: '12489',
+  const savedUser = getSavedUser()
+
+  const mockUser = savedUser ? {
+    name: savedUser.name || 'الطالب',
+    militaryId: savedUser.militaryId || '12389',
+  } : {
+    name: 'الطالب',
+    militaryId: '12389',
   }
 
   const behaviorGrade = 75
 
   const schedule = [
-    { time: '4:45 صباحًا', activity: 'نوبة صحيان' },
-    { time: '5:50 صباحًا', activity: 'طابور اللياقة' },
-    { time: '7:45 - 8:00 صباحًا', activity: 'وجبة الإفطار' },
-    { time: '8:15 صباحًا', activity: 'طابور التفتيش' },
-    { time: '9:00 صباحًا', activity: 'بداية المحاضرات' },
+    { time: '4:45 صباحا', activity: 'نوبة صحيان' },
+    { time: '5:50 صباحا', activity: 'طابور اللياقة' },
+    { time: '7:45 - 8:00 صباحا', activity: 'وجبة الإفطار' },
+    { time: '8:15 صباحا', activity: 'طابور التفتيش' },
+    { time: '9:00 صباحا', activity: 'بداية المحاضرات' },
   ]
 
   return (

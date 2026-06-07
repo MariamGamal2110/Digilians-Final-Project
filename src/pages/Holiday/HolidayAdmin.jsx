@@ -1,7 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import AdminHolidayStats from '../../components/HoildayComponents/HolidayAdmin/AdminHolidayStats'
 import AdminHolidayFilters from '../../components/HoildayComponents/HolidayAdmin/AdminHolidayFilters'
 import AdminHolidayTable from '../../components/HoildayComponents/HolidayAdmin/AdminHolidayTable'
+import { getHolidayAppeals } from '../../api/localRequests'
 
 export default function HolidayAdmin() {
   const [selectedStat, setSelectedStat] = useState('pending')
@@ -100,6 +101,21 @@ export default function HolidayAdmin() {
     searchMilitaryId: '',
     status: ''
   })
+
+  useEffect(() => {
+    const mergeAppeals = () => {
+      const appeals = getHolidayAppeals()
+      setRequests((prev) => {
+        const existingIds = new Set(prev.map((request) => request.id))
+        const newAppeals = appeals.filter((appeal) => !existingIds.has(appeal.id))
+        return newAppeals.length ? [...newAppeals, ...prev] : prev
+      })
+    }
+
+    mergeAppeals()
+    window.addEventListener('storage', mergeAppeals)
+    return () => window.removeEventListener('storage', mergeAppeals)
+  }, [])
 
   const stats = {
     total: requests.length,

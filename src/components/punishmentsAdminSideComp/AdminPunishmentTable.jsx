@@ -1,9 +1,10 @@
 import { useState } from "react";
-import { FiEye, FiEdit2, FiTrash2 } from "react-icons/fi";
+import { FiEye, FiEdit2, FiTrash2, FiMessageSquare, FiMinus, FiPlus } from "react-icons/fi";
 import AdminPunishmentSearch from "./AdminPunishmentSearch";
 import AdminAddPunishmentModal from "./AdminAddPunishmentModal";
 import AdminViewPunishmentModal from "./AdminViewPunishmentModal";
 import AdminDeletePunishmentModal from "./AdminDeletePunishmentModal";
+import { getSavedUser } from "../../api/client";
 
 export default function AdminPunishmentTable({
   data,
@@ -11,12 +12,15 @@ export default function AdminPunishmentTable({
   onSearchChange,
   onAdd,
   onEdit,
+  onDegreeChange,
+  onCommentChange,
   onDelete,
 }) {
   const [showAddModal, setShowAddModal] = useState(false);
   const [editTarget, setEditTarget] = useState(null);   // { index, record }
   const [viewTarget, setViewTarget] = useState(null);   // record
   const [deleteTarget, setDeleteTarget] = useState(null); // { index, record }
+  const [commentTarget, setCommentTarget] = useState(null);
 
   function handleSaveAdd(record) {
     onAdd(record);
@@ -28,18 +32,35 @@ export default function AdminPunishmentTable({
     setEditTarget(null);
   }
 
-  function handleConfirmDelete() {
+function handleConfirmDelete() {
+    // Check authorization
+    const user = getSavedUser('admin');
+    const adminRoles = ["admin", "commander", "super_admin"];
+    
+    if (!user || !adminRoles.includes(user.role)) {
+      alert("غير مصرح لك بالدخول لهذه العملية");
+      return;
+    }
+    
     onDelete(deleteTarget.index);
     setDeleteTarget(null);
   }
 
   return (
     <>
-      {/* Search + Add Button */}
+{/* Search + Add Button */}
       <AdminPunishmentSearch
         searchText={searchText}
         onSearchChange={onSearchChange}
-        onAddClick={() => setShowAddModal(true)}
+        onAddClick={() => {
+          const user = getSavedUser('admin');
+          const adminRoles = ["admin", "commander", "super_admin"];
+          if (!user || !adminRoles.includes(user.role)) {
+            alert("غير مصرح لك بالدخول لهذه العملية");
+            return;
+          }
+          setShowAddModal(true);
+        }}
       />
 
       {/* Table */}
@@ -88,10 +109,24 @@ export default function AdminPunishmentTable({
                   <td className="px-5 py-4 text-[#1f220f]">{row.punishment}</td>
 
                   <td className="px-5 py-4">
-                    <div className="flex justify-center">
+                    <div className="flex items-center justify-center gap-2">
+                      <button
+                        onClick={() => onDegreeChange?.(row, -1)}
+                        className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-[#555d30] hover:bg-[#f3efe4] transition"
+                        title="تقليل الدرجات"
+                      >
+                        <FiMinus size={14} />
+                      </button>
                       <span className="w-9 h-9 rounded-full bg-[#555d30] text-white flex items-center justify-center font-bold">
                         {row.degree}
                       </span>
+                      <button
+                        onClick={() => onDegreeChange?.(row, 1)}
+                        className="w-7 h-7 rounded-full border border-gray-200 flex items-center justify-center text-[#555d30] hover:bg-[#f3efe4] transition"
+                        title="زيادة الدرجات"
+                      >
+                        <FiPlus size={14} />
+                      </button>
                     </div>
                   </td>
 
@@ -106,24 +141,59 @@ export default function AdminPunishmentTable({
                         <FiEye size={18} />
                       </button>
 
-                      {/* Edit */}
                       <button
-                        onClick={() => setEditTarget({ index: i, record: row })}
+                        onClick={() => setCommentTarget(commentTarget === i ? null : i)}
+                        className="w-9 h-9 rounded-full flex items-center justify-center text-[#6b5b3e] hover:bg-[#f3efe4] hover:scale-105 transition"
+                        title="كتابة تعليق"
+                      >
+                        <FiMessageSquare size={17} />
+                      </button>
+
+{/* Edit */}
+                      <button
+                        onClick={() => {
+                          const user = getSavedUser('admin');
+                          const adminRoles = ["admin", "commander", "super_admin"];
+                          if (!user || !adminRoles.includes(user.role)) {
+                            alert("غير مصرح لك بالدخول لهذه العملية");
+                            return;
+                          }
+                          setEditTarget({ index: i, record: row });
+                        }}
                         className="w-9 h-9 rounded-full flex items-center justify-center text-[#6b5b3e] hover:bg-[#f3efe4] hover:scale-105 transition"
                         title="تعديل"
                       >
                         <FiEdit2 size={17} />
                       </button>
 
-                      {/* Delete */}
+{/* Delete */}
                       <button
-                        onClick={() => setDeleteTarget({ index: i, record: row })}
+                        onClick={() => {
+                          const user = getSavedUser('admin');
+                          const adminRoles = ["admin", "commander", "super_admin"];
+                          if (!user || !adminRoles.includes(user.role)) {
+                            alert("غير مصرح لك بالدخول لهذه العملية");
+                            return;
+                          }
+                          setDeleteTarget({ index: i, record: row });
+                        }}
                         className="w-9 h-9 rounded-full flex items-center justify-center text-[#6b5b3e] hover:bg-red-50 hover:text-red-600 hover:scale-105 transition"
                         title="حذف"
                       >
                         <FiTrash2 size={17} />
                       </button>
                     </div>
+                    {commentTarget === i && (
+                      <div className="mt-3">
+                        <textarea
+                          value={row.comment || ""}
+                          onChange={(event) => onCommentChange?.(row, event.target.value)}
+                          rows={2}
+                          placeholder="اكتب تعليق الأدمن هنا"
+                          className="w-full min-w-[220px] resize-none rounded-lg border border-gray-200 bg-gray-50 px-3 py-2 text-xs outline-none focus:border-[#555d30]"
+                        />
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))

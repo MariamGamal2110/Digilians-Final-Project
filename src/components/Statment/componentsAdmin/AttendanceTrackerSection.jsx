@@ -1,53 +1,16 @@
 import React, { useMemo, useState } from 'react'
 
-const students = [
-    {
-        id: 1,
-        name: 'أحمد محمد علي',
-        nationalId: '29901011234567',
-        militaryId: '25698',
-        date: '2023/10/22',
-        time: '7:10 ص',
-        permitType: 'اعتيادي',
-        status: 'present',
-        note: '',
-    },
-    {
-        id: 2,
-        name: 'ياسين فهد القحطاني',
-        nationalId: '30009011234567',
-        militaryId: '32657',
-        date: '2023/10/22',
-        time: '8:40 ص',
-        permitType: 'عسكري',
-        status: 'late',
-        note: 'late',
-    },
-    {
-        id: 3,
-        name: 'سعود عبد الله',
-        nationalId: '30103021234567',
-        militaryId: '25874',
-        date: '2023/10/22',
-        time: '7:20 ص',
-        permitType: 'اعتيادي',
-        status: 'present',
-        note: 'appeal',
-    },
-    {
-        id: 4,
-        name: 'محمود جابر العشري',
-        nationalId: '30005061234567',
-        militaryId: '36987',
-        date: '2023/10/22',
-        time: '8:05 ص',
-        permitType: 'اعتيادي',
-        status: 'late',
-        note: 'late',
-    },
-]
+function getRecordId(record) {
+    return record._id || record.id
+}
 
-export default function AttendanceTrackerSection({ filters }) {
+export default function AttendanceTrackerSection({ 
+    filters, 
+    records = [], 
+    loading = false,
+    onRecordDeleted,
+    role = 'user'
+}) {
     const [attendanceFilter, setAttendanceFilter] = useState('all')
     const [openNoteForId, setOpenNoteForId] = useState(null)
     const [notesByStudent, setNotesByStudent] = useState({})
@@ -55,9 +18,10 @@ export default function AttendanceTrackerSection({ filters }) {
     const visibleStudents = useMemo(() => {
         const searchValue = filters.searchValue || ''
 
-        return students.filter((student) => {
-            const matchesSearch = searchValue
-                ? student.nationalId.includes(searchValue) || student.militaryId.includes(searchValue)
+        return records.filter((student) => {
+            const recordId = getRecordId(student)
+const matchesSearch = searchValue
+                ? student.email?.toLowerCase()?.includes(searchValue.toLowerCase()) || student.militaryId?.includes(searchValue)
                 : true
 
             const matchesStatus =
@@ -68,7 +32,7 @@ export default function AttendanceTrackerSection({ filters }) {
 
             return matchesSearch && matchesStatus
         })
-    }, [attendanceFilter, filters.searchValue])
+    }, [attendanceFilter, filters.searchValue, records])
 
     const toggleNoteEditor = (studentId) => {
         setOpenNoteForId((prev) => (prev === studentId ? null : studentId))
@@ -76,6 +40,13 @@ export default function AttendanceTrackerSection({ filters }) {
 
     const saveNote = () => {
         setOpenNoteForId(null)
+    }
+
+    const handleDeleteRecord = (recordId) => {
+        if (window.confirm('هل أنت متأكد من حذف هذا السجل؟')) {
+            onRecordDeleted?.(recordId)
+            alert('تم الحذف بنجاح')
+        }
     }
 
     return (
@@ -110,94 +81,109 @@ export default function AttendanceTrackerSection({ filters }) {
                     <table className="w-full min-w-[860px] text-right">
                         <thead>
                             <tr className="border-b bg-white/30">
-                                <th className="py-4 px-4 text-xs font-bold">الرقم العسكري</th>
+<th className="py-4 px-4 text-xs font-bold">الرقم العسكري</th>
                                 <th className="py-4 px-4 text-xs font-bold">اسم الطالب</th>
-                                <th className="py-4 px-4 text-xs font-bold">الرقم القومي</th>
+                                <th className="py-4 px-4 text-xs font-bold">البريد الإلكتروني</th>
                                 <th className="py-4 px-4 text-xs font-bold">تاريخ الوصول</th>
                                 <th className="py-4 px-4 text-xs font-bold">وقت الوصول</th>
                                 <th className="py-4 px-4 text-xs font-bold">حالة الطلب</th>
                                 <th className="py-4 px-4 text-xs font-bold">حالة الوصول</th>
                                 <th className="py-4 px-4 text-xs font-bold">الإجراءات</th>
                             </tr>
-                        </thead>
-
+</thead>
                         <tbody>
-                            {visibleStudents.map((student) => (
-                                <React.Fragment key={student.id}>
-                                    <tr className="hover:bg-gray-50">
-                                        <td className="py-4 px-4 font-bold">{student.militaryId}</td>
-                                        <td className="py-4 px-4">{student.name}</td>
-                                        <td className="py-4 px-4">{student.nationalId}</td>
-                                        <td className="py-4 px-4">{student.date}</td>
-                                        <td className="py-4 px-4">{student.time}</td>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={8} className="text-center py-6">
+                                        جاري تحميل البيانات...
+                                    </td>
+                                </tr>
+                            ) : visibleStudents.length === 0 ? (
+                                <tr>
+                                    <td colSpan={8} className="text-center py-6">
+                                        لا توجد بيانات
+                                    </td>
+                                </tr>
+                            ) : (
+                                visibleStudents.map((student) => (
+                                    <React.Fragment key={student.id}>
+                                        <tr className="hover:bg-gray-50">
+<td className="py-4 px-4 font-bold">{student.militaryId}</td>
+                                            <td className="py-4 px-4">{student.name}</td>
+                                            <td className="py-4 px-4">{student.email}</td>
+                                            <td className="py-4 px-4">{student.date}</td>
+                                            <td className="py-4 px-4">{student.time}</td>
 
-                                        <td className="py-4 px-4">
-                                            <span className="bg-gray-200 px-2 py-1 rounded text-xs">
-                                                {student.permitType}
-                                            </span>
-                                        </td>
-
-                                        <td className="py-4 px-4 font-bold">
-                                            {student.status === 'present' ? (
-                                                <span className="text-green-600">في الموعد</span>
-                                            ) : (
-                                                <span className="text-red-600">متأخر</span>
-                                            )}
-                                        </td>
-
-                                        {/* زر فتح التعليق */}
-                                        <td className="py-4 px-4">
-                                            <button
-                                                className="p-2 rounded-full hover:bg-gray-200 flex items-center justify-center"
-                                                onClick={() => toggleNoteEditor(student.id)}
-                                            >
-                                                <span className="material-symbols-outlined text-lg">
-                                                    edit
+                                            <td className="py-4 px-4">
+                                                <span className="bg-gray-200 px-2 py-1 rounded text-xs">
+                                                    {student.permitType}
                                                 </span>
-                                            </button>
-                                        </td>
-                                    </tr>
+                                            </td>
 
-                                    {/* التعليق */}
-                                    {openNoteForId === student.id && (
-                                        <tr>
-                                            <td colSpan={8} className="p-4 bg-gray-50">
-                                                <div className="bg-white p-4 rounded-lg border shadow-sm">
-                                                    <p className="text-sm mb-2 font-bold">ملاحظات</p>
+                                            <td className="py-4 px-4 font-bold">
+                                                {student.status === 'present' ? (
+                                                    <span className="text-green-600">في الموعد</span>
+                                                ) : (
+                                                    <span className="text-red-600">متأخر</span>
+                                                )}
+                                            </td>
 
-                                                    <textarea
-                                                        className="w-full border rounded p-2 text-sm"
-                                                        rows="3"
-                                                        placeholder="اكتب ملاحظتك..."
-                                                        value={notesByStudent[student.id] || ''}
-                                                        onChange={(e) =>
-                                                            setNotesByStudent((prev) => ({
-                                                                ...prev,
-                                                                [student.id]: e.target.value,
-                                                            }))
-                                                        }
-                                                    />
-
-                                                    <div className="flex justify-end gap-2 mt-3">
-                                                        <button
-                                                            className="px-3 py-1 bg-gray-200 rounded"
-                                                            onClick={() => setOpenNoteForId(null)}
-                                                        >
-                                                            إلغاء
-                                                        </button>
-                                                        <button
-                                                            className="px-3 py-1 bg-black text-white rounded"
-                                                            onClick={() => saveNote(student.id)}
-                                                        >
-                                                            حفظ
-                                                        </button>
-                                                    </div>
+                                            <td className="py-4 px-4">
+                                                <div className="flex items-center gap-1">
+                                                    <button
+                                                        className="p-2 rounded-full hover:bg-gray-200 flex items-center justify-center"
+                                                        onClick={() => toggleNoteEditor(getRecordId(student))}
+                                                    >
+                                                        <span className="material-symbols-outlined text-lg">edit</span>
+                                                    </button>
+                                                    <button
+                                                        className="p-2 rounded-full hover:bg-red-100 flex items-center justify-center text-red-600"
+                                                        onClick={() => handleDeleteRecord(getRecordId(student))}
+                                                    >
+                                                        <span className="material-symbols-outlined text-lg">delete</span>
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>
-                                    )}
-                                </React.Fragment>
-                            ))}
+
+                                        {openNoteForId === getRecordId(student) && (
+                                            <tr>
+                                                <td colSpan={8} className="p-4 bg-gray-50">
+                                                    <div className="bg-white p-4 rounded-lg border shadow-sm">
+                                                        <p className="text-sm mb-2 font-bold">ملاحظات</p>
+                                                        <textarea
+                                                            className="w-full border rounded p-2 text-sm"
+                                                            rows="3"
+                                                            placeholder="اكتب ملاحظتك..."
+                                                            value={notesByStudent[student.id] || ''}
+                                                            onChange={(e) =>
+                                                                setNotesByStudent((prev) => ({
+                                                                    ...prev,
+                                                                    [student.id]: e.target.value,
+                                                                }))
+                                                            }
+                                                        />
+                                                        <div className="flex justify-end gap-2 mt-3">
+                                                            <button
+                                                                className="px-3 py-1 bg-gray-200 rounded"
+                                                                onClick={() => setOpenNoteForId(null)}
+                                                            >
+                                                                إلغاء
+                                                            </button>
+                                                            <button
+                                                                className="px-3 py-1 bg-black text-white rounded"
+                                                                onClick={() => saveNote(student.id)}
+                                                            >
+                                                                حفظ
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        )}
+                                    </React.Fragment>
+                                ))
+                            )}
                         </tbody>
                     </table>
 

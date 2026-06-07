@@ -36,6 +36,26 @@ export default function PunishmentAdmin() {
     setData((prev) => prev.map((r, i) => (i === index ? record : r)));
   }
 
+  function handleDegreeChange(target, amount) {
+    setData((prev) =>
+      prev.map((row, i) =>
+        (typeof target === "number" ? i === target : row.militaryNum === target.militaryNum)
+          ? { ...row, degree: Math.max(0, Math.min(20, Number(row.degree || 0) + amount)) }
+          : row
+      )
+    );
+  }
+
+  function handleCommentChange(target, comment) {
+    setData((prev) =>
+      prev.map((row, i) =>
+        (typeof target === "number" ? i === target : row.militaryNum === target.militaryNum)
+          ? { ...row, comment }
+          : row
+      )
+    );
+  }
+
   function handleDelete(index) {
     setData((prev) => prev.filter((_, i) => i !== index));
   }
@@ -87,6 +107,8 @@ export default function PunishmentAdmin() {
             onSearchChange={setSearchText}
             onAdd={handleAdd}
             onEdit={handleEdit}
+            onDegreeChange={handleDegreeChange}
+            onCommentChange={handleCommentChange}
             onDelete={handleDelete}
           />
 

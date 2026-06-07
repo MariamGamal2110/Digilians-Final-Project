@@ -80,12 +80,12 @@ const SignIn = () => {
         body: JSON.stringify(formData),
       });
 
-      saveAuthData({ token: data.token, user: data.user });
-
-      const isAdmin =
+const isAdmin =
         data.user.role === "admin" ||
         data.user.role === "commander" ||
         data.user.role === "super_admin";
+
+      saveAuthData({ token: data.token, user: data.user, role: isAdmin ? "admin" : "user" });
 
       navigate(isAdmin ? "/admin/home" : "/home");
     } catch (err) {

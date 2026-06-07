@@ -119,7 +119,7 @@ const SignUp = () => {
         }),
       });
 
-      saveAuthData({ token: data.token, user: data.user });
+      saveAuthData({ token: data.token, user: data.user, role: isAdmin ? 'admin' : 'user' });
       navigate(isAdmin ? "/admin/home" : "/home");
     } catch (err) {
       setError(err.message || "فشل التسجيل، حاول مرة أخرى.");
