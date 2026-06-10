@@ -1,4 +1,4 @@
-import { apiRequest } from './client'
+﻿import { apiRequest } from './client'
 
 export async function addStudentAttendance(identifier, role = 'user') {
   const data = await apiRequest('/statement/attendance', {
@@ -42,17 +42,32 @@ export async function deleteAttendanceRecords(ids = [], role = 'user') {
   await Promise.all(ids.map((id) => deleteAttendanceRecord(id, role)))
 }
 
+export async function clearAllAttendanceRecords(role = 'user') {
+  const data = await apiRequest('/statement/attendance/clear-all', {
+    method: 'DELETE',
+  }, role)
+  return data
+}
+
 export async function searchStudentsWithStatus(search = '', role = 'user') {
   const query = search ? `?search=${encodeURIComponent(search)}` : ''
   const data = await apiRequest(`/statement/search${query}`, {}, role)
   return data.results
 }
 
-
 export async function updateAttendancePermitType(recordId, permitType, role = 'user') {
   const data = await apiRequest(`/statement/attendance/${recordId}/permit-type`, {
     method: 'PATCH',
     body: JSON.stringify({ permitType }),
+  }, role)
+  return data.record
+}
+
+
+export async function updateAttendanceDeduction(recordId, deduction, role = 'admin') {
+  const data = await apiRequest(`/statement/attendance/${recordId}/deduction`, {
+    method: 'PATCH',
+    body: JSON.stringify({ deduction }),
   }, role)
   return data.record
 }
