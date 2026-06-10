@@ -19,28 +19,7 @@ function PunishmentIcon({ type }) {
   )
 }
 
-export default function UserPunishmentTable() {
-  const punishments = [
-    {
-      violation: 'تأخير أثناء عودة أجازات',
-      punishment: 'خصم من الدرجات',
-      value: 2,
-      type: 'late',
-    },
-    {
-      violation: 'عدم الإلتزام بهيئة الزى',
-      punishment: 'تأخير ساعتين عن نزول الإجازات',
-      value: 5,
-      type: 'uniform',
-    },
-    {
-      violation: 'الاستيقاظ بعد نوبة نوم',
-      punishment: 'حرمان من الإجازة يوم الأربعاء',
-      value: 5,
-      type: 'sleep',
-    },
-  ]
-
+export default function UserPunishmentTable({ punishments = [] }) {
   return (
     <div className="mt-6 bg-white border border-gray-200 rounded-xl overflow-hidden">
       <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
@@ -73,44 +52,52 @@ export default function UserPunishmentTable() {
           </thead>
 
           <tbody>
-            {punishments.map((row, i) => (
-              <tr
-                key={i}
-                className="border-b border-gray-100 last:border-b-0 hover:bg-[#faf9f4] transition"
-              >
-                <td className="px-5 py-4 text-[#555d30] font-bold">
-                  {i + 1}
-                </td>
-
-                <td className="px-5 py-4">
-                  <div className="flex items-center gap-3">
-                    <PunishmentIcon type={row.type} />
-
-                    <div>
-                      <p className="text-[#1f220f] font-bold">
-                        {row.violation}
-                      </p>
-
-                      <p className="text-[#7a7a68] text-xs mt-1">
-                        مخالفة مسجلة على الطالب
-                      </p>
-                    </div>
-                  </div>
-                </td>
-
-                <td className="px-5 py-4 text-[#1f220f] font-bold">
-                  {row.punishment}
-                </td>
-
-                <td className="px-5 py-4">
-                  <div className="flex justify-center">
-                    <span className="w-9 h-9 rounded-full bg-[#555d30] text-white flex items-center justify-center font-bold">
-                      {row.value}
-                    </span>
-                  </div>
+            {punishments.length === 0 ? (
+              <tr>
+                <td colSpan={4} className="text-center py-10 text-gray-400">
+                  لا توجد مخالفات مسجلة
                 </td>
               </tr>
-            ))}
+            ) : (
+              punishments.map((row, i) => (
+                <tr
+                  key={i}
+                  className="border-b border-gray-100 last:border-b-0 hover:bg-[#faf9f4] transition"
+                >
+                  <td className="px-5 py-4 text-[#555d30] font-bold">
+                    {i + 1}
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <div className="flex items-center gap-3">
+                      <PunishmentIcon type={row.type} />
+
+                      <div>
+                        <p className="text-[#1f220f] font-bold">
+                          {row.violation}
+                        </p>
+
+                        <p className="text-[#7a7a68] text-xs mt-1">
+                          مخالفة مسجلة على الطالب
+                        </p>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td className="px-5 py-4 text-[#1f220f] font-bold">
+                    {row.punishment}
+                  </td>
+
+                  <td className="px-5 py-4">
+                    <div className="flex justify-center">
+                      <span className="w-9 h-9 rounded-full bg-[#555d30] text-white flex items-center justify-center font-bold">
+                        {row.degree ?? 0}
+                      </span>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

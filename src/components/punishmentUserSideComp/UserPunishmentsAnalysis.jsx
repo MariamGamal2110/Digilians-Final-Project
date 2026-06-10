@@ -1,11 +1,7 @@
 import React from 'react'
 import { FiAlertTriangle, FiMinusCircle, FiCheckCircle } from 'react-icons/fi'
 
-export default function UserPunishmentsAnalysis({ studentName }) {
-  const totalPunishments = 3
-  const deductedPoints = 12
-  const remainingPoints = 88
-
+export default function UserPunishmentsAnalysis({ studentName, totalPunishments = 0, deductedPoints = 0, remainingPoints = 100 }) {
   const analysisCards = [
     {
       title: 'عدد المخالفات',
@@ -16,13 +12,13 @@ export default function UserPunishmentsAnalysis({ studentName }) {
     {
       title: 'الدرجات المخصومة',
       value: deductedPoints,
-      description: 'إجمالي الخصم من الدرجات العسكريه',
+      description: 'إجمالي الخصم من الدرجات العسكرية',
       icon: <FiMinusCircle size={22} />,
     },
     {
       title: 'باقي الدرجات',
       value: remainingPoints,
-      description: 'الدرجات العسكريه المتبقية للطالب',
+      description: 'الدرجات العسكرية المتبقية للطالب',
       icon: <FiCheckCircle size={22} />,
     },
   ]
