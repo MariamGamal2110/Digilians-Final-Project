@@ -67,6 +67,26 @@ export default function ExcuseSidebar({ request, onDecision }) {
           </p>
         </div>
 
+        {/* Attachments */}
+        {request.attachments && request.attachments.length > 0 && (
+          <div className="rounded-xl p-3 bg-white border border-gray-100">
+            <p className="text-xs font-bold text-[#555d30] mb-2">المرفقات</p>
+            <ul className="space-y-2">
+              {request.attachments.map((a, idx) => (
+                <li key={idx}>
+                  {a.mimetype && a.mimetype.startsWith('image/') ? (
+                    <a href={a.url} target="_blank" rel="noreferrer" className="inline-block">
+                      <img src={a.url} alt={a.originalName || a.filename} className="max-h-40 rounded-md" />
+                    </a>
+                  ) : (
+                    <a href={a.url} target="_blank" rel="noreferrer" className="text-sm text-[#555d30] underline">{a.originalName || a.filename}</a>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+
         {/* Admin Note from previous decision */}
         {isDecided && request.adminNote && (
           <div className={`rounded-xl p-3 text-xs leading-relaxed ${

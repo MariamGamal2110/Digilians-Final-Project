@@ -1,44 +1,40 @@
-import { useState } from "react";
-import RequestsTable from "../../components/ExcuseAdminComponents/RequestsTable ";
-import ExcuseSidebar from './../../components/ExcuseAdminComponents/ExcuseSidebar';
+import { useState, useEffect } from "react";
+import RequestsTable from "../../components/ExcuseAdminComponents/RequestsTable";
+import ExcuseSidebar from "./../../components/ExcuseAdminComponents/ExcuseSidebar";
+import { getAllExcuses, respondToExcuse } from "../../api/excuse";
 
-const initialData = [
-  {
-    id: "63247",
-    name: "أحمد محمود الشناوي",
-    type: "إعادة مراجعة",
-    status: "جديد",
-    details:
-      "مع التحية وبعد.. أتقدم لسيادتكم بطلب التماس بإذن إجازة لحضور حفل زفاف شقيقتي ليلى محمود الشناوي وذلك يوم 5/5/2026 الموافق الثلاثاء.",
-  },
-  {
-    id: "65287",
-    name: "صلاح الدين سيد مكرم",
-    type: "إعادة مراجعة",
-    status: "جديد",
-    details:
-      "مع التحية وبعد.. أتقدم لسيادتكم بطلب التماس بإذن إجازة لحضور حفل زفاف شقيقتي ليلى محمود الشناوي وذلك يوم 5/5/2026 الموافق الثلاثاء.",
-  },
-  {
-    id: "53207",
-    name: "عبدالله محمود سعيد",
-    type: "إعادة مراجعة",
-    status: "جديد",
-    details:
-      "مع التحية وبعد.. أتقدم لسيادتكم بطلب التماس بإذن إجازة لحضور حفل زفاف شقيقتي ليلى محمود الشناوي وذلك يوم 5/5/2026 الموافق الثلاثاء.",
-  },
-  {
-    id: "23258",
-    name: "محمد علي حسن",
-    type: "إعادة مراجعة أولى",
-    status: "مقبول",
-    details: "أتقدم بطلب تأجيل الاختبار بسبب ظروف صحية طارئة.",
-  },
-];
+const initialData = [];
 
 export default function ExecuseAdmin() {
   const [data, setData] = useState(initialData);
   const [selectedId, setSelectedId] = useState(null);
+
+  useEffect(() => {
+    let mounted = true;
+
+    async function load() {
+      try {
+        const excusesRows = await getAllExcuses();
+        const mapped = (excusesRows || []).map((r) => ({
+          id: r.militaryId || r._id,
+          _id: r._id,
+          name: r.studentName || r.user?.name || r.user?.email || "-",
+          type: r.title || r.type || "التماس",
+          status: r.status || "قيد المراجعة",
+          details: r.message || r.details || "",
+          adminNote: r.response || "",
+          attachments: r.attachments || [],
+        }));
+
+        if (mounted) setData(mapped);
+      } catch (err) {
+        console.error("Failed to load excuses", err);
+      }
+    }
+
+    load();
+    return () => (mounted = false);
+  }, []);
 
   // always derive selectedRequest from data so it reflects latest status
   const selectedRequest = data.find((r) => r.id === selectedId) ?? null;
@@ -49,13 +45,29 @@ export default function ExecuseAdmin() {
 
   // called from ExcuseSidebar when admin approves or rejects
   function handleDecision(id, decision, note) {
-    setData((prev) =>
-      prev.map((r) =>
-        r.id === id
-          ? { ...r, status: decision, adminNote: note }
-          : r
-      )
-    );
+    // optimistically update UI
+    setData((prev) => prev.map((r) => (r.id === id ? { ...r, status: decision, adminNote: note } : r)));
+
+    // call backend
+    (async () => {
+      try {
+        const updated = await respondToExcuse(id, { response: note, status: decision });
+
+        setData((prev) =>
+          prev.map((r) =>
+            r.id === id
+              ? {
+                  ...r,
+                  status: updated?.status || decision,
+                  adminNote: updated?.response || note,
+                }
+              : r,
+          ),
+        );
+      } catch (err) {
+        console.error("Failed to send decision", err);
+      }
+    })();
   }
 
   return (
@@ -64,31 +76,20 @@ export default function ExecuseAdmin() {
 
         {/* Page Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-extrabold mb-2 text-[#555d30]">
-            إدارة الالتماسات النشطة
-          </h1>
-          <p className="text-sm leading-7 max-w-xl text-gray-600">
-            مراجعة والبت في طلبات الإجازات الاستثنائية والالتماسات المقدمة
-          </p>
+          <h1 className="text-3xl font-extrabold mb-2 text-[#555d30]">إدارة الالتماسات النشطة</h1>
+          <p className="text-sm leading-7 max-w-xl text-gray-600">مراجعة والبت في طلبات الإجازات الاستثنائية والالتماسات المقدمة</p>
         </div>
 
         {/* Content */}
         <div className="flex gap-4 items-start">
           {/* Table takes remaining width */}
           <div className="flex-1 min-w-0">
-            <RequestsTable
-              data={data}
-              selectedId={selectedId}
-              onSelect={handleSelect}
-            />
+            <RequestsTable data={data} selectedId={selectedId} onSelect={handleSelect} />
           </div>
 
           {/* Sidebar fixed width */}
           <div className="w-80 flex-shrink-0">
-            <ExcuseSidebar
-              request={selectedRequest}
-              onDecision={handleDecision}
-            />
+            <ExcuseSidebar request={selectedRequest} onDecision={handleDecision} />
           </div>
         </div>
 
