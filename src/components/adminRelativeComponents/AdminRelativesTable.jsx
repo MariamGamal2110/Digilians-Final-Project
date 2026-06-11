@@ -1,22 +1,34 @@
 import { FiEye, FiPrinter } from 'react-icons/fi'
 
-export default function AdminRelativesTable({ selectedStudent, onSelectRelative }) {
+export default function AdminRelativesTable({
+  selectedStudent,
+  relatives,
+  onSelectRelative = () => {},
+  isLoading,
+  error,
+}) {
   function printRecord() {
     alert('سيتم طباعة السجل لاحقًا')
+  }
+
+  if (!selectedStudent) {
+    return (
+      <div className="bg-white border border-gray-200 rounded-xl p-5 min-h-[250px] flex items-center justify-center text-center text-[#555d30]">
+        ابدأ بالبحث عن طالب لعرض بيانات الأقارب
+      </div>
+    )
   }
 
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5">
       <div className="flex items-center justify-between mb-5">
         <div className="text-right">
-          
-
           <h2 className="text-[#1f220f] text-xl font-bold">
             الأفراد المسجلين
           </h2>
 
           <p className="text-[#555d30] text-sm mt-1">
-            يوجد أفراد عائلة مسجلين لدي الطالب {selectedStudent.name}
+            يوجد {relatives.length} من سجلات الأقارب للطالب {selectedStudent.name}
           </p>
         </div>
 
@@ -44,13 +56,35 @@ export default function AdminRelativesTable({ selectedStudent, onSelectRelative 
           </thead>
 
           <tbody>
-            {selectedStudent.relatives.map((relative) => (
+            {isLoading && (
+              <tr>
+                <td
+                  colSpan="7"
+                  className="py-8 text-center text-[#555d30] font-bold"
+                >
+                  جاري تحميل بيانات الأقارب...
+                </td>
+              </tr>
+            )}
+
+            {!isLoading && error && (
+              <tr>
+                <td
+                  colSpan="7"
+                  className="py-8 text-center text-red-600 font-bold"
+                >
+                  {error}
+                </td>
+              </tr>
+            )}
+
+            {!isLoading && !error && relatives.map((relative) => (
               <tr
                 key={relative.id}
                 className="border-b border-gray-200 last:border-b-0"
               >
                 <td className="py-4 px-3 text-[#1f220f]">
-                  {relative.name}
+                  {relative.relativeName}
                 </td>
 
                 <td className="py-4 px-3 text-[#1f220f]">
@@ -58,20 +92,20 @@ export default function AdminRelativesTable({ selectedStudent, onSelectRelative 
                 </td>
 
                 <td className="py-4 px-3 text-[#1f220f]">
-                  {relative.nationalId}
+                  {relative.nationalId || '—'}
                 </td>
 
                 <td className="py-4 px-3 text-[#1f220f]">
-                  {relative.birthDate}
+                  {relative.birthDate || '—'}
                 </td>
 
                 <td className="py-4 px-3 text-[#1f220f]">
-                  {relative.job}
+                  {relative.job || '—'}
                 </td>
 
                 <td className="py-4 px-3">
                   <span className="bg-[#e8e5dc] text-[#1f220f] rounded-md px-4 py-2 text-xs font-bold">
-                    {relative.status}
+                    {relative.socialStatus || '—'}
                   </span>
                 </td>
 
@@ -87,7 +121,7 @@ export default function AdminRelativesTable({ selectedStudent, onSelectRelative 
               </tr>
             ))}
 
-            {selectedStudent.relatives.length === 0 && (
+            {!isLoading && !error && relatives.length === 0 && (
               <tr>
                 <td
                   colSpan="7"

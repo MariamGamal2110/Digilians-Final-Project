@@ -6,8 +6,14 @@ export default function StudentsListPanel({ students, selectedStudent, onSelectS
       </h2>
 
       <div className="space-y-3">
+        {students.length === 0 && (
+          <div className="rounded-lg bg-[#f7f5f0] px-4 py-8 text-center text-sm text-[#555d30]">
+            لا توجد نتائج للبحث الحالي
+          </div>
+        )}
+
         {students.map((student) => {
-          const isSelected = selectedStudent.id === student.id
+          const isSelected = selectedStudent?.id === student.id
 
           return (
             <button
@@ -25,6 +31,10 @@ export default function StudentsListPanel({ students, selectedStudent, onSelectS
 
               <p className={isSelected ? 'text-white/80 text-xs' : 'text-[#555d30] text-xs'}>
                 الرقم العسكري: {student.militaryId}
+              </p>
+
+              <p className={isSelected ? 'text-white/80 text-xs mt-1' : 'text-[#555d30] text-xs mt-1'}>
+                عدد الأقارب: {student.relativesCount ?? 0}
               </p>
             </button>
           )
