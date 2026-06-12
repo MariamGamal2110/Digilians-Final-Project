@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { FiEye, FiEdit2, FiTrash2 } from 'react-icons/fi'
 import AddRelativeModal from './AddRelativeModal'
 
@@ -23,16 +23,7 @@ export default function RelativesTable({
       return true
     }
 
-    return (
-      (relative.relativeName || '').toLowerCase().includes(searchValue) ||
-      (relative.relation || '').toLowerCase().includes(searchValue) ||
-      (relative.nationalId || '').toLowerCase().includes(searchValue) ||
-      (relative.birthDate || '').toLowerCase().includes(searchValue) ||
-      (relative.job || '').toLowerCase().includes(searchValue) ||
-      (relative.socialStatus || '').toLowerCase().includes(searchValue) ||
-      (relative.phone || '').toLowerCase().includes(searchValue) ||
-      (relative.address || '').toLowerCase().includes(searchValue)
-    )
+    return (relative.relativeName || '').toLowerCase().includes(searchValue)
   })
 
   function openAddModal() {
@@ -218,7 +209,7 @@ export default function RelativesTable({
                 >
                   {relatives.length === 0
                     ? 'لا توجد بيانات أقارب مسجلة بعد'
-                    : 'لا توجد نتائج مطابقة للبحث'}
+                    : 'لا توجد نتائج مطابقة'}
                 </td>
               </tr>
             )}

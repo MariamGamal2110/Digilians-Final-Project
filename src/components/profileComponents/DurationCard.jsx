@@ -1,4 +1,4 @@
-import InfoCard from './InfoCard'
+﻿import InfoCard from './InfoCard'
 
 export default function DurationCard({ selectedDuration }) {
   const durations = [
@@ -7,6 +7,8 @@ export default function DurationCard({ selectedDuration }) {
     'سنة واحدة',
     'سنتين',
   ]
+
+  const safeSelectedDuration = selectedDuration || '4 أشهر'
 
   return (
     <div className="rounded-xl transition-transform duration-300 ease-out hover:-translate-y-1">
@@ -18,7 +20,7 @@ export default function DurationCard({ selectedDuration }) {
               type="button"
               disabled
               className={
-                duration === selectedDuration
+                duration === safeSelectedDuration
                   ? 'bg-[#555d30] text-white rounded-md py-2.5 font-bold cursor-default'
                   : 'bg-[#e8e5dc] text-[#1f220f] rounded-md py-2.5 font-bold cursor-default'
               }

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+﻿import { useEffect, useMemo, useState } from 'react'
 
 import {
   getStudentRelatives,
@@ -16,7 +16,8 @@ export default function RelativesAdmin() {
   const [students, setStudents] = useState([])
   const [selectedStudentId, setSelectedStudentId] = useState('')
   const [studentDetails, setStudentDetails] = useState(null)
-  const [isSearching, setIsSearching] = useState(true)
+  const [isSearching, setIsSearching] = useState(false)
+  const [hasLoadedStudents, setHasLoadedStudents] = useState(false)
   const [searchError, setSearchError] = useState('')
   const [isLoadingStudent, setIsLoadingStudent] = useState(false)
   const [studentError, setStudentError] = useState('')
@@ -25,6 +26,7 @@ export default function RelativesAdmin() {
 
   useEffect(() => {
     let isMounted = true
+    const debounceDelay = deferredSearch ? 300 : 0
 
     const timeoutId = setTimeout(async () => {
       setIsSearching(true)
@@ -61,9 +63,10 @@ export default function RelativesAdmin() {
       } finally {
         if (isMounted) {
           setIsSearching(false)
+          setHasLoadedStudents(true)
         }
       }
-    }, 300)
+    }, debounceDelay)
 
     return () => {
       isMounted = false
@@ -120,7 +123,6 @@ export default function RelativesAdmin() {
     students.find((student) => student.id === selectedStudentId) ||
     null
   const relatives = studentDetails?.relatives || []
-  const combinedError = searchError || studentError
 
   return (
     <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8">
@@ -134,7 +136,6 @@ export default function RelativesAdmin() {
           {selectedStudent && (
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mb-6">
               <SupervisorCard student={selectedStudent} />
-
               <RelativeDetailsCard student={selectedStudent} />
               <SecurityStatusCard />
             </div>
@@ -146,6 +147,9 @@ export default function RelativesAdmin() {
                 students={students}
                 selectedStudent={selectedStudent}
                 onSelectStudent={handleSelectStudent}
+                isLoading={isSearching}
+                error={searchError}
+                hasLoaded={hasLoadedStudents}
               />
             </div>
 
@@ -153,8 +157,8 @@ export default function RelativesAdmin() {
               <AdminRelativesTable
                 selectedStudent={selectedStudent}
                 relatives={relatives}
-                isLoading={isSearching || isLoadingStudent}
-                error={combinedError}
+                isLoading={isLoadingStudent}
+                error={studentError}
               />
             </div>
           </div>
