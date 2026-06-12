@@ -2,8 +2,8 @@
 
 import {
   getStudentRelatives,
-  searchStudentsRelatives,
 } from '../../api/relatives'
+import { searchProfileStudents } from '../../api/profile'
 import AdminRelativesTopBar from '../../components/adminRelativeComponents/AdminRelativesTopBar'
 import StudentsListPanel from '../../components/adminRelativeComponents/StudentsListPanel'
 import AdminRelativesTable from '../../components/adminRelativeComponents/AdminRelativesTable'
@@ -35,13 +35,18 @@ export default function RelativesAdmin() {
       setSearchError('')
 
       try {
-        const results = await searchStudentsRelatives(deferredSearch)
+        const results = await searchProfileStudents(deferredSearch)
 
         if (!isMounted) {
           return
         }
 
-        setStudents(results)
+        setStudents(
+          results.map((student) => ({
+            ...student,
+            relativesCount: student.relativesCount ?? 0,
+          })),
+        )
 
         if (results.length === 0) {
           setSelectedStudentId('')
