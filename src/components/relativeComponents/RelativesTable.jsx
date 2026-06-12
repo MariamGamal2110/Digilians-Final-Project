@@ -1,6 +1,7 @@
-﻿import { useState } from 'react'
+import { useState } from 'react'
 import { FiEye, FiEdit2, FiTrash2 } from 'react-icons/fi'
 import AddRelativeModal from './AddRelativeModal'
+import RelativeDetailsModal from './RelativeDetailsModal'
 
 export default function RelativesTable({
   searchText,
@@ -13,6 +14,7 @@ export default function RelativesTable({
 }) {
   const [showModal, setShowModal] = useState(false)
   const [selectedRelative, setSelectedRelative] = useState(null)
+  const [viewedRelative, setViewedRelative] = useState(null)
   const [modalError, setModalError] = useState('')
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -74,17 +76,7 @@ export default function RelativesTable({
   }
 
   function viewRelative(relative) {
-    alert(
-      `الاسم: ${relative.relativeName}
-صلة القرابة: ${relative.relation}
-الرقم القومي: ${relative.nationalId || 'غير متوفر'}
-تاريخ الميلاد: ${relative.birthDate || 'غير متوفر'}
-الوظيفة: ${relative.job || 'غير متوفر'}
-الحالة الاجتماعية: ${relative.socialStatus || 'غير متوفر'}
-رقم الهاتف: ${relative.phone || 'غير متوفر'}
-العنوان: ${relative.address || 'غير متوفر'}
-ملاحظات: ${relative.notes || 'لا توجد'}`,
-    )
+    setViewedRelative(relative)
   }
 
   return (
@@ -174,6 +166,7 @@ export default function RelativesTable({
                 <td className="py-4 px-4">
                   <div className="flex items-center justify-center gap-2">
                     <button
+                      type="button"
                       onClick={() => viewRelative(relative)}
                       className="w-9 h-9 rounded-full flex items-center justify-center text-[#6b5b3e] hover:bg-[#f3efe4] hover:scale-105 transition"
                       title="عرض"
@@ -182,6 +175,7 @@ export default function RelativesTable({
                     </button>
 
                     <button
+                      type="button"
                       onClick={() => openEditModal(relative)}
                       className="w-9 h-9 rounded-full flex items-center justify-center text-[#6b5b3e] hover:bg-[#f3efe4] hover:scale-105 transition"
                       title="تعديل"
@@ -190,6 +184,7 @@ export default function RelativesTable({
                     </button>
 
                     <button
+                      type="button"
                       onClick={() => deleteRelative(relative.id)}
                       className="w-9 h-9 rounded-full flex items-center justify-center text-[#6b5b3e] hover:bg-[#f3efe4] hover:scale-105 transition"
                       title="حذف"
@@ -226,6 +221,11 @@ export default function RelativesTable({
           errorMessage={modalError}
         />
       )}
+
+      <RelativeDetailsModal
+        relative={viewedRelative}
+        onClose={() => setViewedRelative(null)}
+      />
     </div>
   )
 }

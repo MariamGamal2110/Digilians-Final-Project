@@ -8,6 +8,7 @@ import AdminRelativesTopBar from '../../components/adminRelativeComponents/Admin
 import StudentsListPanel from '../../components/adminRelativeComponents/StudentsListPanel'
 import AdminRelativesTable from '../../components/adminRelativeComponents/AdminRelativesTable'
 import RelativeDetailsCard from '../../components/adminRelativeComponents/RelativeDetailsCard'
+import RelativeDetailsModal from '../../components/adminRelativeComponents/RelativeDetailsModal'
 import SecurityStatusCard from '../../components/adminRelativeComponents/SecurityStatusCard'
 import SupervisorCard from '../../components/adminRelativeComponents/SupervisorCard'
 
@@ -21,6 +22,7 @@ export default function RelativesAdmin() {
   const [searchError, setSearchError] = useState('')
   const [isLoadingStudent, setIsLoadingStudent] = useState(false)
   const [studentError, setStudentError] = useState('')
+  const [selectedRelative, setSelectedRelative] = useState(null)
 
   const deferredSearch = useMemo(() => searchText.trim(), [searchText])
 
@@ -44,6 +46,7 @@ export default function RelativesAdmin() {
         if (results.length === 0) {
           setSelectedStudentId('')
           setStudentDetails(null)
+          setSelectedRelative(null)
           return
         }
 
@@ -60,6 +63,7 @@ export default function RelativesAdmin() {
         setStudents([])
         setSelectedStudentId('')
         setStudentDetails(null)
+        setSelectedRelative(null)
       } finally {
         if (isMounted) {
           setIsSearching(false)
@@ -76,6 +80,7 @@ export default function RelativesAdmin() {
 
   useEffect(() => {
     if (!selectedStudentId) {
+      setSelectedRelative(null)
       return
     }
 
@@ -93,6 +98,7 @@ export default function RelativesAdmin() {
         }
 
         setStudentDetails(payload)
+        setSelectedRelative(null)
       } catch (loadError) {
         if (!isMounted) {
           return
@@ -100,6 +106,7 @@ export default function RelativesAdmin() {
 
         setStudentError(loadError.message || 'فشل جلب سجلات الأقارب')
         setStudentDetails(null)
+        setSelectedRelative(null)
       } finally {
         if (isMounted) {
           setIsLoadingStudent(false)
@@ -116,6 +123,15 @@ export default function RelativesAdmin() {
 
   function handleSelectStudent(student) {
     setSelectedStudentId(student.id)
+    setSelectedRelative(null)
+  }
+
+  function handleOpenRelativeDetails(relative) {
+    setSelectedRelative(relative)
+  }
+
+  function handleCloseRelativeDetails() {
+    setSelectedRelative(null)
   }
 
   const selectedStudent =
@@ -157,6 +173,7 @@ export default function RelativesAdmin() {
               <AdminRelativesTable
                 selectedStudent={selectedStudent}
                 relatives={relatives}
+                onSelectRelative={handleOpenRelativeDetails}
                 isLoading={isLoadingStudent}
                 error={studentError}
               />
@@ -164,6 +181,12 @@ export default function RelativesAdmin() {
           </div>
         </div>
       </div>
+
+      <RelativeDetailsModal
+        relative={selectedRelative}
+        student={selectedStudent}
+        onClose={handleCloseRelativeDetails}
+      />
     </section>
   )
 }

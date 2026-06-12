@@ -42,3 +42,13 @@ export async function getAdminStudentSummary(studentId, role = 'admin') {
 
   return data.profileSummary
 }
+
+export async function getAdminWarningSummary(role = 'admin') {
+  const data = await apiRequest(
+    '/punishments/admin/warning-summary',
+    { method: 'GET' },
+    role,
+  )
+
+  return data.data
+}

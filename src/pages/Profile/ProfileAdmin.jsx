@@ -5,11 +5,13 @@ import AdminProfileTopBar from '../../components/adminProfileComponents/AdminPro
 import AdminInfoHeader from '../../components/adminProfileComponents/AdminInfoHeader'
 import AdminStatsCards from '../../components/adminProfileComponents/AdminStatsCards'
 import AdminActionsList from '../../components/adminProfileComponents/AdminActionsList'
+import WarningSummaryModal from '../../components/adminProfileComponents/WarningSummaryModal'
 import SendStudentMessageModal from '../../components/adminProfileComponents/SendStudentMessageModal'
 import MessagesCenterModal from '../../components/profileComponents/MessagesCenterModal'
 import { getSavedUser } from '../../api/client'
 import {
   getAdminProfile,
+  getAdminWarningSummary,
   getAdminStudentSummary,
   searchProfileStudents,
 } from '../../api/profile'
@@ -51,6 +53,14 @@ export default function ProfileAdmin() {
   const [selectedStudent, setSelectedStudent] = useState(null)
   const [isRefreshingProfile, setIsRefreshingProfile] = useState(true)
   const [errorMessage, setErrorMessage] = useState('')
+  const [warningSummary, setWarningSummary] = useState({
+    oneWarning: { count: 0, students: [] },
+    twoWarnings: { count: 0, students: [] },
+    dismissed: { count: 0, students: [] },
+  })
+  const [isLoadingWarningSummary, setIsLoadingWarningSummary] = useState(true)
+  const [warningSummaryError, setWarningSummaryError] = useState('')
+  const [openedWarningCategory, setOpenedWarningCategory] = useState(null)
 
   const [adminUnreadCount, setAdminUnreadCount] = useState(0)
   const [showInboxModal, setShowInboxModal] = useState(false)
@@ -117,8 +127,42 @@ export default function ProfileAdmin() {
       }
     }
 
+    async function loadWarningSummary() {
+      try {
+        setIsLoadingWarningSummary(true)
+        setWarningSummaryError('')
+        const summary = await getAdminWarningSummary()
+
+        if (!isMounted) {
+          return
+        }
+
+        setWarningSummary({
+          oneWarning: summary?.oneWarning || { count: 0, students: [] },
+          twoWarnings: summary?.twoWarnings || { count: 0, students: [] },
+          dismissed: summary?.dismissed || { count: 0, students: [] },
+        })
+      } catch (error) {
+        if (!isMounted) {
+          return
+        }
+
+        setWarningSummaryError(error.message || 'تعذر تحميل ملخص الإنذارات')
+        setWarningSummary({
+          oneWarning: { count: 0, students: [] },
+          twoWarnings: { count: 0, students: [] },
+          dismissed: { count: 0, students: [] },
+        })
+      } finally {
+        if (isMounted) {
+          setIsLoadingWarningSummary(false)
+        }
+      }
+    }
+
     loadAdminProfile()
     loadUnreadCount()
+    loadWarningSummary()
 
     return () => {
       isMounted = false
@@ -207,38 +251,67 @@ export default function ProfileAdmin() {
   }
 
   const statsCards = useMemo(() => {
-    const stats = adminProfile?.stats || {}
+    const oneWarning = warningSummary?.oneWarning || { count: 0, students: [] }
+    const twoWarnings = warningSummary?.twoWarnings || { count: 0, students: [] }
+    const dismissed = warningSummary?.dismissed || { count: 0, students: [] }
 
     return [
       {
         title: 'طلاب حصلوا على إنذار واحد',
-        count: stats.warningOneCount || 0,
+        count: oneWarning.count || 0,
         description: 'طلاب لديهم إنذار أول ويحتاجون متابعة بسيطة',
         level: 'متابعة عادية',
-        percent: Math.min((stats.warningOneCount || 0) * 25, 100),
+        percent: Math.min((oneWarning.count || 0) * 25, 100),
         type: 'warning-one',
+        isLoading: isLoadingWarningSummary,
+        errorMessage: warningSummaryError,
+        onClick: () =>
+          setOpenedWarningCategory({
+            title: 'طلاب حصلوا على إنذار واحد',
+            description: 'طلاب لديهم إنذار أول ويحتاجون متابعة بسيطة',
+            count: oneWarning.count || 0,
+            students: oneWarning.students || [],
+            type: 'warning-one',
+          }),
       },
       {
         title: 'طلاب حصلوا على إنذارين',
-        count: stats.warningTwoCount || 0,
+        count: twoWarnings.count || 0,
         description: 'طلاب يحتاجون متابعة عاجلة قبل الفصل من الدورة',
         level: 'متابعة عاجلة',
-        percent: Math.min((stats.warningTwoCount || 0) * 35, 100),
+        percent: Math.min((twoWarnings.count || 0) * 35, 100),
         type: 'warning-two',
+        isLoading: isLoadingWarningSummary,
+        errorMessage: warningSummaryError,
+        onClick: () =>
+          setOpenedWarningCategory({
+            title: 'طلاب حصلوا على إنذارين',
+            description: 'طلاب يحتاجون متابعة عاجلة قبل الفصل من الدورة',
+            count: twoWarnings.count || 0,
+            students: twoWarnings.students || [],
+            type: 'warning-two',
+          }),
       },
       {
         title: 'طلاب مفصولون من الدورة',
-        count: (stats.suspendedCount || 0) + (stats.dismissedCount || 0),
-        description: 'طلاب تم فصلهم بسبب تكرار المخالفات أو عدم الالتزام',
+        count: dismissed.count || 0,
+        description: 'طلاب لديهم ثلاثة إنذارات أو أكثر وفق سجلات العقوبات',
         level: 'إجراء نهائي',
-        percent: Math.min(
-          ((stats.suspendedCount || 0) + (stats.dismissedCount || 0)) * 25,
-          100,
-        ),
+        percent: Math.min((dismissed.count || 0) * 25, 100),
         type: 'dismissed',
+        isLoading: isLoadingWarningSummary,
+        errorMessage: warningSummaryError,
+        onClick: () =>
+          setOpenedWarningCategory({
+            title: 'طلاب مفصولون من الدورة',
+            description: 'طلاب لديهم ثلاثة إنذارات أو أكثر',
+            count: dismissed.count || 0,
+            students: dismissed.students || [],
+            type: 'dismissed',
+          }),
       },
     ]
-  }, [adminProfile])
+  }, [isLoadingWarningSummary, warningSummary, warningSummaryError])
 
   return (
     <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8">
@@ -310,6 +383,12 @@ export default function ProfileAdmin() {
         onOpenConversation={openAdminConversation}
         onReply={handleAdminReply}
         isSendingReply={isSendingReply}
+      />
+
+      <WarningSummaryModal
+        isOpen={Boolean(openedWarningCategory)}
+        category={openedWarningCategory}
+        onClose={() => setOpenedWarningCategory(null)}
       />
     </section>
   )

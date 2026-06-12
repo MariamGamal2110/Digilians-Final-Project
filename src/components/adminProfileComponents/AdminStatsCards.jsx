@@ -42,9 +42,12 @@ export default function AdminStatsCards({ statsCards = [], isRefreshingProfile =
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
       {statsCards.map((card) => (
-        <div
+        <button
           key={card.title}
-          className="relative overflow-hidden bg-white border border-gray-200 rounded-2xl p-6 min-h-[190px] hover:shadow-lg hover:-translate-y-1 transition"
+          type="button"
+          onClick={() => card.onClick?.()}
+          disabled={card.isDisabled}
+          className="relative overflow-hidden bg-white border border-gray-200 rounded-2xl p-6 min-h-[190px] hover:shadow-lg hover:-translate-y-1 transition text-right disabled:hover:translate-y-0 disabled:hover:shadow-none"
         >
           <div className="absolute top-0 right-0 w-24 h-24 bg-[#f4f1e8] rounded-bl-[70px]" />
 
@@ -79,10 +82,16 @@ export default function AdminStatsCards({ statsCards = [], isRefreshingProfile =
             </div>
 
             <div className="w-20 h-20 rounded-full bg-[#555d30] text-white flex items-center justify-center text-4xl font-extrabold shadow-md shrink-0">
-              {card.count}
+              {card.isLoading ? '...' : card.count}
             </div>
           </div>
-        </div>
+
+          {card.errorMessage && (
+            <p className="relative mt-4 text-xs font-bold text-red-600">
+              {card.errorMessage}
+            </p>
+          )}
+        </button>
       ))}
 
       {isRefreshingProfile && statsCards.length === 0 && (
