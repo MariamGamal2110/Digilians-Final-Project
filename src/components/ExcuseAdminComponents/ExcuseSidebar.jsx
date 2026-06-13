@@ -1,26 +1,36 @@
-import { useState, useEffect } from "react";
-import { FiCheckCircle, FiXCircle, FiFileText } from "react-icons/fi";
+import { useEffect, useState } from "react";
+import {
+  FiCheckCircle,
+  FiFileText,
+  FiImage,
+  FiMessageSquare,
+  FiPaperclip,
+  FiXCircle,
+} from "react-icons/fi";
 import ExcuseStatusBadge from "./ExcuseStatusBadge";
 
-// Props:
-//   request    — the currently selected request object (or null)
-//   onDecision — (id, newStatus, adminNote) => void  — called when admin approves/rejects
 export default function ExcuseSidebar({ request, onDecision }) {
   const [note, setNote] = useState("");
   const [noteError, setNoteError] = useState(false);
 
-  // reset note whenever a different request is selected
   useEffect(() => {
     setNote("");
     setNoteError(false);
   }, [request?.id]);
 
-  // Empty state
   if (!request) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-8 text-center text-gray-400 flex flex-col items-center gap-3">
-        <FiFileText size={32} className="text-gray-300" />
-        <p className="text-sm">اختر طلباً من الجدول لعرض تفاصيله</p>
+      <div className="rounded-[24px] border border-[#e9e2d2] bg-white p-8 text-center shadow-[0_18px_48px_rgba(31,34,15,0.06)]">
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#f3efe2] text-[#555d30]">
+          <FiFileText size={28} />
+        </div>
+        <p className="mt-4 text-base font-bold text-[#1f220f]">
+          اختر طلباً من القائمة
+        </p>
+        <p className="mt-2 text-sm leading-6 text-[#6b7053]">
+          ستظهر هنا تفاصيل الالتماس والمرفقات وقرار المسؤول بمجرد تحديد أي
+          صف من الجدول.
+        </p>
       </div>
     );
   }
@@ -32,6 +42,7 @@ export default function ExcuseSidebar({ request, onDecision }) {
       setNoteError(true);
       return;
     }
+
     setNoteError(false);
     onDecision(request.id, decision, note.trim());
   }
@@ -39,103 +50,160 @@ export default function ExcuseSidebar({ request, onDecision }) {
   return (
     <div
       dir="rtl"
-      className="bg-white rounded-2xl shadow-sm border border-gray-100 flex flex-col gap-5 overflow-hidden"
+      className="flex max-h-[620px] flex-col overflow-hidden rounded-[24px] border border-[#e9e2d2] bg-white shadow-[0_18px_48px_rgba(31,34,15,0.06)] xl:max-h-[calc(100vh-11rem)]"
     >
-      {/* Top strip */}
-      <div className="bg-[#555d30] px-5 py-4">
-        <h3 className="font-bold text-white text-base leading-snug">
-          {request.name}
-        </h3>
-        <p className="text-white/70 text-xs mt-1">
-          الرقم العسكري: {request.id}
+      <div className="bg-[#555d30] px-5 py-5 text-white">
+        <div className="mb-3 inline-flex rounded-full border border-white/15 bg-white/10 px-3 py-1 text-xs font-semibold text-white/85">
+          تفاصيل الالتماس
+        </div>
+        <h3 className="text-lg font-extrabold leading-snug">{request.name}</h3>
+        <p className="mt-1 text-sm text-white/70">
+          الرقم العسكري: {request.militaryId || request.id}
         </p>
       </div>
 
-      <div className="px-5 pb-5 flex flex-col gap-4">
-
-        {/* Type + Current Status */}
-        <div className="flex items-center justify-between">
-          <span className="text-xs text-gray-400">{request.type}</span>
-          <ExcuseStatusBadge status={request.status} />
-        </div>
-
-        {/* Request Details */}
-        <div className="bg-[#f9f8f4] border border-gray-100 rounded-xl p-4">
-          <p className="text-xs font-bold text-[#555d30] mb-2">نص الالتماس</p>
-          <p className="text-sm text-gray-600 leading-relaxed">
-            {request.details}
-          </p>
-        </div>
-
-        {/* Admin Note from previous decision */}
-        {isDecided && request.adminNote && (
-          <div className={`rounded-xl p-3 text-xs leading-relaxed ${
-            request.status === "مقبول"
-              ? "bg-green-50 border border-green-100 text-green-700"
-              : "bg-red-50 border border-red-100 text-red-700"
-          }`}>
-            <span className="font-bold block mb-1">ملاحظة المسؤول:</span>
-            {request.adminNote}
-          </div>
-        )}
-
-        {/* Decision area — hidden once decided */}
-        {!isDecided && (
-          <>
+      <div dir="ltr" className="flex-1 overflow-y-auto overscroll-contain">
+        <div dir="rtl" className="flex flex-col gap-4 p-5">
+          <div className="flex items-center justify-between gap-3 rounded-2xl bg-[#fcfbf7] p-4">
             <div>
-              <label className="block text-xs font-bold text-[#555d30] mb-1.5">
-                سبب القرار *
-              </label>
-              <textarea
-                value={note}
-                onChange={(e) => {
-                  setNote(e.target.value);
-                  if (e.target.value.trim()) setNoteError(false);
-                }}
-                placeholder="اكتب سبب الموافقة أو الرفض..."
-                rows={3}
-                className={`w-full border rounded-xl p-3 text-sm text-right resize-none outline-none transition ${
-                  noteError
-                    ? "border-red-400 bg-red-50 focus:border-red-500"
-                    : "border-gray-200 bg-gray-50 focus:border-[#555d30]"
-                }`}
-              />
-              {noteError && (
-                <p className="text-red-500 text-xs mt-1">
-                  يرجى كتابة سبب القرار قبل المتابعة
-                </p>
-              )}
+              <p className="text-xs font-semibold text-[#8b8f78]">نوع الطلب</p>
+              <p className="mt-1 text-sm font-bold text-[#1f220f]">
+                {request.type}
+              </p>
             </div>
+            <ExcuseStatusBadge status={request.status} />
+          </div>
 
-            <div className="flex gap-2">
-              {/* Reject */}
-              <button
-                onClick={() => handleDecision("مرفوض")}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 border border-red-300 text-red-600 hover:bg-red-50 rounded-xl py-2.5 text-sm font-bold transition"
-              >
-                <FiXCircle size={15} />
-                رفض
-              </button>
-
-              {/* Approve */}
-              <button
-                onClick={() => handleDecision("مقبول")}
-                className="flex-1 inline-flex items-center justify-center gap-1.5 bg-[#555d30] hover:bg-[#3f4723] text-white rounded-xl py-2.5 text-sm font-bold transition"
-              >
-                <FiCheckCircle size={15} />
-                موافقة
-              </button>
+          <div className="rounded-2xl border border-[#ece6d7] bg-[#fcfbf7] p-4">
+            <div className="mb-2 flex items-center gap-2 text-[#555d30]">
+              <FiMessageSquare className="text-sm" />
+              <p className="text-xs font-extrabold">نص الالتماس</p>
             </div>
-          </>
-        )}
+            <p className="text-sm leading-7 text-[#4f543b]">
+              {request.details || "لا توجد تفاصيل إضافية مرفقة بهذا الطلب."}
+            </p>
+          </div>
 
-        {/* Already decided message */}
-        {isDecided && (
-          <p className="text-center text-xs text-gray-400">
-            تم البت في هذا الطلب ولا يمكن تغيير قراره
-          </p>
-        )}
+          {request.attachments && request.attachments.length > 0 && (
+            <div className="rounded-2xl border border-[#ece6d7] bg-white p-4">
+              <div className="mb-3 flex items-center gap-2 text-[#555d30]">
+                <FiPaperclip className="text-sm" />
+                <p className="text-xs font-extrabold">المرفقات</p>
+              </div>
 
+              <ul className="space-y-3">
+                {request.attachments.map((a, idx) => (
+                  <li
+                    key={idx}
+                    className="overflow-hidden rounded-2xl border border-[#eee7d9] bg-[#fcfbf7]"
+                  >
+                    {a.mimetype && a.mimetype.startsWith("image/") ? (
+                      <a
+                        href={a.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="block"
+                      >
+                        <img
+                          src={a.url}
+                          alt={a.originalName || a.filename}
+                          className="max-h-44 w-full object-cover"
+                        />
+                        <div className="flex items-center gap-2 px-3 py-2 text-xs font-semibold text-[#555d30]">
+                          <FiImage />
+                          {a.originalName || a.filename}
+                        </div>
+                      </a>
+                    ) : (
+                      <a
+                        href={a.url}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-2 px-3 py-3 text-sm font-semibold text-[#555d30] underline-offset-4 hover:underline"
+                      >
+                        <FiPaperclip />
+                        {a.originalName || a.filename}
+                      </a>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+
+          {isDecided && request.adminNote && (
+            <div
+              className={`rounded-2xl border p-4 text-sm leading-7 ${
+                request.status === "مقبول"
+                  ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+                  : "border-rose-200 bg-rose-50 text-rose-800"
+              }`}
+            >
+              <span className="mb-1 block text-xs font-extrabold">
+                ملاحظة المسؤول
+              </span>
+              {request.adminNote}
+            </div>
+          )}
+
+          {!isDecided && (
+            <>
+              <div className="rounded-2xl border border-[#ece6d7] bg-[#fcfbf7] p-4">
+                <label className="mb-2 block text-xs font-extrabold text-[#555d30]">
+                  سبب القرار *
+                </label>
+                <textarea
+                  value={note}
+                  onChange={(e) => {
+                    setNote(e.target.value);
+                    if (e.target.value.trim()) {
+                      setNoteError(false);
+                    }
+                  }}
+                  placeholder="اكتب سبب الموافقة أو الرفض هنا..."
+                  rows={4}
+                  className={`w-full resize-none rounded-2xl border p-3 text-sm text-right outline-none transition ${
+                    noteError
+                      ? "border-rose-400 bg-rose-50 focus:border-rose-500"
+                      : "border-[#ddd4c1] bg-white focus:border-[#555d30]"
+                  }`}
+                />
+                {noteError && (
+                  <p className="mt-2 text-xs font-semibold text-rose-600">
+                    يرجى كتابة سبب القرار قبل المتابعة.
+                  </p>
+                )}
+              </div>
+
+              <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                <button
+                  type="button"
+                  onClick={() => handleDecision("مرفوض")}
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-bold text-rose-700 transition hover:bg-rose-100"
+                >
+                  <FiXCircle size={16} />
+                  رفض الطلب
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => handleDecision("مقبول")}
+                  className="inline-flex items-center justify-center gap-2 rounded-2xl bg-[#555d30] px-4 py-3 text-sm font-bold text-white transition hover:bg-[#444b26]"
+                >
+                  <FiCheckCircle size={16} />
+                  اعتماد الطلب
+                </button>
+              </div>
+            </>
+          )}
+
+          {isDecided && (
+            <p className="rounded-2xl bg-[#f5f2e8] px-4 py-3 text-center text-xs font-semibold text-[#6b7053]">
+              تم البت في هذا الطلب بالفعل، لذلك لا يمكن تعديل القرار من هذه
+              الصفحة.
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

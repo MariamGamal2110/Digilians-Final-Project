@@ -113,6 +113,22 @@ export default function HolidayForm({ formData, onFormChange, onSubmit, onCancel
             <span className="text-accent">📝</span>
             <span>سبب عدم الدخول</span>
           </label>
+
+          {/* Quick select for "عدم رغبة" */}
+          <div className="mb-3 flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={() => onFormChange({ target: { name: 'reason', value: 'عدم رغبة' } })}
+              className={`px-4 py-2 rounded-lg text-sm font-bold transition-all duration-200 ${
+                formData.reason === 'عدم رغبة'
+                  ? 'bg-accent text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              عدم رغبة
+            </button>
+          </div>
+
           <textarea
             name="reason"
             value={formData.reason}
