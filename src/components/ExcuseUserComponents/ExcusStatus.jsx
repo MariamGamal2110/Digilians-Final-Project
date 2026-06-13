@@ -1,7 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react'
 import { LuTimerReset } from "react-icons/lu";
+<<<<<<< HEAD
 import { getMyExcuses } from '../../api/excuse';
 import ExcuseStatusBadge from '../../components/ExcuseAdminComponents/ExcuseStatusBadge';
+=======
+<<<<<<< HEAD
+import { getMyExcuses } from '../../api/excuse';
+import ExcuseStatusBadge from '../../components/ExcuseAdminComponents/ExcuseStatusBadge';
+=======
+import { GoDot, GoDotFill } from "react-icons/go";
+import { getMyExcuses } from '../../api/excuse';
+>>>>>>> efe2bd38f60756d677162f85e664cd4f8e6c0232
+>>>>>>> a8ff67b54946e31c0522043a274e72f4984b32d4
 
 export default function ExcusStatus() {
   const [lastRequest, setLastRequest] = useState(null);
@@ -87,6 +97,10 @@ export default function ExcusStatus() {
       <h2 className="text-lg font-bold text-gray-700 mb-4">حالة آخر طلب</h2>
 
       <div className="flex items-center gap-3 mb-4">
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+>>>>>>> a8ff67b54946e31c0522043a274e72f4984b32d4
         <div className="p-1 rounded-lg">
           <LuTimerReset className="text-lg text-[#555d30]" />
         </div>
@@ -102,6 +116,34 @@ export default function ExcusStatus() {
         <p className="text-sm text-gray-600 leading-relaxed">{lastRequest.message || lastRequest.details || '-'}</p>
       </div>
 
+<<<<<<< HEAD
+=======
+=======
+        <div className="bg-yellow-100 text-[#555d30] p-2 rounded-lg">
+          <LuTimerReset className="text-lg" />
+        </div>
+
+        <div>
+          <h3 className="text-sm font-semibold text-gray-700">{status}</h3>
+          <p className="text-xs text-gray-400">{title} ({createdLabel})</p>
+        </div>
+      </div>
+
+      <div className="flex items-start gap-3 mb-4">
+        <GoDotFill className="text-green-600 mt-1" />
+        <div>
+          <h3 className="text-sm font-semibold text-gray-700">تم تقديم الطلب</h3>
+          <p className="text-xs text-gray-400">{createdLabel}</p>
+        </div>
+      </div>
+
+      <div className="mt-2">
+        <h4 className="text-sm font-bold text-gray-700 mb-2">نص الطلب</h4>
+        <p className="text-sm text-gray-600 leading-relaxed">{lastRequest.message || lastRequest.details || '-'}</p>
+      </div>
+
+>>>>>>> efe2bd38f60756d677162f85e664cd4f8e6c0232
+>>>>>>> a8ff67b54946e31c0522043a274e72f4984b32d4
       {/* attachments removed from UI per user request */}
 
       {adminNote && (
