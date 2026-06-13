@@ -49,7 +49,7 @@ const SignIn = () => {
       }
     } else {
       if (normalizedEmail === "sandy@gmail.com") {
-        setError("هذا البريد محجوز للمسؤول ولا يمكن استخدامه كمستخدم عادي.");
+        setError("غير مصرح بأسخدام هذا البريد الالكترونى ");
         return;
       }
 
