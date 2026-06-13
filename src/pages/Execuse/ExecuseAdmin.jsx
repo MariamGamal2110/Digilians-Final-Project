@@ -17,10 +17,19 @@ export default function ExecuseAdmin() {
         const excusesRows = await getAllExcuses();
 
         const mapped = (excusesRows || []).map((r) => ({
+<<<<<<< HEAD
           // Use Mongo _id as the canonical id when calling backend routes
           id: r._id,
           _id: r._id,
           militaryId: r.militaryId,
+=======
+
+          // use Mongo _id as the canonical id when calling backend routes
+          // id: r._id,
+          _id: r._id,
+          militaryId: r.militaryId,
+          id: r.militaryId || r._id,
+>>>>>>> 8ac6f8741d5b133924f83a13529c2b1206883d81
           name: r.studentName || r.user?.name || r.user?.email || "-",
           type: r.title || r.type || "التماس",
           status: r.status || "قيد المراجعة",
