@@ -36,11 +36,13 @@ export default function CurrentStatusCard({ latestAttendance, loading }) {
         )}
       </div>
 
-      <div className="mt-8 relative z-10">
+<div className="mt-8 relative z-10">
         <div className="flex justify-between items-end">
           <div className="text-center">
-            <span className="block text-3xl font-bold text-white">
-              {hasArrival ? latestAttendance.deduction : 0}
+            <span className={`block text-3xl font-bold ${hasArrival && latestAttendance.deduction > 0 ? 'text-red-200' : 'text-white'}`}>
+              {hasArrival 
+                ? (latestAttendance.deduction > 0 ? `-${latestAttendance.deduction}` : '0')
+                : 0}
             </span>
             <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">
               درجات الخصم

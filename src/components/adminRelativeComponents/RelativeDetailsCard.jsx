@@ -6,11 +6,11 @@ export default function RelativeDetailsCard({ student }) {
           معلومات الطالب المختار
         </h2>
 
- <img
-  src="/images/student-avatar.png"
-  alt="صورة الطالب"
-  className="w-14 h-14 rounded-lg object-cover border border-[#c8cdb8]"
-/>
+        <img
+          src="/images/student-avatar.png"
+          alt="صورة الطالب"
+          className="w-14 h-14 rounded-lg object-cover border border-[#c8cdb8]"
+        />
       </div>
 
       <div className="space-y-4 text-sm">
@@ -28,28 +28,27 @@ export default function RelativeDetailsCard({ student }) {
           <span className="text-[#555d30] font-bold flex items-center gap-2">
             البريد الإلكتروني
           </span>
-          <span className="text-[#1f220f]">{student.email}</span>
+          <span className="text-[#1f220f]">{student.email || 'غير متوفر'}</span>
         </div>
 
         <div className="flex items-center justify-between border-b border-gray-200 pb-2">
           <span className="text-[#555d30] font-bold flex items-center gap-2">
-            التراك
+            عدد الأقارب
           </span>
-          <span className="text-[#1f220f]">{student.track}</span>
+          <span className="text-[#1f220f]">{student.relativesCount ?? 0}</span>
         </div>
 
         <div className="flex items-center justify-between border-b border-gray-200 pb-2">
-          <span className="text-[#555d30] font-bold">التخصص</span>
-          <span className="text-[#1f220f]">{student.specialization}</span>
+          <span className="text-[#555d30] font-bold">آخر تحديث</span>
+          <span className="text-[#1f220f]">{student.updatedAt || 'غير متوفر'}</span>
         </div>
 
         <div className="flex items-center justify-between">
           <span className="text-[#555d30] font-bold flex items-center gap-2">
-            تاريخ الالتحاق
-           
+            تاريخ الإنشاء
           </span>
           <span className="text-[#1f220f]">
-            {student.enrollmentDate || 'غير محدد'}
+            {student.createdAt || 'غير محدد'}
           </span>
         </div>
       </div>

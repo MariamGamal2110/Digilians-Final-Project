@@ -1,6 +1,8 @@
 // Digilians-Final-Project/src/api/client.js
 
-const API_BASE_URL = 'http://localhost:5000/api'
+const API_BASE_URL =
+  import.meta.env.VITE_API_BASE_URL ||
+  'http://localhost:5000/api';
 
 // تعديل المسميات لتطابق ما يتم تخزينه فعلياً في متصفحك ومنع الـ session mixed
 const STORAGE_KEYS = {
@@ -56,13 +58,21 @@ export function clearAuthData(role = 'user') {
 export async function apiRequest(path, options = {}, role = 'user') {
   const token = getToken(role);
 
+  // If the body is FormData, do not set Content-Type header (browser will set multipart boundary)
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+
+  const headers = {
+    ...(token && { Authorization: `Bearer ${token}` }),
+    ...options.headers,
+  };
+
+  if (!isFormData) {
+    headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+  }
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options.headers,
-    },
+    headers,
   });
 
   // معالجة حالة الـ 404 لروابط الأدمن أو المشاكل العامة

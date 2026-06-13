@@ -1,4 +1,4 @@
-export default function AcademicChart({ chartData }) {
+﻿export default function AcademicChart({ chartData }) {
   const svgWidth = 700
   const svgHeight = 310
 
@@ -18,8 +18,15 @@ export default function AcademicChart({ chartData }) {
   const maxValue = 100
   const minValue = 0
 
+  const safeChartData = Array.isArray(chartData) && chartData.length > 0
+    ? chartData
+    : [
+        { label: 'البداية', value: 100 },
+        { label: 'النتيجة', value: 100 },
+      ]
+
   const stepX =
-    chartData.length > 1 ? chartWidth / (chartData.length - 1) : 0
+    safeChartData.length > 1 ? chartWidth / (safeChartData.length - 1) : 0
 
   function getX(index) {
     return plotStartX + index * stepX
@@ -29,7 +36,7 @@ export default function AcademicChart({ chartData }) {
     return topPadding + chartHeight - ((value - minValue) / (maxValue - minValue)) * chartHeight
   }
 
-  const points = chartData
+  const points = safeChartData
     .map((item, index) => `${getX(index)},${getY(item.value)}`)
     .join(' ')
 
@@ -97,8 +104,8 @@ export default function AcademicChart({ chartData }) {
             strokeLinejoin="round"
           />
 
-          {chartData.map((item, index) => (
-            <g key={item.label}>
+          {safeChartData.map((item, index) => (
+            <g key={`${item.label}-${index}`}>
               <circle
                 cx={getX(index)}
                 cy={getY(item.value)}
