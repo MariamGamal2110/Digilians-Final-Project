@@ -26,6 +26,14 @@ export const getAllExcuses = async () => {
   return (response && (response.data?.excuses || response.excuses)) || response;
 };
 
+// Admin: clear all excuses
+export const clearAllExcuses = async () => {
+  const response = await apiRequest('/excuses/clear-all', {
+    method: 'DELETE',
+  }, 'admin');
+  return response;
+};
+
 // Admin: respond to an excuse (id) with payload { response, status }
 export const respondToExcuse = async (id, payload) => {
   const response = await apiRequest(`/excuses/${id}/respond`, {
@@ -35,4 +43,10 @@ export const respondToExcuse = async (id, payload) => {
   return (response && (response.data?.excuse || response.excuse)) || response;
 };
 
-export default { createExcuse, getMyExcuses, getAllExcuses, respondToExcuse };
+export default {
+  createExcuse,
+  getMyExcuses,
+  getAllExcuses,
+  clearAllExcuses,
+  respondToExcuse,
+};
