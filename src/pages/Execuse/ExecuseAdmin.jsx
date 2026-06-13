@@ -15,16 +15,12 @@ export default function ExecuseAdmin() {
     async function load() {
       try {
         const excusesRows = await getAllExcuses();
+
         const mapped = (excusesRows || []).map((r) => ({
-<<<<<<< HEAD
-          // use Mongo _id as the canonical id when calling backend routes
+          // Use Mongo _id as the canonical id when calling backend routes
           id: r._id,
           _id: r._id,
           militaryId: r.militaryId,
-=======
-          id: r.militaryId || r._id,
-          _id: r._id,
->>>>>>> efe2bd38f60756d677162f85e664cd4f8e6c0232
           name: r.studentName || r.user?.name || r.user?.email || "-",
           type: r.title || r.type || "التماس",
           status: r.status || "قيد المراجعة",
@@ -40,25 +36,35 @@ export default function ExecuseAdmin() {
     }
 
     load();
-    return () => (mounted = false);
+
+    return () => {
+      mounted = false;
+    };
   }, []);
 
-  // always derive selectedRequest from data so it reflects latest status
+  // Always derive selectedRequest from data so it reflects latest status
   const selectedRequest = data.find((r) => r.id === selectedId) ?? null;
 
   function handleSelect(row) {
     setSelectedId(row.id);
   }
 
-  // called from ExcuseSidebar when admin approves or rejects
+  // Called from ExcuseSidebar when admin approves or rejects
   function handleDecision(id, decision, note) {
-    // optimistically update UI
-    setData((prev) => prev.map((r) => (r.id === id ? { ...r, status: decision, adminNote: note } : r)));
+    // Optimistically update UI
+    setData((prev) =>
+      prev.map((r) =>
+        r.id === id ? { ...r, status: decision, adminNote: note } : r
+      )
+    );
 
-    // call backend
+    // Call backend
     (async () => {
       try {
-        const updated = await respondToExcuse(id, { response: note, status: decision });
+        const updated = await respondToExcuse(id, {
+          response: note,
+          status: decision,
+        });
 
         setData((prev) =>
           prev.map((r) =>
@@ -68,8 +74,8 @@ export default function ExecuseAdmin() {
                   status: updated?.status || decision,
                   adminNote: updated?.response || note,
                 }
-              : r,
-          ),
+              : r
+          )
         );
       } catch (err) {
         console.error("Failed to send decision", err);
@@ -80,26 +86,35 @@ export default function ExecuseAdmin() {
   return (
     <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8">
       <div className="max-w-[1300px] mx-auto">
-
         {/* Page Header */}
         <div className="mb-6">
-          <h1 className="text-3xl font-extrabold mb-2 text-[#555d30]">إدارة الالتماسات النشطة</h1>
-          <p className="text-sm leading-7 max-w-xl text-gray-600">مراجعة والبت في طلبات الإجازات الاستثنائية والالتماسات المقدمة</p>
+          <h1 className="text-3xl font-extrabold mb-2 text-[#555d30]">
+            إدارة الالتماسات النشطة
+          </h1>
+          <p className="text-sm leading-7 max-w-xl text-gray-600">
+            مراجعة والبت في طلبات الإجازات الاستثنائية والالتماسات المقدمة
+          </p>
         </div>
 
         {/* Content */}
         <div className="flex gap-4 items-start">
           {/* Table takes remaining width */}
           <div className="flex-1 min-w-0">
-            <RequestsTable data={data} selectedId={selectedId} onSelect={handleSelect} />
+            <RequestsTable
+              data={data}
+              selectedId={selectedId}
+              onSelect={handleSelect}
+            />
           </div>
 
           {/* Sidebar fixed width */}
           <div className="w-80 flex-shrink-0">
-            <ExcuseSidebar request={selectedRequest} onDecision={handleDecision} />
+            <ExcuseSidebar
+              request={selectedRequest}
+              onDecision={handleDecision}
+            />
           </div>
         </div>
-
       </div>
     </section>
   );
