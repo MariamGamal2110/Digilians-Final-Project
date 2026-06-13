@@ -56,13 +56,21 @@ export function clearAuthData(role = 'user') {
 export async function apiRequest(path, options = {}, role = 'user') {
   const token = getToken(role);
 
+  // If the body is FormData, do not set Content-Type header (browser will set multipart boundary)
+  const isFormData = typeof FormData !== 'undefined' && options.body instanceof FormData;
+
+  const headers = {
+    ...(token && { Authorization: `Bearer ${token}` }),
+    ...options.headers,
+  };
+
+  if (!isFormData) {
+    headers['Content-Type'] = headers['Content-Type'] || 'application/json';
+  }
+
   const response = await fetch(`${API_BASE_URL}${path}`, {
     ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token && { Authorization: `Bearer ${token}` }),
-      ...options.headers,
-    },
+    headers,
   });
 
   // معالجة حالة الـ 404 لروابط الأدمن أو المشاكل العامة

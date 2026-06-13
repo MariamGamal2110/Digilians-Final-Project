@@ -3,16 +3,16 @@
 
 const statusStyles = {
   جديد:    "bg-yellow-100 text-yellow-700 border border-yellow-200",
-  مقبول:   "bg-green-100  text-green-700  border border-green-200",
-  مرفوض:   "bg-red-100    text-red-700    border border-red-200",
-  "قيد المراجعة": "bg-blue-100 text-blue-700 border border-blue-200",
+  مقبول:   "bg-green-200 text-green-800 border border-green-300",
+  مرفوض:   "bg-red-200 text-red-800 border border-red-300",
+  "قيد المراجعة": "bg-yellow-100 text-yellow-800 border border-yellow-200",
 };
 
 const statusDot = {
   جديد:    "bg-yellow-400",
-  مقبول:   "bg-green-500",
-  مرفوض:   "bg-red-500",
-  "قيد المراجعة": "bg-blue-400",
+  مقبول:   "bg-green-600",
+  مرفوض:   "bg-red-600",
+  "قيد المراجعة": "bg-yellow-500",
 };
 
 export default function ExcuseStatusBadge({ status }) {
