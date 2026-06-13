@@ -12,9 +12,30 @@ import RelativeDetailsModal from '../../components/adminRelativeComponents/Relat
 import SecurityStatusCard from '../../components/adminRelativeComponents/SecurityStatusCard'
 import SupervisorCard from '../../components/adminRelativeComponents/SupervisorCard'
 
+function normalizeArabicSearchText(value) {
+  return String(value ?? '')
+    .trim()
+    .toLowerCase()
+    .replace(/[\u064B-\u0652]/g, '')
+    .replace(/\u0640/g, '')
+    .replace(/[أإآٱ]/g, 'ا')
+    .replace(/ة/g, 'ه')
+    .replace(/ى/g, 'ي')
+    .replace(/ؤ/g, 'و')
+    .replace(/ئ/g, 'ي')
+    .replace(/\s+/g, ' ')
+}
+
+function toStudentOption(student) {
+  return {
+    ...student,
+    relativesCount: student.relativesCount ?? 0,
+  }
+}
+
 export default function RelativesAdmin() {
   const [searchText, setSearchText] = useState('')
-  const [students, setStudents] = useState([])
+  const [allStudents, setAllStudents] = useState([])
   const [selectedStudentId, setSelectedStudentId] = useState('')
   const [studentDetails, setStudentDetails] = useState(null)
   const [isSearching, setIsSearching] = useState(false)
@@ -25,47 +46,33 @@ export default function RelativesAdmin() {
   const [selectedRelative, setSelectedRelative] = useState(null)
 
   const deferredSearch = useMemo(() => searchText.trim(), [searchText])
+  const normalizedSearch = useMemo(
+    () => normalizeArabicSearchText(deferredSearch),
+    [deferredSearch]
+  )
 
   useEffect(() => {
     let isMounted = true
-    const debounceDelay = deferredSearch ? 300 : 0
-
-    const timeoutId = setTimeout(async () => {
+    
+    async function loadStudentsDirectory() {
       setIsSearching(true)
       setSearchError('')
 
       try {
-        const results = await searchProfileStudents(deferredSearch)
+        const results = await searchProfileStudents('')
 
         if (!isMounted) {
           return
         }
 
-        setStudents(
-          results.map((student) => ({
-            ...student,
-            relativesCount: student.relativesCount ?? 0,
-          })),
-        )
-
-        if (results.length === 0) {
-          setSelectedStudentId('')
-          setStudentDetails(null)
-          setSelectedRelative(null)
-          return
-        }
-
-        setSelectedStudentId((currentId) => {
-          const hasCurrent = results.some((student) => student.id === currentId)
-          return hasCurrent ? currentId : results[0].id
-        })
+        setAllStudents(results.map(toStudentOption))
       } catch (loadError) {
         if (!isMounted) {
           return
         }
 
         setSearchError(loadError.message || 'فشل البحث عن الطلاب')
-        setStudents([])
+        setAllStudents([])
         setSelectedStudentId('')
         setStudentDetails(null)
         setSelectedRelative(null)
@@ -75,13 +82,50 @@ export default function RelativesAdmin() {
           setHasLoadedStudents(true)
         }
       }
-    }, debounceDelay)
+    }
+
+    loadStudentsDirectory()
 
     return () => {
       isMounted = false
-      clearTimeout(timeoutId)
     }
-  }, [deferredSearch])
+  }, [])
+
+  const students = useMemo(() => {
+    if (!normalizedSearch) {
+      return allStudents
+    }
+
+    return allStudents.filter((student) => {
+      const normalizedName = normalizeArabicSearchText(student.name)
+      const normalizedMilitaryId = normalizeArabicSearchText(student.militaryId)
+      const normalizedEmail = normalizeArabicSearchText(student.email)
+
+      return (
+        normalizedName.includes(normalizedSearch) ||
+        normalizedMilitaryId.includes(normalizedSearch) ||
+        normalizedEmail.includes(normalizedSearch)
+      )
+    })
+  }, [allStudents, normalizedSearch])
+
+  useEffect(() => {
+    if (searchError) {
+      return
+    }
+
+    if (students.length === 0) {
+      setSelectedStudentId('')
+      setStudentDetails(null)
+      setSelectedRelative(null)
+      return
+    }
+
+    setSelectedStudentId((currentId) => {
+      const hasCurrent = students.some((student) => student.id === currentId)
+      return hasCurrent ? currentId : students[0].id
+    })
+  }, [students, searchError])
 
   useEffect(() => {
     if (!selectedStudentId) {
