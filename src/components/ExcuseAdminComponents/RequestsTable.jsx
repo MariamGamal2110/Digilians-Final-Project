@@ -39,9 +39,12 @@ export default function RequestsTable({ data, selectedId, onSelect }) {
               <span className="text-sm font-bold text-[#1f220f] truncate">
                 {row.name}
               </span>
-              <span className="text-sm text-gray-500">{row.id}</span>
+              <span className="text-sm text-gray-500">{row.militaryId || row.id}</span>
               <span className="text-sm text-gray-600">{row.type}</span>
-              <div className="flex justify-center">
+              <div className="flex justify-center items-center gap-2">
+                {row.attachments && row.attachments.length > 0 && (
+                  <span title={`${row.attachments.length} مرفق`} className="text-xs text-gray-500">📎</span>
+                )}
                 <ExcuseStatusBadge status={row.status} />
               </div>
             </div>
