@@ -3,28 +3,22 @@ import { FiShield, FiCreditCard, FiCheck, FiX, FiExternalLink, FiSearch } from "
 import StatsGrid from "../../components/PaymentComponents/Admin/StatsGrid";
 import SearchBar from '../../components/SearchBar';
 import axios from 'axios';
+import { getToken } from '../../api/client';
 
 const API_BASE_URL = 'http://localhost:5000/api/payments';
 const BACKEND_SERVER_URL = 'http://localhost:5000';
 
 const getAuthHeader = () => {
-  let token = localStorage.getItem('token')
-    || localStorage.getItem('digilians_token')
-    || localStorage.getItem('adminToken');
-
-  if (!token) {
-    const keys = ['authData', 'digilians_user', 'user', 'admin', 'adminData'];
-    for (const key of keys) {
-      try {
-        const stored = localStorage.getItem(key);
-        if (stored) {
-          const parsed = JSON.parse(stored);
-          token = parsed?.token || parsed?.data?.token || parsed?.state?.token;
-          if (token) break;
-        }
-      } catch (e) {}
-    }
-  }
+  // Use getToken from client.js which correctly reads 'digilians_token'
+  const token = getToken('admin');
+  
+  // Debug: log what's found
+  window.debugTokenFound = token ? 'yes' : 'no';
+  window.debugLocalStorageKeys = Object.keys(localStorage).join(', ');
+  
+  console.log('Token found (using getToken):', window.debugTokenFound);
+  console.log('All localStorage keys:', window.debugLocalStorageKeys);
+  
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
@@ -99,8 +93,7 @@ const PaymentAdmin = () => {
   students.forEach(student => {
     if (!student.months) return;
     student.months.forEach(month => {
-      if (!month.receiptUrl) return; 
-
+      // جلب ALL الشهور - سواء عندهم receipt أو لأ
       allRows.push({
         studentId: student._id,
         name: student.studentName,
@@ -109,7 +102,7 @@ const PaymentAdmin = () => {
         monthName: month.monthName,
         amount: month.amount,
         status: month.status,
-        receiptImg: `${BACKEND_SERVER_URL}${month.receiptUrl}`
+        receiptImg: month.receiptUrl ? `${BACKEND_SERVER_URL}${month.receiptUrl}` : null
       });
     });
   });
@@ -201,15 +194,19 @@ const PaymentAdmin = () => {
                         </td>
 
                         <td className="px-6 py-4 text-center">
-                          <a
-                            href={item.receiptImg}
-                            target="_blank"
-                            rel="noreferrer"
-                            className="inline-flex items-center gap-1.5 text-blue-600 bg-blue-50/60 px-3 py-1 rounded-lg border border-blue-200 text-xs font-bold hover:bg-blue-100 transition-colors"
-                          >
-                            <FiExternalLink size={13} />
-                            عرض الإيصال
-                          </a>
+                          {item.receiptImg ? (
+                            <a
+                              href={item.receiptImg}
+                              target="_blank"
+                              rel="noreferrer"
+                              className="inline-flex items-center gap-1.5 text-blue-600 bg-blue-50/60 px-3 py-1 rounded-lg border border-blue-200 text-xs font-bold hover:bg-blue-100 transition-colors"
+                            >
+                              <FiExternalLink size={13} />
+                              عرض الإيصال
+                            </a>
+                          ) : (
+                            <span className="text-gray-400 text-xs">لم يتم الرفع</span>
+                          )}
                         </td>
 
                         <td className="px-6 py-4 text-center">
@@ -239,6 +236,12 @@ const PaymentAdmin = () => {
                           {item.status === 'late' && (
                             <span className="text-red-500 text-xs font-bold inline-flex items-center gap-1 justify-center bg-red-50 px-2 py-1 rounded-md border border-red-200">
                               <FiX /> مرفوض
+                            </span>
+                          )}
+
+                          {item.status === 'pending' && (
+                            <span className="text-gray-500 text-xs font-bold inline-flex items-center gap-1 justify-center bg-gray-50 px-2 py-1 rounded-md border border-gray-200">
+                              بانتظار الدفع
                             </span>
                           )}
                         </td>
