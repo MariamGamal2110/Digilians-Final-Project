@@ -1,10 +1,21 @@
-import { useState } from 'react'
+﻿import { useEffect, useState } from 'react'
 
-export default function EditProfileModal({ student, onClose, onSave }) {
+export default function EditProfileModal({
+  student,
+  onClose,
+  onSave,
+  isSaving = false,
+  errorMessage = '',
+}) {
   const [formData, setFormData] = useState({
-    name: student.name || '',
     email: student.email || '',
   })
+
+  useEffect(() => {
+    setFormData({
+      email: student.email || '',
+    })
+  }, [student.email])
 
   function handleChange(event) {
     const { name, value } = event.target
@@ -19,7 +30,6 @@ export default function EditProfileModal({ student, onClose, onSave }) {
     event.preventDefault()
 
     onSave({
-      name: formData.name,
       email: formData.email,
     })
   }
@@ -38,6 +48,7 @@ export default function EditProfileModal({ student, onClose, onSave }) {
             type="button"
             onClick={onClose}
             className="w-9 h-9 rounded-full bg-[#f3f1e8] text-[#1f220f] flex items-center justify-center font-bold hover:bg-[#e8e5dc] transition"
+            disabled={isSaving}
           >
             ×
           </button>
@@ -52,8 +63,8 @@ export default function EditProfileModal({ student, onClose, onSave }) {
             <input
               type="text"
               name="name"
-              value={formData.name}
-              onChange={handleChange}
+              value={student.name || ''}
+              readOnly
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#555d30]"
               placeholder="اكتب اسم الطالب"
             />
@@ -71,6 +82,7 @@ export default function EditProfileModal({ student, onClose, onSave }) {
               onChange={handleChange}
               className="w-full border border-gray-200 rounded-xl px-4 py-3 text-sm outline-none focus:border-[#555d30]"
               placeholder="اكتب البريد الإلكتروني"
+              disabled={isSaving}
             />
           </div>
 
@@ -91,20 +103,28 @@ export default function EditProfileModal({ student, onClose, onSave }) {
             </p>
           </div>
 
+          {errorMessage && (
+            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+              {errorMessage}
+            </div>
+          )}
+
           <div className="flex items-center justify-end gap-3 pt-3">
             <button
               type="button"
               onClick={onClose}
               className="px-6 py-3 rounded-xl border border-gray-200 text-[#1f220f] font-bold hover:bg-[#f8f7f2] transition"
+              disabled={isSaving}
             >
               إلغاء
             </button>
 
             <button
               type="submit"
-              className="px-8 py-3 rounded-xl bg-[#555d30] text-white font-bold hover:bg-[#454c27] transition"
+              className="px-8 py-3 rounded-xl bg-[#555d30] text-white font-bold hover:bg-[#454c27] transition disabled:opacity-60 disabled:cursor-not-allowed"
+              disabled={isSaving}
             >
-              حفظ التعديل
+              {isSaving ? 'جارٍ الحفظ...' : 'حفظ التعديل'}
             </button>
           </div>
         </form>

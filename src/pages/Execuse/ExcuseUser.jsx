@@ -1,6 +1,9 @@
 import { useEffect, useState } from "react";
 import ExcuseUserForm from "../../components/ExcuseUserComponents/ExcuseUserForm";
+<<<<<<< HEAD
 import ExcuseStatusBadge from "../../components/ExcuseAdminComponents/ExcuseStatusBadge";
+=======
+>>>>>>> efe2bd38f60756d677162f85e664cd4f8e6c0232
 import { getMyExcuses } from "../../api/excuse";
 
 export default function ExcuseUser() {
@@ -39,7 +42,11 @@ export default function ExcuseUser() {
                 <li key={r._id} className="border p-3 rounded-lg">
                   <div className="flex justify-between">
                     <strong>{r.title}</strong>
+<<<<<<< HEAD
                     <ExcuseStatusBadge status={r.status} />
+=======
+                    <span className="text-sm text-gray-500">{r.status}</span>
+>>>>>>> efe2bd38f60756d677162f85e664cd4f8e6c0232
                   </div>
                   <p className="text-sm text-gray-600 mt-2">{r.message}</p>
                   {r.attachments && r.attachments.length > 0 && (

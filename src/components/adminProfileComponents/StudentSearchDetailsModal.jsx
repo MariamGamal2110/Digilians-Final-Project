@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import { FiChevronDown, FiChevronUp } from 'react-icons/fi'
 
 export default function StudentSearchDetailsModal({ student, onClose }) {

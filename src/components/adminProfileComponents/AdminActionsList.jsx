@@ -1,4 +1,4 @@
-import { useState } from 'react'
+﻿import { useState } from 'react'
 import {
   FiFileText,
   FiList,
@@ -179,12 +179,12 @@ function ActionReportModal({ action, onClose }) {
 
 function AllActionsModal({ actions, onClose, onSelectAction }) {
   return (
-    <div className="fixed inset-0 z-50 bg-black/45 flex items-center justify-center px-4">
+    <div className="fixed inset-0 z-50 bg-black/45 flex items-center justify-center px-4 py-6">
       <div
         dir="rtl"
         className="bg-white w-full max-w-3xl rounded-2xl shadow-2xl overflow-hidden border border-[#e8e5dc] max-h-[85vh] flex flex-col"
       >
-        <div className="relative px-8 py-6 border-b border-[#e8e5dc] bg-[#f8f6f0]">
+        <div className="relative px-8 py-6 border-b border-[#e8e5dc] bg-[#f8f6f0] shrink-0">
           <div className="text-right">
             <h2 className="text-[#1f220f] text-2xl font-extrabold mb-2">
               جميع الإجراءات الموثقة
@@ -257,7 +257,34 @@ function AllActionsModal({ actions, onClose, onSelectAction }) {
   )
 }
 
-export default function AdminActionsList({ actions = [] }) {
+function ActionsListSkeleton() {
+  return (
+    <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm animate-pulse">
+      <div className="flex items-center justify-between px-6 py-5 border-b border-gray-200">
+        <div className="space-y-2">
+          <div className="h-6 w-48 rounded bg-[#eee9dc]" />
+          <div className="h-4 w-24 rounded bg-[#f3f1e8]" />
+        </div>
+        <div className="w-11 h-11 rounded-xl bg-[#f3f1e8]" />
+      </div>
+
+      {[1, 2, 3].map((item) => (
+        <div key={item} className="flex items-center justify-between gap-5 px-6 py-5 border-b border-gray-100">
+          <div className="flex items-center gap-4">
+            <div className="w-12 h-12 rounded-xl bg-[#f3f1e8]" />
+            <div className="space-y-2">
+              <div className="h-4 w-40 rounded bg-[#eee9dc]" />
+              <div className="h-3 w-24 rounded bg-[#f3f1e8]" />
+            </div>
+          </div>
+          <div className="h-5 w-10 rounded bg-[#eee9dc]" />
+        </div>
+      ))}
+    </div>
+  )
+}
+
+export default function AdminActionsList({ actions = [], isRefreshingProfile = false }) {
   const [selectedAction, setSelectedAction] = useState(null)
   const [showAllActionsModal, setShowAllActionsModal] = useState(false)
 
@@ -267,6 +294,10 @@ export default function AdminActionsList({ actions = [] }) {
   function openActionFromAllActions(action) {
     setShowAllActionsModal(false)
     setSelectedAction(action)
+  }
+
+  if (isRefreshingProfile && safeActions.length === 0) {
+    return <ActionsListSkeleton />
   }
 
   return (

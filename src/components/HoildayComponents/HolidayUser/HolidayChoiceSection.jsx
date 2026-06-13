@@ -4,13 +4,7 @@ import { MdCheckCircle, MdCancel } from 'react-icons/md'
 export default function HolidayChoiceSection({ selectedChoice, onChoiceChange }) {
   return (
     <div dir="rtl" className="bg-white rounded-2xl p-8 shadow-md border border-gray-100">
-      {/* Header */}
-      <div className="text-center mb-8">
-        <h2 className="text-3xl font-bold text-primary mb-2">الإجازات الأسبوعية</h2>
-        <p className="text-gray-600 text-sm">
-          يرجى تحديد رغبتك في الدخول للإجازات الأسبوعية أم لا
-        </p>
-      </div>
+      
 
       {/* Choice Message */}
       <p className="text-center text-gray-700 font-semibold mb-8">
