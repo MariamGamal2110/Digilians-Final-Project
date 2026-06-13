@@ -71,3 +71,24 @@ export async function updateAttendanceDeduction(recordId, deduction, role = 'adm
   }, role)
   return data.record
 }
+
+export async function fetchApprovedExcuses(role = 'admin') {
+  const data = await apiRequest('/statement/excuses', {}, role)
+  return data.excuses
+}
+
+export async function confirmExcuse(excuseId, role = 'admin') {
+  const data = await apiRequest('/statement/excuses/confirm', {
+    method: 'POST',
+    body: JSON.stringify({ excuseId }),
+  }, role)
+  return data.record
+}
+
+export async function rejectExcuse(excuseId, role = 'admin') {
+  const data = await apiRequest('/statement/excuses/reject', {
+    method: 'POST',
+    body: JSON.stringify({ excuseId }),
+  }, role)
+  return data.deleted
+}

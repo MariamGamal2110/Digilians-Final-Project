@@ -2,7 +2,10 @@ import React from 'react'
 
 export default function CurrentStatusCard({ latestAttendance, loading }) {
   const hasArrival = !!latestAttendance
-  const isLate = latestAttendance?.status === 'متأخر' || latestAttendance?.status === 'Ù…ØªØ£Ø®Ø±'
+  const status = latestAttendance?.status || ''
+  const isLate = status === 'متأخر'
+  const isExcuse = status === 'التماس'
+
   const cardColor = hasArrival && isLate ? 'bg-red-600' : 'bg-[#555d30]'
 
   return (
@@ -17,13 +20,14 @@ export default function CurrentStatusCard({ latestAttendance, loading }) {
         ) : hasArrival ? (
           <>
             <h3 className="text-3xl font-headline font-bold text-white mb-2">
-              {isLate ? 'وصلت متأخرا' : 'وصلت في الموعد'}
+              {isExcuse ? 'معتمد بالتماس' : isLate ? 'وصلت متأخرا' : 'وصلت في الموعد'}
             </h3>
             <p className="text-on-primary-container/80 text-sm leading-relaxed">
-              تم تسجيل وصولك يوم {latestAttendance.date} الساعة {latestAttendance.time}.
-              {isLate
-                ? ` تم خصم ${latestAttendance.deduction} درجات بسبب التأخير بعد الساعة 5 مساء.`
-                : ' لم يتم تطبيق أي خصم على درجاتك.'}
+              {isExcuse
+                ? `تم تسجيل وصولك بالتماس يوم ${latestAttendance.date} الساعة ${latestAttendance.time}. لا يتم خصم أي درجات.`
+                : `تم تسجيل وصولك يوم ${latestAttendance.date} الساعة ${latestAttendance.time}.${isLate
+                  ? ` تم خصم ${latestAttendance.deduction} درجات بسبب التأخير بعد الساعة 5 مساء.`
+                  : ' لم يتم تطبيق أي خصم على درجاتك.'}`}
             </p>
           </>
         ) : (
@@ -39,9 +43,9 @@ export default function CurrentStatusCard({ latestAttendance, loading }) {
 <div className="mt-8 relative z-10">
         <div className="flex justify-between items-end">
           <div className="text-center">
-            <span className={`block text-3xl font-bold ${hasArrival && latestAttendance.deduction > 0 ? 'text-red-200' : 'text-white'}`}>
-              {hasArrival 
-                ? (latestAttendance.deduction > 0 ? `-${latestAttendance.deduction}` : '0')
+            <span className={`block text-3xl font-bold ${hasArrival && latestAttendance.deduction > 0 && !isExcuse ? 'text-red-200' : 'text-white'}`}>
+              {hasArrival
+                ? (isExcuse ? '0' : (latestAttendance.deduction > 0 ? `-${latestAttendance.deduction}` : '0'))
                 : 0}
             </span>
             <span className="text-[10px] font-bold uppercase tracking-widest opacity-60">

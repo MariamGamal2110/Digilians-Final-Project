@@ -105,7 +105,7 @@ export default function SearchInputsPanel({
         </div>
       )}
 
-      {searchResults.length > 0 && (
+{searchResults.length > 0 && (
         <div className="space-y-2">
           {searchResults.map((student) => (
             <div
@@ -128,29 +128,14 @@ export default function SearchInputsPanel({
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-secondary">
+              <div className="grid grid-cols-2 gap-2 text-secondary">
                 <p>
-                  <span className="font-bold text-on-surface">حالة الوصول: </span>
-                  <span
-                    className={
-                      student.arrivalStatus === 'في الموعد'
-                        ? 'text-green-600 font-bold'
-                        : student.arrivalStatus === 'متأخر'
-                          ? 'text-red-600 font-bold'
-                          : 'text-gray-500'
-                    }
-                  >
-                    {student.arrivalStatus}
-                  </span>
+                  <span className="font-bold text-on-surface">الرقم العسكري: </span>
+                  <span className="font-bold">{student.militaryId}</span>
                 </p>
                 <p>
-                  <span className="font-bold text-on-surface">حالة الطلب: </span>
-                  <span className="bg-gray-200 px-2 py-0.5 rounded">
-                    {student.requestStatus} {student.militaryId} 
-                  </span>
-                </p>
-                <p className="sm:col-span-2 text-[11px] opacity-70">
-                 
+                  <span className="font-bold text-on-surface">وقت الوصول: </span>
+                  <span className="font-bold">{student.time}</span>
                 </p>
               </div>
             </div>

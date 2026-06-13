@@ -2,7 +2,6 @@
 import AttendanceTrackerSection from '../../components/Statment/componentsAdmin/AttendanceTrackerSection'
 import CurrentStatusCardAdmin from '../../components/Statment/componentsAdmin/CurrentStatusCardAdmin'
 import MobileBottomNavAdmin from '../../components/Statment/componentsAdmin/MobileBottomNavAdmin'
-import PermitDetailsCardAdmin from '../../components/Statment/componentsAdmin/PermitDetailsCardAdmin'
 import SearchInputsPanel from '../../components/Statment/componentsAdmin/SearchInputsPanel'
 import WelcomeHeaderAdmin from '../../components/Statment/componentsAdmin/WelcomeHeaderAdmin'
 import AttendenceAll from '../../components/Statment/componentsAdmin/AttendenceAll'
@@ -13,6 +12,9 @@ import {
   fetchStatementStats,
   deleteAttendanceRecord,
   clearAllAttendanceRecords,
+  fetchApprovedExcuses,
+  confirmExcuse,
+  rejectExcuse,
 } from '../../api/statement'
 
 function getRecordId(record) {
@@ -22,27 +24,40 @@ function getRecordId(record) {
 export default function StatmentAdmin() {
   const [filters, setFilters] = useState({ searchValue: '' })
   const [records, setRecords] = useState([])
+  const [excuses, setExcuses] = useState([])
   const [serverStats, setServerStats] = useState({ totalExpected: 0 })
   const [loading, setLoading] = useState(true)
   const [adding, setAdding] = useState(false)
   const [searching, setSearching] = useState(false)
-  const [searchResults, setSearchResults] = useState([])
+const [searchResults, setSearchResults] = useState([])
   const [searchNotFound, setSearchNotFound] = useState(false)
   const [error, setError] = useState('')
 
-  const stats = useMemo(() => ({
+const stats = useMemo(() => ({
     totalExpected: serverStats.totalExpected,
-    totalAttendance: records.length,
-    lateStudents: records.filter((r) => r.status === 'late').length,
-  }), [records, serverStats.totalExpected])
+    // Count attendance records (duplicates are prevented by backend)
+    totalAttendance: records.filter((r) => r.status !== 'التماس').length,
+    lateStudents: records.filter((r) => r.status === 'متأخر').length,
+}), [records, serverStats.totalExpected])
 
   const loadData = useCallback(async () => {
     try {
       setError('')
+      // Fetch only attendance records (not excuses)
       const recordsData = await fetchAttendanceRecords('', 'admin')
+      console.log('Attendance:', recordsData)
       setRecords(recordsData)
     } catch (err) {
+      console.error('Error:', err)
       setError(err.message || 'تعذر تحميل بيانات التصريح')
+    }
+    // Load excuses separately
+    try {
+      const excusesData = await fetchApprovedExcuses('admin')
+      console.log('Excuses:', excusesData)
+      setExcuses(excusesData)
+    } catch (err) {
+      console.warn('Could not load excuses:', err)
     }
     try {
       const statsData = await fetchStatementStats('admin')
@@ -142,13 +157,55 @@ export default function StatmentAdmin() {
     }
   }
 
-  // تحديث الدرجة في الـ records بعد الحفظ في السيرفر
+// تحديث الدرجة في الـ records بعد الحفظ في السيرفر
   const handleDeductionChanged = useCallback((recordId, newDeduction) => {
     setRecords((prev) =>
       prev.map((r) =>
         getRecordId(r) === recordId ? { ...r, deduction: newDeduction } : r
       )
     )
+  }, [])
+
+// Handle excuse confirmation - removes from excuses (DB handles creating attendance record)
+  const handleExcuseConfirmed = useCallback(async (excuseId) => {
+    try {
+      // Call API to confirm and create attendance record
+      await confirmExcuse(excuseId, 'admin')
+      console.log('Confirmed excuse, record created in DB')
+      
+      // Remove from excuses list 
+      setExcuses((prev) => prev.filter((e) => getRecordId(e) !== excuseId))
+      
+      // Reload attendance records to get the new record
+      await loadData()
+    } catch (err) {
+      console.error('Error confirming excuse:', err)
+      // If error is 409 (already exists), just remove from list
+      if (err.statusCode === 409 || err.message?.includes('موجود')) {
+        setExcuses((prev) => prev.filter((e) => getRecordId(e) !== excuseId))
+        await loadData()
+      } else {
+        setError(err.message || 'تعذر تأكيد التماس')
+      }
+    }
+  }, [excuses])
+
+// Handle excuse rejection - removes from excuses without creating attendance record
+  const handleExcuseRejected = useCallback(async (excuseId) => {
+    if (!window.confirm('هل أنت متأكد من رفض هذا التماس؟')) {
+      return
+    }
+    try {
+      // Call API to reject and delete the excuse
+      await rejectExcuse(excuseId, 'admin')
+      console.log('Rejected and removed excuse')
+      
+      // Remove from excuses list 
+      setExcuses((prev) => prev.filter((e) => getRecordId(e) !== excuseId))
+    } catch (err) {
+      console.error('Error rejecting excuse:', err)
+      setError(err.message || 'تعذر رفض التماس')
+    }
   }, [])
 
   return (
@@ -176,10 +233,9 @@ export default function StatmentAdmin() {
               {error}
             </div>
           )}
-          <div className="px-1 pb-8 pt-3">
+<div className="px-1 pb-8 pt-3">
             <div className="flex justify-between gap-4">
               <WelcomeHeaderAdmin />
-              <PermitDetailsCardAdmin />
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
@@ -191,13 +247,16 @@ export default function StatmentAdmin() {
             {/* Filter - دائماً ظاهر فوق الجدول */}
 
 
-            {/* Table - دائماً ظاهر */}
+{/* Table - دائماً ظاهر */}
             <AttendanceTrackerSection
               filters={filters}
-              records={records}
+records={records}
+              excuses={excuses}
               loading={loading}
               onRecordDeleted={handleRecordDeleted}
               onClearAll={handleClearAll}
+              onExcuseConfirmed={handleExcuseConfirmed}
+              onExcuseRejected={handleExcuseRejected}
               onDeductionChanged={handleDeductionChanged}
               role="admin"
             />
