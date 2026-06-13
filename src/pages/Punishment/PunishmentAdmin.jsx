@@ -1,39 +1,74 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { FiShield, FiAlertTriangle } from "react-icons/fi";
 import AdminPunishmentStats from "../../components/punishmentsAdminSideComp/Adminpunishmentstats";
-import AdminPunishmentSearch from "../../components/punishmentsAdminSideComp/AdminPunishmentSearch";
 import AdminPunishmentTable from "../../components/punishmentsAdminSideComp/AdminPunishmentTable";
+import { apiRequest } from "../../api/client";
 
-const initialData = [
-  { studentName: "محمد حسن على", militaryNum: "22589", gender: "male", violation: "خصم درجات", punishment: "إنذار كتابي", degree: 2 },
-  { studentName: "جهاد احمد الشبراوى", militaryNum: "22505", gender: "female", violation: "الاستيقاظ بعد نوبة نوم", punishment: " حرمان من الإجازة يوم الأربعاء فقط", degree: 5 },
-  { studentName: "احمد سمير ابراهيم", militaryNum: "22789", gender: "male", violation: "خصم درجات", punishment: "إنذار كتابي", degree: 2 },
-  { studentName: "محمد حسن على", militaryNum: "22880", gender: "male", violation: "عدم الالتزام بهيئة الزى", punishment: "تأخير ساعتين عن نزول الإجازات", degree: 5 },
-  { studentName: "غاليه محمود حسن", militaryNum: "28089", gender: "female", violation: "عدم الالتزام بهيئة الزى", punishment: "تأخير ساعتين عن نزول الإجازات", degree: 5 },
-  { studentName: "محمد عزالدين اكرم", militaryNum: "22517", gender: "male", violation: "تأخير أثناء عودة الإجازات", punishment: "تأخير ساعتين عن نزول الإجازات", degree: 5 },
-  { studentName: "محمد اسلام محسن", militaryNum: "22590", gender: "male", violation: "عدم الالتزام بهيئة الزى", punishment: "تأخير ساعتين عن نزول الإجازات", degree: 5 },
-  { studentName: " كريم  محسن ابوالعينين", militaryNum: "25809", gender: "male", violation: "عدم الالتزام بهيئة الزى", punishment: "جرمان من الاجازه", degree: 5 },
-  { studentName: "عمر ابراهيم فرغلى", militaryNum: "25800", gender: "male", violation: "عدم الالتزام بهيئة الزى", punishment: "تأخير ساعتين عن نزول الإجازات", degree: 5 },
-  { studentName: "أسماء حسين احمد", militaryNum: "22599", gender: "female", violation: "عدم الالتزام بهيئة الزى", punishment: "تأخير ساعتين عن نزول الإجازات", degree: 5 },
-];
+const API = "/punishments";
+
 export default function PunishmentAdmin() {
-  const [data, setData] = useState(initialData);
+  const [data, setData] = useState([]);
   const [searchText, setSearchText] = useState("");
-  const filteredData = data.filter(
-    (r) =>
-      r.studentName.includes(searchText) ||
-      r.militaryNum.includes(searchText)
-  );
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const shownCount = searchText ? filteredData.length : data.length;
-  const displayData = searchText ? filteredData : data;
-
-  function handleAdd(record) {
-    setData((prev) => [...prev, record]);
+  async function fetchPunishments() {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await apiRequest(API, { method: "GET" }, "admin");
+      setData(response.punishments || []);
+    } catch (err) {
+      console.error("❌ خطأ في جلب البيانات:", err);
+      setError(err.message || "فشل في تحميل البيانات");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function handleEdit(index, record) {
-    setData((prev) => prev.map((r, i) => (i === index ? record : r)));
+  useEffect(() => {
+    fetchPunishments();
+  }, []);
+
+  async function handleAdd(record) {
+    try {
+      const response = await apiRequest(API, {
+        method: "POST",
+        body: JSON.stringify(record),
+      }, "admin");
+      setData((prev) => [response.punishment, ...prev]);
+      setError(null);
+    } catch (err) {
+      console.error("❌ خطأ في الإضافة:", err);
+      setError(err.message || "حدث خطأ أثناء الإضافة");
+    }
+  }
+
+  async function handleEdit(index, record) {
+    try {
+      const id = data[index]._id;
+      const response = await apiRequest(`${API}/${id}`, {
+        method: "PUT",
+        body: JSON.stringify(record),
+      }, "admin");
+      setData((prev) => prev.map((row, i) => (i === index ? response.punishment : row)));
+      setError(null);
+    } catch (err) {
+      console.error("❌ خطأ في التعديل:", err);
+      setError(err.message || "حدث خطأ أثناء التعديل");
+    }
+  }
+
+  async function handleDelete(index) {
+    try {
+      const id = data[index]._id;
+      await apiRequest(`${API}/${id}`, { method: "DELETE" }, "admin");
+      setData((prev) => prev.filter((_, i) => i !== index));
+      setError(null);
+    } catch (err) {
+      console.error("❌ خطأ في الحذف:", err);
+      setError(err.message || "حدث خطأ أثناء الحذف");
+    }
   }
 
   function handleDegreeChange(target, amount) {
@@ -56,16 +91,35 @@ export default function PunishmentAdmin() {
     );
   }
 
-  function handleDelete(index) {
-    setData((prev) => prev.filter((_, i) => i !== index));
+  const filteredData = data.filter(
+    (r) =>
+      r.studentName?.toLowerCase().includes(searchText.toLowerCase()) ||
+      r.militaryNum?.includes(searchText),
+  );
+
+  const shownCount = searchText ? filteredData.length : data.length;
+  const displayData = searchText ? filteredData : data;
+
+  if (loading) {
+    return (
+      <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8">
+        <div className="max-w-6xl mx-auto text-center">
+          <p className="text-gray-500">جاري تحميل البيانات...</p>
+        </div>
+      </section>
+    );
   }
 
   return (
     <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8">
       <div className="max-w-6xl mx-auto bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
         <div className="p-8">
+          {error && (
+            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+              {error}
+            </div>
+          )}
 
-          {/* Header */}
           <div className="relative overflow-hidden bg-[#555d30] rounded-2xl p-8 mb-6">
             <div className="absolute -left-10 -top-10 w-40 h-40 rounded-full bg-white/10" />
             <div className="absolute left-16 bottom-[-45px] w-32 h-32 rounded-full bg-white/5" />
@@ -88,19 +142,13 @@ export default function PunishmentAdmin() {
             </div>
           </div>
 
-          {/* Stats */}
           <AdminPunishmentStats
             total={data.length}
             females={data.filter((r) => r.gender === "female").length}
             males={data.filter((r) => r.gender === "male").length}
             shown={shownCount}
           />
-          {/* <AdminPunishmentSearch 
-          searchText={searchText}
-          onSearchChange={setSearchText}
-          onAdd={handleAdd} /> */}
 
-          {/* Table */}
           <AdminPunishmentTable
             data={displayData}
             searchText={searchText}
@@ -111,7 +159,6 @@ export default function PunishmentAdmin() {
             onCommentChange={handleCommentChange}
             onDelete={handleDelete}
           />
-
         </div>
       </div>
     </section>
