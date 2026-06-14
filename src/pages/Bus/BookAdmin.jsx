@@ -10,31 +10,30 @@ export default function BookAdmin() {
     fetchAllBookings();
   }, []);
 
+  const fetchAllBookings = async () => {
+    try {
+      const res = await fetch("http://localhost:5000/api/booking/all");
+      const data = await res.json();
 
-const fetchAllBookings = async () => {
-  try {
-    const res = await fetch('http://localhost:5000/api/booking/all')
-    const data = await res.json()
-     
-    if (data.success) {
-      console.log('#Data Type:', typeof data, Array.isArray(data));
-      
-      const bookingsArray = Array.isArray(data.data) 
-        ? data['0'] 
-        : [data['0']];
-      setBookings(bookingsArray)
-      console.log('#final Bookings:', bookingsArray)
-    } else {
-      setBookings([])
-        console.log('No bookings found')
+      if (data.success) {
+        console.log("#Data Type:", typeof data, Array.isArray(data));
+
+        const bookingsArray = Array.isArray(data.data)
+          ? data["0"]
+          : [data["0"]];
+        setBookings(bookingsArray);
+        console.log("#final Bookings:", bookingsArray);
+      } else {
+        setBookings([]);
+        console.log("No bookings found");
+      }
+    } catch (err) {
+      setError("تعذر الاتصال بالخادم" + err.message);
+      setBookings([]);
+    } finally {
+      setLoading(false);
     }
-  } catch (err) {
-    setError('تعذر الاتصال بالخادم' + err.message)
-    setBookings([])
-  } finally {
-    setLoading(false)
-  }
-}
+  };
 
   const handleUpdateStatus = async (id, status) => {
     try {
@@ -162,31 +161,73 @@ const fetchAllBookings = async () => {
                     <td className="px-6 py-4 text-secondary">
                       {b.boardingStation}
                     </td>
-                    <td
-                      className={`px-6 py-4 font-medium text-xs ${statusInfo.color}`}
-                    >
-                      {statusInfo.text}
+                    <td className={`px-6 py-4 font-medium text-xs`}>
+                      {b.status}
                     </td>
-                   <td className="px-6 py-4">
-  <div className="flex items-center gap-2">
-    {b.status !== 'confirmed' && (
-      <button
-        onClick={() => handleUpdateStatus(b._id, 'confirmed')}
-        className="bg-accent text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
-      >
-        تم الحجز
-      </button>
-    )}
-    {b.status !== 'rejected' && (
-      <button
-        onClick={() => handleUpdateStatus(b._id, 'rejected')}
-        className="border border-gray-200 text-secondary text-xs px-4 py-2 rounded-lg hover:bg-background transition-colors"
-      >
-        اعتذار
-      </button>
-    )}
-  </div>
-</td>
+                    {statusInfo.text}
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        {b.status === "pending" ? (
+                          <>
+                            <button
+                              onClick={() =>
+                                handleUpdateStatus(b._id, "confirmed")
+                              }
+                              className="bg-green-500 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+                            >
+                              ✅ قبول
+                            </button>
+                            <button
+                              onClick={() =>
+                                handleUpdateStatus(b._id, "rejected")
+                              }
+                              className="bg-red-500 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                            >
+                              ❌ رفض
+                            </button>
+                          </>
+                        ):( b.status === "rejected" ? (
+                          <span className="text-red-400 text-xs font-bold">
+                            {" "}الرفض تم❌
+                          </span>
+                        ) : (
+                          <span className="text-green-500 text-xs font-bold">   {" "}✅ تم الحجز </span>
+                        ))}
+                    
+                        {/* {b.status === "rejected" && (
+                          <>
+                            <span className="text-red-400 text-xs font-bold">
+                              {" "}
+                              الرفض تم❌
+                            </span>
+                            <button
+                              onClick={() =>
+                                handleUpdateStatus(b._id, "confirmed")
+                              }
+                              className="bg-green-500 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-green-600 transition-colors"
+                            >
+                              ✅ قبول
+                            </button>
+                          </>
+                        )}
+                        {b.status === "confirmed" && (
+                          <>
+                            <span className="text-green-500 text-xs font-bold">
+                              {" "}
+                              ✅ تم الحجز{" "}
+                            </span>
+                            <button
+                              onClick={() =>
+                                handleUpdateStatus(b._id, "rejected")
+                              }
+                              className="bg-red-500 text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                            >
+                              ❌ رفض
+                            </button>
+                          </>
+                        )} */}
+                      </div>
+                    </td>
                   </tr>
                 );
               })}
