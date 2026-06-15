@@ -1,26 +1,8 @@
-import React, { useState, useEffect } from 'react';
-import { FiShield, FiCreditCard, FiCheck, FiX, FiExternalLink, FiSearch } from "react-icons/fi";
-import StatsGrid from "../../components/PaymentComponents/Admin/StatsGrid";
-import SearchBar from '../../components/SearchBar';
+import client, { getToken } from '../../api/client';
 import axios from 'axios';
-import { getToken } from '../../api/client';
 
-const API_BASE_URL = 'http://localhost:5000/api/payments';
-const BACKEND_SERVER_URL = 'http://localhost:5000';
-
-const getAuthHeader = () => {
-  // Use getToken from client.js which correctly reads 'digilians_token'
-  const token = getToken('admin');
-  
-  // Debug: log what's found
-  window.debugTokenFound = token ? 'yes' : 'no';
-  window.debugLocalStorageKeys = Object.keys(localStorage).join(', ');
-  
-  console.log('Token found (using getToken):', window.debugTokenFound);
-  console.log('All localStorage keys:', window.debugLocalStorageKeys);
-  
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/payments`;
+const BACKEND_SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 const StatusBadge = ({ status }) => {
   const config = {

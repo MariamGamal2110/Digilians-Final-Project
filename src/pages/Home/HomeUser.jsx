@@ -1,22 +1,37 @@
+import { useEffect, useState } from 'react'
 import HomeHero from '../../components/userhomeComponents/HomeHero'
 import ScheduleTimeline from '../../components/userhomeComponents/ScheduleTimeline'
 import BehaviorGradeCard from '../../components/userhomeComponents/BehaviorGradeCard'
 import AcademyCard from '../../components/userhomeComponents/AcademyCard'
 import StudentAlertsCard from '../../components/userhomeComponents/StudentAlertsCard'
-import { getSavedUser } from '../../api/client'
+import client, { getSavedUser, getToken } from '../../api/client'
 
 export default function HomeUser() {
   const savedUser = getSavedUser()
+  const [behaviorGrade, setBehaviorGrade] = useState(100)
 
   const mockUser = savedUser ? {
     name: savedUser.name || 'الطالب',
-    militaryId: savedUser.militaryId || '12389',
+    militaryId: savedUser.militaryId || '',
   } : {
     name: 'الطالب',
-    militaryId: '12389',
+    militaryId: '',
   }
 
-  const behaviorGrade = 75
+  useEffect(() => {
+    fetchBehaviorGrade()
+  }, [])
+
+  const fetchBehaviorGrade = async () => {
+    try {
+      const data = await client.apiRequest('/profile/student')
+      if (data.success && data.profile?.grades?.behavior !== undefined) {
+        setBehaviorGrade(data.profile.grades.behavior)
+      }
+    } catch (err) {
+      console.error('خطأ في جلب درجات السلوك:', err)
+    }
+  }
 
   const schedule = [
     { time: '4:45 صباحا', activity: 'نوبة صحيان' },
