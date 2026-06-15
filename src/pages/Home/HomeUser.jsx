@@ -4,7 +4,7 @@ import ScheduleTimeline from '../../components/userhomeComponents/ScheduleTimeli
 import BehaviorGradeCard from '../../components/userhomeComponents/BehaviorGradeCard'
 import AcademyCard from '../../components/userhomeComponents/AcademyCard'
 import StudentAlertsCard from '../../components/userhomeComponents/StudentAlertsCard'
-import { getSavedUser, getToken } from '../../api/client'
+import client, { getSavedUser, getToken } from '../../api/client'
 
 export default function HomeUser() {
   const savedUser = getSavedUser()
@@ -24,11 +24,7 @@ export default function HomeUser() {
 
   const fetchBehaviorGrade = async () => {
     try {
-      const token = getToken('user')
-      const res = await fetch('http://localhost:5000/api/profile/student', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
+      const data = await client.apiRequest('/profile/student')
       if (data.success && data.profile?.grades?.behavior !== undefined) {
         setBehaviorGrade(data.profile.grades.behavior)
       }

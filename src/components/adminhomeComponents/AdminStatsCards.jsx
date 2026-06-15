@@ -16,11 +16,7 @@ export default function AdminStatsCards() {
 
   const fetchStats = async () => {
     try {
-      const token = getToken('admin')
-      const res = await fetch('http://localhost:5000/api/profile/admin', {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
+      const data = await client.apiRequest('/profile/admin', {}, 'admin')
 
       if (data.success && data.profile) {
         const s = data.profile.stats || {}

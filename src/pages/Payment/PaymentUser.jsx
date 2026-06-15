@@ -1,26 +1,10 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import StatsGrid from '../../components/PaymentComponents/User/StatsGrid';
+import client from '../../api/client';
 import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:5000/api/payments';
-const BACKEND_SERVER_URL = 'http://localhost:5000';
-
-const getAuthHeader = () => {
-  let token = localStorage.getItem('digilians_token');
-
-  if (!token) {
-    try {
-      const storedUser = localStorage.getItem('authData') || localStorage.getItem('digilians_user') || localStorage.getItem('user');
-      if (storedUser) {
-        const parsed = JSON.parse(storedUser);
-        token = parsed?.token || parsed?.data?.token || parsed?.state?.token;
-      }
-    } catch (e) {
-      console.error("Error parsing auth data", e);
-    }
-  }
-  return token ? { Authorization: `Bearer ${token}` } : null;
-};
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/payments`;
+const BACKEND_SERVER_URL = import.meta.env.VITE_SERVER_URL;
 
 const STATIC_YEAR_MONTHS = [
   { id: 1, name: 'يناير' }, { id: 2, name: 'فبراير' }, { id: 3, name: 'مارس' },
@@ -34,14 +18,16 @@ const SovereignLedger = () => {
   const [loading, setLoading] = useState(false);
 
   const loadPaymentRecords = useCallback(async () => {
-    const headers = getAuthHeader();
-    if (!headers || !headers.Authorization) {
+    const token = client.getToken('user');
+    if (!token) {
       console.warn("No token found");
       return;
     }
 
     try {
-      const response = await axios.get(`${API_BASE_URL}/my-payments`, { headers });
+      const response = await axios.get(`${API_BASE_URL}/my-payments`, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
       if (response.data && response.data.success) {
         const fetchedMonths = response.data.data?.months || response.data.data || [];
         setServerPayments(fetchedMonths);
@@ -49,7 +35,7 @@ const SovereignLedger = () => {
     } catch (err) {
       console.error('Error loading payments:', err);
       if (err.response?.status === 401 || err.response?.status === 403) {
-        localStorage.removeItem('digilians_token');
+        client.clearAuthData('user');
         window.location.href = '/login';
       }
     }
@@ -90,8 +76,8 @@ const SovereignLedger = () => {
       return;
     }
 
-    const headers = getAuthHeader();
-    if (!headers) {
+    const token = client.getToken('user');
+    if (!token) {
       alert('جلسة العمل انتهت. يرجى إعادة تسجيل الدخول.');
       return;
     }
@@ -103,7 +89,10 @@ const SovereignLedger = () => {
     try {
       setLoading(true);
       const response = await axios.post(`${API_BASE_URL}/upload-receipt`, formData, {
-        headers: { ...headers, 'Content-Type': 'multipart/form-data' }
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data' 
+        }
       });
 
       if (response.data && response.data.success) {
