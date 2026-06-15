@@ -29,16 +29,16 @@ export default function StatmentAdmin() {
   const [loading, setLoading] = useState(true)
   const [adding, setAdding] = useState(false)
   const [searching, setSearching] = useState(false)
-const [searchResults, setSearchResults] = useState([])
+  const [searchResults, setSearchResults] = useState([])
   const [searchNotFound, setSearchNotFound] = useState(false)
   const [error, setError] = useState('')
 
-const stats = useMemo(() => ({
+  const stats = useMemo(() => ({
     totalExpected: serverStats.totalExpected,
     // Count attendance records (duplicates are prevented by backend)
     totalAttendance: records.filter((r) => r.status !== 'التماس').length,
     lateStudents: records.filter((r) => r.status === 'متأخر').length,
-}), [records, serverStats.totalExpected])
+  }), [records, serverStats.totalExpected])
 
   const loadData = useCallback(async () => {
     try {
@@ -157,7 +157,7 @@ const stats = useMemo(() => ({
     }
   }
 
-// تحديث الدرجة في الـ records بعد الحفظ في السيرفر
+  // تحديث الدرجة في الـ records بعد الحفظ في السيرفر
   const handleDeductionChanged = useCallback((recordId, newDeduction) => {
     setRecords((prev) =>
       prev.map((r) =>
@@ -166,16 +166,16 @@ const stats = useMemo(() => ({
     )
   }, [])
 
-// Handle excuse confirmation - removes from excuses (DB handles creating attendance record)
+  // Handle excuse confirmation - removes from excuses (DB handles creating attendance record)
   const handleExcuseConfirmed = useCallback(async (excuseId) => {
     try {
       // Call API to confirm and create attendance record
       await confirmExcuse(excuseId, 'admin')
       console.log('Confirmed excuse, record created in DB')
-      
+
       // Remove from excuses list 
       setExcuses((prev) => prev.filter((e) => getRecordId(e) !== excuseId))
-      
+
       // Reload attendance records to get the new record
       await loadData()
     } catch (err) {
@@ -190,7 +190,7 @@ const stats = useMemo(() => ({
     }
   }, [excuses])
 
-// Handle excuse rejection - removes from excuses without creating attendance record
+  // Handle excuse rejection - removes from excuses without creating attendance record
   const handleExcuseRejected = useCallback(async (excuseId) => {
     if (!window.confirm('هل أنت متأكد من رفض هذا التماس؟')) {
       return
@@ -199,7 +199,7 @@ const stats = useMemo(() => ({
       // Call API to reject and delete the excuse
       await rejectExcuse(excuseId, 'admin')
       console.log('Rejected and removed excuse')
-      
+
       // Remove from excuses list 
       setExcuses((prev) => prev.filter((e) => getRecordId(e) !== excuseId))
     } catch (err) {
@@ -219,7 +219,12 @@ const stats = useMemo(() => ({
 
       <main className="min-h-screen flex justify-center px-4 py-8 md:py-10 lg:py-12">
         <div className="w-full max-w-[1300px] rounded-[28px] bg-white/55 shadow-[0_18px_50px_rgba(66,58,40,0.10)] backdrop-blur-sm px-4 sm:px-6 lg:px-8 py-6 md:py-8 overflow-hidden">
-         
+          <div className="flex justify-between gap-4 bg-[#555d30] rounded-2xl p-8 mb-6 text-white ">
+            <WelcomeHeaderAdmin />
+          </div>
+
+
+
           <SearchInputsPanel
             onApply={handleApplySearch}
             onAdd={handleAddStudent}
@@ -228,15 +233,12 @@ const stats = useMemo(() => ({
             searchResults={searchResults}
             searchNotFound={searchNotFound}
           />
-           {error && (
+          {error && (
             <div className="mx-auto w-2/4 mb-4 rounded-lg bg-red-50 border border-red-200 text-red-700 px-4 py-3 text-sm font-semibold text-center">
               {error}
             </div>
           )}
-<div className="px-1 pb-8 pt-3">
-            <div className="flex justify-between gap-4">
-              <WelcomeHeaderAdmin />
-            </div>
+          <div className="px-1 pb-8 pt-3">
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-5">
               <CurrentStatusCardAdmin totalExpected={stats.totalExpected} />
@@ -247,10 +249,10 @@ const stats = useMemo(() => ({
             {/* Filter - دائماً ظاهر فوق الجدول */}
 
 
-{/* Table - دائماً ظاهر */}
+            {/* Table - دائماً ظاهر */}
             <AttendanceTrackerSection
               filters={filters}
-records={records}
+              records={records}
               excuses={excuses}
               loading={loading}
               onRecordDeleted={handleRecordDeleted}

@@ -151,16 +151,43 @@ export default function HolidayAdmin() {
     : requests
 
   const showTable = !showSearch || searchQuery || statusFilter
+return (
+  <section dir="rtl" className="min-h-screen bg-background py-8 ">
+    <div className="max-w-[1300px] mx-auto px-6">
 
-  return (
-    <section dir="rtl" className="min-h-screen bg-background py-8">
-      <div className="max-w-[1300px] mx-auto px-6">
+      {/* البطاقة البيضاء اللي بتلف كل حاجة */}
+      <div className="bg-white rounded-[28px] shadow-[0_18px_50px_rgba(66,58,40,0.10)] px-6 py-6 overflow-hidden ">
 
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold text-primary mb-2">الإجازات الأسبوعية المقدمة</h1>
-          <p className="text-gray-600">إدارة طلبات الإجازات الأسبوعية وتحديد الحالة</p>
+        {/* الهيدر الأخضر */}
+        <div className="relative flex flex-row-reverse items-center gap-6 bg-[#555d30] rounded-2xl p-8 mb-10 overflow-hidden pb-16">
+          {/* دوايرة زخرفية */}
+          <div className="absolute left-0 top-0 w-40 h-40 bg-white/10 rounded-full -translate-x-1/2 -translate-y-1/2 pointer-events-none" />
+          <div className="absolute left-16 bottom-0 w-32 h-32 bg-white/10 rounded-full translate-y-1/2 pointer-events-none" />
+
+          {/* أيقونة */}
+          <div className="relative z-10 bg-white/15 rounded-2xl w-[72px] h-[72px] flex items-center justify-center shrink-0">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none"
+              stroke="white" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg>
+          </div>
+
+          {/* النص */}
+          <div className="relative z-10 flex-1 text-right ">
+            
+            <h1 className="text-white text-[32px] font-black tracking-tight leading-tight mb-2">
+              الإجازات الأسبوعية المقدمة
+            </h1>
+            <p className="text-white/70 text-sm">
+              إدارة طلبات الإجازات الأسبوعية وتحديد الحالة
+            </p>
+          </div>
         </div>
 
+        {/* باقي المحتوى */}
         <AdminHolidayStats
           stats={stats}
           selectedStat={selectedStat}
@@ -204,7 +231,8 @@ export default function HolidayAdmin() {
             onClear={handleClear}
           />
         )}
-      </div>
-    </section>
-  )
-}
+
+      </div>{/* نهاية البطاقة البيضاء */}
+    </div>
+  </section>
+)}

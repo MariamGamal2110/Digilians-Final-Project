@@ -83,7 +83,7 @@ export default function SearchInputsPanel({
         <input
           className="w-full bg-white h-9 border border-surface-dim rounded-lg px-3 py-2 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container/40"
           onChange={(event) => setSearchValue(event.target.value)}
-          placeholder="بحث بالاسم أو الرقم العسكري أو البريد الإلكتروني"
+          placeholder="بحث أو الرقم العسكري أو البريد الإلكتروني"
           type="text"
           value={searchValue}
         />
@@ -101,7 +101,7 @@ export default function SearchInputsPanel({
 
       {searchNotFound && (
         <div className="rounded-lg bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 text-xs font-semibold text-center">
-          الطالب دا مش موجود
+          الطالب مش موجود
         </div>
       )}
 
