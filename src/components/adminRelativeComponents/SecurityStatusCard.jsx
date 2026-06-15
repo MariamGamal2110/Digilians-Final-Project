@@ -37,7 +37,7 @@ export default function SecurityStatusCard() {
 
     return (
         <>
-            <div className="bg-[#555d30] text-white rounded-xl p-5 min-h-[280px]">
+            <div className="bg-white text-[#1f220f] rounded-xl border border-gray-200 p-5 min-h-[280px]">
                 <h2 className="font-bold text-lg mb-5">
                     تقرير الحالة الأمنية
                 </h2>
@@ -49,8 +49,8 @@ export default function SecurityStatusCard() {
                             onClick={() => handleSelectItem(item)}
                             className={
                                 selectedItem && selectedItem.id === item.id
-                                    ? 'w-full text-right bg-[#2f351c] rounded-lg px-3 py-2 transition'
-                                    : 'w-full text-right hover:bg-[#6b7440] rounded-lg px-3 py-2 transition'
+                                    ? 'w-full text-right bg-[#e8eddc] text-[#1f220f] rounded-lg px-3 py-2 transition'
+                                    : 'w-full text-right text-[#555d30] hover:bg-[#f7f5f0] rounded-lg px-3 py-2 transition'
                             }
                         >
                             › {item.title}
@@ -59,7 +59,7 @@ export default function SecurityStatusCard() {
                 </div>
 
                 {selectedItem && (
-                    <div className="mt-5 bg-white/10 border border-white/20 rounded-lg p-4 text-sm leading-7">
+                    <div className="mt-5 rounded-lg border border-[#d8dfc6] bg-[#f7f9f1] p-4 text-sm leading-7 text-[#1f220f]">
                         <p className="font-bold mb-2">
                             {selectedItem.title}
                         </p>
