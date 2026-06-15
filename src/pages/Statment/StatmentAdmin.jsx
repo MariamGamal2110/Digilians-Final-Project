@@ -15,6 +15,7 @@ import {
   fetchApprovedExcuses,
   confirmExcuse,
   rejectExcuse,
+  searchStudentsWithStatus,
 } from '../../api/statement'
 
 function getRecordId(record) {
@@ -99,7 +100,7 @@ export default function StatmentAdmin() {
             )
             if (!alreadyInTable) {
               setRecords((prev) => [existingRecord, ...prev])
-            } else {
+} else {
               setError('الطالب موجود بالفعل في الجدول')
             }
           }
@@ -114,7 +115,7 @@ export default function StatmentAdmin() {
     }
   }
 
-  const handleApplySearch = ({ searchValue }) => {
+  const handleApplySearch = async ({ searchValue }) => {
     const trimmed = searchValue.trim()
     setFilters({ searchValue: trimmed })
     setSearchResults([])
@@ -124,16 +125,18 @@ export default function StatmentAdmin() {
 
     setSearching(true)
     try {
-      const normalizedSearch = trimmed.toLowerCase()
-      const results = records.filter((student) =>
-        [student.name, student.militaryId, student.email]
-          .filter(Boolean)
-          .some((value) => String(value).toLowerCase().includes(normalizedSearch))
-      )
+      // Call API to search in DATABASE (PermitStudentDirectory), not local records
+      const results = await searchStudentsWithStatus(trimmed, 'admin')
       setSearchResults(results)
       setSearchNotFound(results.length === 0)
     } catch (err) {
-      setError(err.message || 'تعذر البحث')
+      // Backend returns "الطالب دا مش موجود" when not found in database
+      if (err.statusCode === 404 || err.message?.includes('مش موجود')) {
+        setSearchNotFound(true)
+        setError('')
+      } else {
+        setError(err.message || 'تعذر البحث')
+      }
     } finally {
       setSearching(false)
     }
