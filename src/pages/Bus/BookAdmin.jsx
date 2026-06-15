@@ -15,10 +15,10 @@
 //   try {
 //     const res = await fetch('http://localhost:5000/api/booking/all')
 //     const data = await res.json()
-     
+
 //     if (data.success) {
 //       console.log('#Data Type:', typeof data, Array.isArray(data));
-      
+
 //       const bookingsArray = Array.isArray(data.data) 
 //         ? data['0'] 
 //         : [data['0']];
@@ -262,30 +262,30 @@ export default function BookAdmin() {
   }, []);
 
 
-const fetchAllBookings = async () => {
-  try {
-    const res = await fetch('http://localhost:5000/api/booking/all')
-    const data = await res.json()
-     
-    if (data.success) {
-      console.log('#Data Type:', typeof data, Array.isArray(data));
-      
-      const bookingsArray = Array.isArray(data.data) 
-        ? data['0'] 
-        : [data['0']];
-      setBookings(bookingsArray)
-      console.log('#final Bookings:', bookingsArray)
-    } else {
-      setBookings([])
+  const fetchAllBookings = async () => {
+    try {
+      const res = await fetch('http://localhost:5000/api/booking/all')
+      const data = await res.json()
+
+      if (data.success) {
+        console.log('#Data Type:', typeof data, Array.isArray(data));
+
+        const bookingsArray = Array.isArray(data.data)
+          ? data['0']
+          : [data['0']];
+        setBookings(bookingsArray)
+        console.log('#final Bookings:', bookingsArray)
+      } else {
+        setBookings([])
         console.log('No bookings found')
+      }
+    } catch (err) {
+      setError('تعذر الاتصال بالخادم' + err.message)
+      setBookings([])
+    } finally {
+      setLoading(false)
     }
-  } catch (err) {
-    setError('تعذر الاتصال بالخادم' + err.message)
-    setBookings([])
-  } finally {
-    setLoading(false)
   }
-}
 
   const handleUpdateStatus = async (id, status) => {
     try {
@@ -391,7 +391,7 @@ const fetchAllBookings = async () => {
               className="w-full md:w-80 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-right bg-white focus:outline-none focus:ring-2 focus:ring-[#555d30]/30"
             />
           </div>
-        ) : (
+          : (
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-gray-100 bg-background">
@@ -432,33 +432,34 @@ const fetchAllBookings = async () => {
                     >
                       {statusInfo.text}
                     </td>
-                   <td className="px-6 py-4">
-  <div className="flex items-center gap-2">
-    {b.status !== 'confirmed' && (
-      <button
-        onClick={() => handleUpdateStatus(b._id, 'confirmed')}
-        className="bg-accent text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
-      >
-        تم الحجز
-      </button>
-    )}
-    {b.status !== 'rejected' && (
-      <button
-        onClick={() => handleUpdateStatus(b._id, 'rejected')}
-        className="border border-gray-200 text-secondary text-xs px-4 py-2 rounded-lg hover:bg-background transition-colors"
-      >
-        اعتذار
-      </button>
-    )}
-  </div>
-</td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        {b.status !== 'confirmed' && (
+                          <button
+                            onClick={() => handleUpdateStatus(b._id, 'confirmed')}
+                            className="bg-accent text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
+                          >
+                            تم الحجز
+                          </button>
+                        )}
+                        {b.status !== 'rejected' && (
+                          <button
+                            onClick={() => handleUpdateStatus(b._id, 'rejected')}
+                            className="border border-gray-200 text-secondary text-xs px-4 py-2 rounded-lg hover:bg-background transition-colors"
+                          >
+                            اعتذار
+                          </button>
+                        )}
+                      </div>
+                    </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
-        )}
+          )
+        </div>
       </div>
+
     </section>
-  );
-}
+  )}
