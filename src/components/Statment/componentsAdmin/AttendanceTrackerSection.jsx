@@ -28,7 +28,7 @@ export default function AttendanceTrackerSection({
         }
     }
 
-// Separate excuses (filter by excuses array only when "tallas" is selected)
+    // Separate excuses (filter by excuses array only when "tallas" is selected)
     const visibleStudents = useMemo(() => {
         if (attendanceFilter === 'tallas') {
             // Show only excuses when "التماس" filter is selected
@@ -53,7 +53,7 @@ export default function AttendanceTrackerSection({
         setOpenNoteForId(null)
     }
 
-const handleDeleteRecord = (recordId, recordStatus) => {
+    const handleDeleteRecord = (recordId, recordStatus) => {
         // If it's an excuse record (status: "التماس"), use reject instead of delete
         if (recordStatus === 'التماس') {
             if (window.confirm('هل أنت متأكد من رفض هذا التماس؟')) {
@@ -68,7 +68,7 @@ const handleDeleteRecord = (recordId, recordStatus) => {
         }
     }
 
-const getDeduction = (studentId, defaultDeduction = 0) => {
+    const getDeduction = (studentId, defaultDeduction = 0) => {
         return deductionsByStudent[studentId] ?? defaultDeduction
     }
 
@@ -76,12 +76,12 @@ const getDeduction = (studentId, defaultDeduction = 0) => {
         // Calculate new deduction value
         const current = deductionsByStudent[studentId] ?? defaultDeduction
         const next = Math.max(0, current + delta)
-        
+
         // Update local state immediately for responsive UI
         setDeductionsByStudent((prev) => {
             return { ...prev, [studentId]: next }
         })
-        
+
         // Save to database
         try {
             await updateAttendanceDeduction(studentId, next, role)
@@ -171,7 +171,7 @@ const getDeduction = (studentId, defaultDeduction = 0) => {
                                                 <td className="py-4 px-4">{student.date}</td>
                                                 <td className="py-4 px-4">{student.time}</td>
 
-<td className="py-4 px-4 font-bold">
+                                                <td className="py-4 px-4 font-bold">
                                                     {student.status === 'التماس' ? (
                                                         <span className="text-blue-600">التماس</span>
                                                     ) : student.status === 'في الموعد' ? (
@@ -183,7 +183,7 @@ const getDeduction = (studentId, defaultDeduction = 0) => {
                                                     )}
                                                 </td>
 
-{/* ✅ عمود الدرجات - different for excuses */}
+                                                {/* ✅ عمود الدرجات - different for excuses */}
                                                 <td className="py-4 px-4">
                                                     {student.status === 'التماس' ? (
                                                         <div className="flex items-center justify-center gap-2">
@@ -227,7 +227,7 @@ const getDeduction = (studentId, defaultDeduction = 0) => {
                                                     )}
                                                 </td>
 
-<td className="py-4 px-4">
+                                                <td className="py-4 px-4">
                                                     <div className="flex items-center gap-1">
                                                         <button
                                                             className="p-2 rounded-full hover:bg-gray-200 flex items-center justify-center"
