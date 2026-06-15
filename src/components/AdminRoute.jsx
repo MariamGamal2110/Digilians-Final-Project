@@ -1,12 +1,27 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { getSavedUser } from "../api/client";
+import { getSavedUser, getToken } from "../api/client";
+
+function isAdminRole(role = "") {
+  const normalizedRole = String(role).trim().toLowerCase();
+
+  return [
+    "admin",
+    "commander",
+    "super_admin",
+    "superadmin",
+    "مدير النظام",
+    "مشرف",
+    "إدارة",
+    "الادارة",
+  ].includes(normalizedRole);
+}
 
 export default function AdminRoute({ children }) {
-  const user = getSavedUser('admin');
-  const adminRoles = ["admin", "commander", "super_admin"];
+  const user = getSavedUser('admin') || getSavedUser('user');
+  const token = getToken('admin') || getToken('user');
 
-  if (!user || !adminRoles.includes(user.role)) {
+  if (!token || !user || !isAdminRole(user.role)) {
     return <Navigate to="/signin?role=commander" replace />;
   }
 

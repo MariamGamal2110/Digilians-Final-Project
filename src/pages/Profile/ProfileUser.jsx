@@ -272,7 +272,9 @@ export default function ProfileUser() {
             </div>
           )}
 
-          <div className="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+          <div className="relative mb-8 flex min-h-[180px] flex-col items-center justify-between gap-6 overflow-hidden rounded-2xl bg-[#555d30] px-6 py-9 md:flex-row">
+            <div className="absolute -left-10 -top-10 h-36 w-36 rounded-full bg-white/10" />
+            <div className="absolute left-24 bottom-[-70px] h-40 w-40 rounded-full bg-white/5" />
             <ProfileInfo student={studentProfile.student} />
 
             <div className="relative flex items-center gap-3">
@@ -280,7 +282,7 @@ export default function ProfileUser() {
                 type="button"
                 onClick={openStudentInbox}
                 title="رسائل الإدارة"
-                className="relative w-12 h-12 rounded-full border border-[#d8d4c7] bg-[#f7f5f0] text-[#3b3120] flex items-center justify-center hover:bg-[#f3efe4] transition"
+                className="relative flex h-12 w-12 items-center justify-center rounded-full border border-white/25 bg-white/10 text-white transition hover:bg-white/20"
               >
                 <FiBell size={20} />
                 {studentUnreadCount > 0 && (
@@ -293,7 +295,7 @@ export default function ProfileUser() {
               <button
                 type="button"
                 onClick={openEditModal}
-                className="bg-[#555d30] text-white rounded-md px-8 py-4 text-sm font-bold flex items-center gap-3 hover:bg-[#3f4723] transition"
+                className="flex items-center gap-3 rounded-md bg-white px-8 py-4 text-sm font-bold text-[#3f4723] transition hover:bg-[#eef0e4]"
               >
                 تعديل بيانات
                 <span>✎</span>

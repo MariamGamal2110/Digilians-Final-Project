@@ -27,15 +27,35 @@ export default function AdminInfoHeader({
   const adminInitials = getAdminInitials(admin.name)
   const [hasImageError, setHasImageError] = useState(false)
 
+  const hasResolvedMilitaryId = Boolean(
+    admin?.militaryId && admin.militaryId !== 'غير متوفر'
+  )
+  const hasResolvedDepartment = Boolean(
+    admin?.department && admin.department !== 'الإدارة'
+  )
+  const hasResolvedRole = Boolean(
+    admin?.role && admin.role !== 'مشرف'
+  )
+  const shouldShowMeta = hasResolvedMilitaryId || hasResolvedDepartment || hasResolvedRole
+
   useEffect(() => {
     setHasImageError(false)
   }, [avatarSrc])
 
   const shouldShowImage = Boolean(avatarSrc) && !hasImageError
+  const adminMeta = [
+    hasResolvedRole ? admin.role : null,
+    hasResolvedMilitaryId ? `الرقم العسكري : ${admin.militaryId}` : null,
+  ]
+    .filter(Boolean)
+    .join(' - ')
 
   return (
-    <div className="mb-8 flex flex-col items-center justify-between gap-8 lg:flex-row">
-      <div className="flex flex-col items-center gap-5 text-right sm:flex-row">
+    <div className="relative mb-8 flex min-h-[190px] flex-col items-center justify-between gap-8 overflow-hidden rounded-2xl bg-[#555d30] px-6 py-9 lg:flex-row">
+      <div className="absolute -left-10 -top-10 h-36 w-36 rounded-full bg-white/10" />
+      <div className="absolute left-24 bottom-[-70px] h-40 w-40 rounded-full bg-white/5" />
+
+      <div className="relative flex flex-col items-center gap-5 text-right sm:flex-row">
         <div className="shrink-0">
           {shouldShowImage ? (
             <div className="h-24 w-24 overflow-hidden rounded-2xl border border-[#c8cdb8] bg-[#dfe3d2] shadow-sm sm:h-28 sm:w-28">
@@ -54,38 +74,42 @@ export default function AdminInfoHeader({
         </div>
 
         <div>
-          <div className="mb-3 flex justify-end">
-            <span className="rounded-md bg-[#555d30] px-4 py-1 text-xs font-bold text-white">
+          <div className="mb-4 flex justify-end">
+            <span className="inline-flex items-center rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-xs font-bold tracking-wide text-white shadow-[0_6px_18px_rgba(0,0,0,0.08)]">
               مشرف
             </span>
           </div>
 
-          <h1 className="mb-4 text-3xl font-bold text-[#1f220f]">
+          <h1 className="mb-4 text-3xl font-bold text-white">
             {admin.name}
           </h1>
 
-          <p className="mb-2 flex items-center justify-end gap-2 text-sm font-bold text-[#1f220f]">
-            {admin.role} - الرقم العسكري : {admin.militaryId}
-            <FiUserCheck className="text-[#555d30]" />
-          </p>
+          {shouldShowMeta && (
+            <p className="mb-2 flex items-center justify-end gap-2 text-sm font-bold text-white">
+              {adminMeta}
+              <FiUserCheck className="text-white/85" />
+            </p>
+          )}
 
-          <p className="text-sm text-[#555d30]">
-            {admin.department}
-          </p>
+          {hasResolvedDepartment && (
+            <p className="text-sm text-white/85">
+              {admin.department}
+            </p>
+          )}
 
-          {isRefreshingProfile && (
-            <p className="mt-3 text-xs font-bold text-[#7b815f]">
+          {isRefreshingProfile && !shouldShowMeta && (
+            <p className="mt-3 text-xs font-bold text-white/75">
               جارٍ تحديث بيانات الملف الإداري...
             </p>
           )}
         </div>
       </div>
 
-      <div className="flex items-center gap-4">
+      <div className="relative flex items-center gap-4">
         <button
           type="button"
           onClick={onContactStudent}
-          className="flex items-center gap-3 rounded-md bg-[#555d30] px-8 py-4 text-sm font-bold text-white transition hover:scale-105 hover:bg-[#3f4723]"
+          className="flex items-center gap-3 rounded-md bg-white px-8 py-4 text-sm font-bold text-[#3f4723] transition hover:scale-105 hover:bg-[#eef0e4]"
         >
           التواصل بالطالب
           <FiMail />
