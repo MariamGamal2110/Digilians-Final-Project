@@ -600,6 +600,16 @@ export default function BookUser() {
       fetchMyBookings(form.studentId)
     }
   }, [form.studentId])
+useEffect(() => {
+  const hasPending = previousBookings.some(b => b.status === 'pending')
+  if (!hasPending || form.studentId.length <= 3) return
+
+  const interval = setInterval(() => {
+    fetchMyBookings(form.studentId)
+  }, 10000)
+
+  return () => clearInterval(interval)
+}, [previousBookings, form.studentId])
 
   const fetchMyBookings = async (studentId) => {
     try {

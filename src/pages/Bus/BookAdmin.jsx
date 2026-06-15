@@ -261,26 +261,31 @@ export default function BookAdmin() {
     fetchAllBookings();
   }, []);
 
-  const fetchAllBookings = async () => {
-    try {
-      const res = await fetch('http://localhost:5000/api/booking/all')
-      const data = await res.json()
-      if (data.success) {
-        console.log('#Data Type:', typeof data, Array.isArray(data));
-        const bookingsArray = Array.isArray(data.data) ? data['0'] : [data['0']];
-        setBookings(bookingsArray)
-        console.log('#final Bookings:', bookingsArray)
-      } else {
-        setBookings([])
-        console.log('No bookings found')
-      }
-    } catch (err) {
-      setError('تعذر الاتصال بالخادم' + err.message)
+
+const fetchAllBookings = async () => {
+  try {
+    const res = await fetch('http://localhost:5000/api/booking/all')
+    const data = await res.json()
+     
+    if (data.success) {
+      console.log('#Data Type:', typeof data, Array.isArray(data));
+      
+      const bookingsArray = Array.isArray(data.data) 
+        ? data['0'] 
+        : [data['0']];
+      setBookings(bookingsArray)
+      console.log('#final Bookings:', bookingsArray)
+    } else {
       setBookings([])
-    } finally {
-      setLoading(false)
+        console.log('No bookings found')
     }
+  } catch (err) {
+    setError('تعذر الاتصال بالخادم' + err.message)
+    setBookings([])
+  } finally {
+    setLoading(false)
   }
+}
 
   const handleUpdateStatus = async (id, status) => {
     try {
@@ -386,68 +391,73 @@ export default function BookAdmin() {
               className="w-full md:w-80 border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-right bg-white focus:outline-none focus:ring-2 focus:ring-[#555d30]/30"
             />
           </div>
-
-          {/* الجدول */}
-          <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-inner">
-            <div className="overflow-x-auto">
-              <table className="w-full text-right border-collapse">
-                <thead>
-                  <tr className="bg-gray-50 text-gray-500 text-xs font-bold border-b border-gray-200">
-                    <th className="px-6 py-4">اسم الطالب</th>
-                    <th className="px-6 py-4">الرقم العسكري</th>
-                    <th className="px-6 py-4">الوجهة</th>
-                    <th className="px-6 py-4 text-center">الحالة</th>
-                    <th className="px-6 py-4 text-center">الإجراء</th>
+        ) : (
+          <table className="w-full text-sm">
+            <thead>
+              <tr className="border-b border-gray-100 bg-background">
+                <th className="text-right text-secondary font-medium px-6 py-3">
+                  اسم الطالب
+                </th>
+                <th className="text-right text-secondary font-medium px-6 py-3">
+                  الرقم العسكري
+                </th>
+                <th className="text-right text-secondary font-medium px-6 py-3">
+                  الوجهة
+                </th>
+                <th className="text-right text-secondary font-medium px-6 py-3">
+                  الحالة
+                </th>
+                <th className="text-right text-secondary font-medium px-6 py-3">
+                  الإجراء
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {bookings.map((b) => {
+                const statusInfo = getStatusLabel(b.status);
+                return (
+                  <tr
+                    key={b._id}
+                    className="border-b border-gray-50 hover:bg-background transition-colors"
+                  >
+                    <td className="px-6 py-4 text-primary font-bold">
+                      {b.studentName}
+                    </td>
+                    <td className="px-6 py-4 text-secondary">{b.studentId}</td>
+                    <td className="px-6 py-4 text-secondary">
+                      {b.boardingStation}
+                    </td>
+                    <td
+                      className={`px-6 py-4 font-medium text-xs ${statusInfo.color}`}
+                    >
+                      {statusInfo.text}
+                    </td>
+                   <td className="px-6 py-4">
+  <div className="flex items-center gap-2">
+    {b.status !== 'confirmed' && (
+      <button
+        onClick={() => handleUpdateStatus(b._id, 'confirmed')}
+        className="bg-accent text-white text-xs font-bold px-4 py-2 rounded-lg hover:bg-secondary transition-colors"
+      >
+        تم الحجز
+      </button>
+    )}
+    {b.status !== 'rejected' && (
+      <button
+        onClick={() => handleUpdateStatus(b._id, 'rejected')}
+        className="border border-gray-200 text-secondary text-xs px-4 py-2 rounded-lg hover:bg-background transition-colors"
+      >
+        اعتذار
+      </button>
+    )}
+  </div>
+</td>
                   </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {filteredBookings.length === 0 ? (
-                    <tr>
-                      <td colSpan="5" className="text-center py-12 text-gray-400 font-bold text-sm">
-                        لا توجد طلبات حجز حتى الآن
-                      </td>
-                    </tr>
-                  ) : (
-                    filteredBookings.map((b) => {
-                      const statusInfo = getStatusLabel(b.status);
-                      return (
-                        <tr key={b._id} className="hover:bg-gray-50/70 transition-colors">
-                          <td className="px-6 py-4 font-bold text-gray-800">{b.studentName}</td>
-                          <td className="px-6 py-4 font-mono text-sm text-gray-600 font-bold">{b.studentId}</td>
-                          <td className="px-6 py-4 text-gray-700 font-medium">{b.boardingStation}</td>
-                          <td className={`px-6 py-4 text-center font-medium text-xs ${statusInfo.color}`}>
-                            {statusInfo.text}
-                          </td>
-                          <td className="px-6 py-4 text-center">
-                            <div className="flex gap-2 justify-center">
-                              {b.status !== 'confirmed' && (
-                                <button
-                                  onClick={() => handleUpdateStatus(b._id, 'confirmed')}
-                                  className="bg-green-600 hover:bg-green-700 text-white text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 shadow-sm transition-all"
-                                >
-                                  <FiCheck /> تم الحجز
-                                </button>
-                              )}
-                              {b.status !== 'rejected' && (
-                                <button
-                                  onClick={() => handleUpdateStatus(b._id, 'rejected')}
-                                  className="bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 text-xs font-bold px-3 py-1.5 rounded-lg flex items-center gap-1 transition-all"
-                                >
-                                  <FiX /> اعتذار
-                                </button>
-                              )}
-                            </div>
-                          </td>
-                        </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-        </div>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
     </section>
   );
