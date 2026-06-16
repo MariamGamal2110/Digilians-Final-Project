@@ -104,7 +104,7 @@ const SovereignLedger = () => {
     try {
       setLoading(true);
       const response = await axios.post(`${API_BASE_URL}/upload-receipt`, formData, {
-        headers: { ...headers, 'Content-Type': 'multipart/form-data' }
+        headers: { ...headers }
       });
 
       if (response.data && response.data.success) {
