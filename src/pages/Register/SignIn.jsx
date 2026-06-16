@@ -49,12 +49,12 @@ const SignIn = () => {
       }
     } else {
       if (normalizedEmail === "sandy@gmail.com") {
-        setError("غير مصرح بأسخدام هذا البريد الالكترونى ");
+        setError("لا يمكن السماح بالدخول لهذاالمستخدم");
         return;
       }
 
       if (formData.password === "Sandy123@") {
-        setError("هذه كلمة المرور محجوزة للمسؤول.");
+        setError(" كلمة المرور غير صحيحة للطالب.");
         return;
       }
 
