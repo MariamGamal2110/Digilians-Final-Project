@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { FiClipboard, FiEdit3, FiUserCheck, FiUsers } from 'react-icons/fi'
-import { getToken } from '../../api/client'
+import client, { getToken } from '../../api/client'
 
 export default function AdminStatsCards() {
   const [stats, setStats] = useState({
