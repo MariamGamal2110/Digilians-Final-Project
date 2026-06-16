@@ -112,7 +112,8 @@ const SovereignLedger = () => {
         loadPaymentRecords();
       }
     } catch (err) {
-      alert(err.response?.data?.message || 'حدث خطأ أثناء رفع الإيصال');
+      const errMsg = err.response?.data?.message || err.response?.data || err.message;
+      alert(`حدث خطأ أثناء رفع الإيصال: ${errMsg}`);
     } finally {
       setLoading(false);
     }
