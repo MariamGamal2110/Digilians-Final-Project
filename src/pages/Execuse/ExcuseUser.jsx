@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { openSafeUrl } from "../../api/client";
 import ExcuseUserForm from "../../components/ExcuseUserComponents/ExcuseUserForm";
 import ExcuseStatusBadge from "../../components/ExcuseAdminComponents/ExcuseStatusBadge";
 import { getMyExcuses } from "../../api/excuse";
@@ -50,9 +51,14 @@ export default function ExcuseUser() {
                   {r.attachments && r.attachments.length > 0 && (
                     <div className="mt-2 flex gap-2 items-center">
                       {r.attachments.map((a, idx) => (
-                        <a key={idx} href={a.url} target="_blank" rel="noreferrer" className="text-xs text-[#555d30] underline">
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => openSafeUrl(a.url, a.originalName || a.filename)}
+                          className="text-xs text-[#555d30] underline hover:text-[#444b26]"
+                        >
                           {a.originalName || a.filename}
-                        </a>
+                        </button>
                       ))}
                     </div>
                   )}

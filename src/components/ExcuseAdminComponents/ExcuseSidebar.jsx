@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { BACKEND_SERVER_URL, openSafeUrl } from "../../api/client";
 import {
   FiCheckCircle,
   FiFileText,
@@ -8,6 +9,14 @@ import {
   FiXCircle,
 } from "react-icons/fi";
 import ExcuseStatusBadge from "./ExcuseStatusBadge";
+
+const getAttachmentUrl = (url) => {
+  if (!url) return "";
+  if (url.startsWith("data:") || url.startsWith("http://") || url.startsWith("https://")) {
+    return url;
+  }
+  return `${BACKEND_SERVER_URL}${url}`;
+};
 
 export default function ExcuseSidebar({ request, onDecision }) {
   const [note, setNote] = useState("");
@@ -98,14 +107,13 @@ export default function ExcuseSidebar({ request, onDecision }) {
                     className="overflow-hidden rounded-2xl border border-[#eee7d9] bg-[#fcfbf7]"
                   >
                     {a.mimetype && a.mimetype.startsWith("image/") ? (
-                      <a
-                        href={a.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="block"
+                      <button
+                        type="button"
+                        onClick={() => openSafeUrl(a.url, a.originalName || a.filename)}
+                        className="block w-full text-right"
                       >
                         <img
-                          src={a.url}
+                          src={getAttachmentUrl(a.url)}
                           alt={a.originalName || a.filename}
                           className="max-h-44 w-full object-cover"
                         />
@@ -113,17 +121,16 @@ export default function ExcuseSidebar({ request, onDecision }) {
                           <FiImage />
                           {a.originalName || a.filename}
                         </div>
-                      </a>
+                      </button>
                     ) : (
-                      <a
-                        href={a.url}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="flex items-center gap-2 px-3 py-3 text-sm font-semibold text-[#555d30] underline-offset-4 hover:underline"
+                      <button
+                        type="button"
+                        onClick={() => openSafeUrl(a.url, a.originalName || a.filename)}
+                        className="flex w-full items-center gap-2 px-3 py-3 text-sm font-semibold text-[#555d30] underline-offset-4 hover:underline text-right"
                       >
                         <FiPaperclip />
                         {a.originalName || a.filename}
-                      </a>
+                      </button>
                     )}
                   </li>
                 ))}

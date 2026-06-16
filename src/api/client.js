@@ -4,6 +4,27 @@ const API_BASE_URL =
   import.meta.env.VITE_API_BASE_URL ||
   'http://localhost:5000/api';
 
+export const BACKEND_SERVER_URL = API_BASE_URL.endsWith('/api') ? API_BASE_URL.slice(0, -4) : API_BASE_URL;
+
+export const openSafeUrl = (url, title = 'عرض الملف') => {
+  if (!url) return;
+  if (url.startsWith('data:')) {
+    const newTab = window.open();
+    if (newTab) {
+      if (url.includes('application/pdf')) {
+        newTab.document.write(`<iframe src="${url}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+      } else {
+        newTab.document.write(`<img src="${url}" style="max-width:100%; display:block; margin:auto;" />`);
+      }
+      newTab.document.title = title;
+    }
+  } else {
+    const isAbsolute = url.startsWith('http://') || url.startsWith('https://');
+    const finalUrl = isAbsolute ? url : `${BACKEND_SERVER_URL}${url}`;
+    window.open(finalUrl, '_blank', 'noreferrer');
+  }
+};
+
 // تعديل المسميات لتطابق ما يتم تخزينه فعلياً في متصفحك ومنع الـ session mixed
 const STORAGE_KEYS = {
   admin: {

@@ -1,11 +1,8 @@
-import client, { getToken } from '../../api/client';
+import client, { getToken, BACKEND_SERVER_URL, openSafeUrl } from '../../api/client';
 import axios from 'axios';
 import { FiCheck, FiX, FiExternalLink, FiShield, FiCreditCard } from 'react-icons/fi';
 import { useEffect, useState } from 'react';
 import SearchBar from '../../components/SearchBar';
-
-
-
 
 const getAuthHeader = () => {
   const token = localStorage.getItem('digilians_token');
@@ -13,7 +10,14 @@ const getAuthHeader = () => {
 };
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/payments`;
-const BACKEND_SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+const getFullUrl = (url) => {
+  if (!url) return null;
+  if (url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://')) {
+    return url;
+  }
+  return `${BACKEND_SERVER_URL}${url}`;
+};
 
 const StatusBadge = ({ status }) => {
   const config = {
@@ -95,7 +99,7 @@ const PaymentAdmin = () => {
         monthName: month.monthName,
         amount: month.amount,
         status: month.status,
-        receiptImg: month.receiptUrl ? (month.receiptUrl.startsWith('data:') ? month.receiptUrl : `${BACKEND_SERVER_URL}${month.receiptUrl}`) : null
+        receiptImg: getFullUrl(month.receiptUrl)
       });
     });
   });
@@ -188,15 +192,13 @@ const PaymentAdmin = () => {
 
                         <td className="px-6 py-4 text-center">
                           {item.receiptImg ? (
-                            <a
-                              href={item.receiptImg}
-                              target="_blank"
-                              rel="noreferrer"
+                            <button
+                              onClick={() => openSafeUrl(item.receiptImg, "عرض إيصال الدفع")}
                               className="inline-flex items-center gap-1.5 text-blue-600 bg-blue-50/60 px-3 py-1 rounded-lg border border-blue-200 text-xs font-bold hover:bg-blue-100 transition-colors"
                             >
                               <FiExternalLink size={13} />
                               عرض الإيصال
-                            </a>
+                            </button>
                           ) : (
                             <span className="text-gray-400 text-xs">لم يتم الرفع</span>
                           )}
