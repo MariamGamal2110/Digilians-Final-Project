@@ -59,13 +59,30 @@ export default function ExcuseUserForm({ onSubmitted }) {
     try {
       let created;
       if (files && files.length > 0) {
-        const fd = new FormData();
-        fd.append("title", formData.type);
-        fd.append("message", formData.details);
-        if (formData.startDate) fd.append("startDate", formData.startDate);
-        if (formData.endDate) fd.append("endDate", formData.endDate);
-        files.forEach((f) => fd.append("attachments", f));
-        created = await createExcuse(fd);
+        const attachments = await Promise.all(
+          files.map(async (f) => {
+            const base64 = await new Promise((resolve) => {
+              const reader = new FileReader();
+              reader.readAsDataURL(f);
+              reader.onload = () => resolve(reader.result);
+            });
+            return {
+              filename: f.name,
+              originalName: f.name,
+              mimetype: f.type,
+              size: f.size,
+              base64: base64
+            };
+          })
+        );
+        const payload = {
+          title: formData.type,
+          message: formData.details,
+          startDate: formData.startDate,
+          endDate: formData.endDate,
+          attachments
+        };
+        created = await createExcuse(payload);
       } else {
         const payload = {
           title: formData.type,
