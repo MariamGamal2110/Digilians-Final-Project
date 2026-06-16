@@ -156,7 +156,7 @@ export default function ExcuseUserForm({ onSubmitted }) {
             className="w-full rounded-2xl border border-[#ddd4c1] bg-[#fcfbf7] px-4 py-3 text-sm outline-none transition focus:border-[#555d30]"
           >
             <option value="">اختر نوع الالتماس</option>
-            <option value="إلنماس داخلى">إلتماس داخلي </option>
+            <option value="إلتماس داخلى">إلتماس داخلي </option>
             <option value="إلتماس خارجي ">إلتماس خارجي </option>
           </select>
         </div>
