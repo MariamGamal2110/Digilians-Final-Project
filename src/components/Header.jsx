@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { NavLink, useLocation } from 'react-router-dom'
+import client from '../api/client'
 
 const studentMainLinks = [
   { label: 'الرئيسية', to: '/home' },
@@ -51,25 +52,47 @@ function getDefaultUser(isAdminMode) {
 
 export default function Header() {
   const location = useLocation()
-  const [moreOpen, setMoreOpen] = useState(false)
   const [mobileOpen, setMobileOpen] = useState(false)
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false)
 
   const isAdminMode = location.pathname.startsWith('/admin')
 
   const mainLinks = isAdminMode ? adminMainLinks : studentMainLinks
   const moreLinks = isAdminMode ? adminMoreLinks : studentMoreLinks
-  const userToShow = getDefaultUser(isAdminMode)
-  const profileLink = isAdminMode ? '/admin/profile' : '/profile'
+
+  const [userToShow, setUserToShow] = useState({
+    name: isAdminMode ? 'Admin' : 'طالب',
+    role: isAdminMode ? 'لوحة التحكم' : 'طالب',
+    image: `https://ui-avatars.com/api/?name=${isAdminMode ? 'Admin' : 'Student'}&background=6b7440&color=fff`,
+  })
 
   useEffect(() => {
-    setMoreOpen(false)
+    try {
+      const savedUser = client.getSavedUser(isAdminMode ? 'admin' : 'user')
+      if (savedUser) {
+        const displayName = savedUser.studentName || savedUser.name || savedUser.email || (isAdminMode ? 'Admin' : 'طالب')
+        setUserToShow({
+          name: displayName,
+          role: isAdminMode ? 'لوحة التحكم' : 'طالب',
+          image: savedUser.image || `https://ui-avatars.com/api/?name=${encodeURIComponent(displayName)}&background=6b7440&color=fff`,
+        })
+      } else {
+        setUserToShow(getDefaultUser(isAdminMode))
+      }
+    } catch (e) {
+      console.error(e)
+    }
+  }, [isAdminMode, location.pathname])
+
+  useEffect(() => {
     setMobileOpen(false)
+    setUserDropdownOpen(false)
   }, [location.pathname])
 
   useEffect(() => {
     function handleClickOutside(event) {
-      if (moreOpen && !event.target.closest('.more-menu')) {
-        setMoreOpen(false)
+      if (userDropdownOpen && !event.target.closest('.user-dropdown-menu')) {
+        setUserDropdownOpen(false)
       }
     }
 
@@ -78,7 +101,12 @@ export default function Header() {
     return () => {
       document.removeEventListener('mousedown', handleClickOutside)
     }
-  }, [moreOpen])
+  }, [userDropdownOpen])
+
+  const handleLogout = () => {
+    client.clearAuthData(isAdminMode ? 'admin' : 'user')
+    window.location.href = '/signin'
+  }
 
   function getLinkClass({ isActive }) {
     if (isActive) {
@@ -92,26 +120,58 @@ export default function Header() {
     <header dir="rtl" className="bg-[#f3f4ef]">
       <div className="w-full bg-white border-b border-gray-200 shadow-sm px-8 py-3">
         <div className="flex items-center justify-between gap-6">
-          <NavLink
-            to={profileLink}
-            className="flex items-center gap-3 rounded-xl px-2 py-1 hover:bg-[#f3f4ef] transition"
-          >
-            <img
-              src={userToShow.image}
-              alt={userToShow.name}
-              className="w-11 h-11 rounded-full object-cover border-2 border-[#6b7440] cursor-pointer hover:opacity-90 transition"
-            />
+          
+          {/* User Profile Dropdown Menu */}
+          <div className="relative user-dropdown-menu">
+            <button
+              type="button"
+              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+              className="flex items-center gap-3 rounded-xl px-2 py-1 hover:bg-[#f3f4ef] transition focus:outline-none"
+            >
+              <img
+                src={userToShow.image}
+                alt={userToShow.name}
+                className="w-11 h-11 rounded-full object-cover border-2 border-[#6b7440] cursor-pointer hover:opacity-90 transition"
+              />
 
-            <div className="text-right">
-              <p className="text-[#1f220f] font-bold text-base leading-tight">
-                {userToShow.name}
-              </p>
+              <div className="text-right">
+                <p className="text-[#1f220f] font-bold text-base leading-tight flex items-center gap-1">
+                  {userToShow.name}
+                  <span className="text-xs text-[#676b59]">▾</span>
+                </p>
 
-              <p className="text-[#676b59] text-sm">
-                {userToShow.role}
-              </p>
-            </div>
-          </NavLink>
+                <p className="text-[#676b59] text-sm">
+                  {userToShow.role}
+                </p>
+              </div>
+            </button>
+
+            {userDropdownOpen && (
+              <div className="absolute right-0 top-full mt-3 bg-white border border-gray-200 rounded-xl shadow-lg z-50 min-w-56 overflow-hidden">
+                {moreLinks.map((link) => (
+                  <NavLink
+                    key={link.to}
+                    to={link.to}
+                    className={({ isActive }) =>
+                      isActive
+                        ? 'block px-5 py-3 text-sm text-[#1f220f] font-bold bg-[#eef0e4]'
+                        : 'block px-5 py-3 text-sm text-[#676b59] hover:bg-[#f3f4ef] hover:text-[#1f220f] transition'
+                    }
+                  >
+                    {link.label}
+                  </NavLink>
+                ))}
+                <div className="border-t border-gray-100 my-1" />
+                <button
+                  type="button"
+                  onClick={handleLogout}
+                  className="w-full text-right block px-5 py-3 text-sm text-red-600 hover:bg-rose-50 hover:text-red-700 transition font-bold"
+                >
+                  تسجيل الخروج
+                </button>
+              </div>
+            )}
+          </div>
 
           <nav className="hidden md:flex items-center gap-2">
             {mainLinks.map((link) => (
@@ -119,35 +179,6 @@ export default function Header() {
                 {link.label}
               </NavLink>
             ))}
-
-            <div className="relative more-menu">
-              <button
-                type="button"
-                onClick={() => setMoreOpen(!moreOpen)}
-                className="text-[#676b59] hover:bg-[#f3f4ef] hover:text-[#1f220f] px-4 py-2 rounded-full text-base transition flex items-center gap-1"
-              >
-                الإلتزامات
-                <span className="text-xs">▾</span>
-              </button>
-
-              {moreOpen && (
-                <div className="absolute top-full left-0 mt-3 bg-white border border-gray-200 rounded-xl shadow-lg z-50 min-w-48 overflow-hidden">
-                  {moreLinks.map((link) => (
-                    <NavLink
-                      key={link.to}
-                      to={link.to}
-                      className={({ isActive }) =>
-                        isActive
-                          ? 'block px-5 py-3 text-sm text-[#1f220f] font-bold bg-[#eef0e4]'
-                          : 'block px-5 py-3 text-sm text-[#676b59] hover:bg-[#f3f4ef] hover:text-[#1f220f] transition'
-                      }
-                    >
-                      {link.label}
-                    </NavLink>
-                  ))}
-                </div>
-              )}
-            </div>
           </nav>
 
           <button
@@ -174,6 +205,14 @@ export default function Header() {
                 {link.label}
               </NavLink>
             ))}
+            <div className="border-t border-gray-100 my-1" />
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="text-right text-red-600 hover:bg-rose-50 hover:text-red-700 px-4 py-3 rounded-xl text-sm transition font-bold"
+            >
+              تسجيل الخروج
+            </button>
           </div>
         )}
       </div>
