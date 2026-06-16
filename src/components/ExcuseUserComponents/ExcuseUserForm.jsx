@@ -101,10 +101,7 @@ export default function ExcuseUserForm({ onSubmitted }) {
         <h2 className="mt-3 text-xl font-extrabold text-white">
           اكتب تفاصيل الطلب بشكل واضح
         </h2>
-        <p className="mt-1 text-sm leading-6 text-white/80">
-          جميع الحقول الحالية كما هي، مع تحسين الشكل فقط لتجربة أوضح وأكثر
-          تنظيمًا.
-        </p>
+        
       </div>
 
       <div className="flex flex-1 flex-col space-y-6 p-6">
@@ -115,7 +112,7 @@ export default function ExcuseUserForm({ onSubmitted }) {
               className="mb-2 inline-flex items-center gap-2 text-sm font-bold text-[#555d30]"
             >
               <FiCalendar className="text-sm" />
-              تاريخ بداية الإجازة
+              تاريخ بداية الإلتماس
             </label>
             <input
               type="date"
@@ -134,7 +131,7 @@ export default function ExcuseUserForm({ onSubmitted }) {
               className="mb-2 inline-flex items-center gap-2 text-sm font-bold text-[#555d30]"
             >
               <FiCalendar className="text-sm" />
-              تاريخ نهاية الإجازة
+              تاريخ نهاية الإلتماس
             </label>
             <input
               type="date"
@@ -159,8 +156,8 @@ export default function ExcuseUserForm({ onSubmitted }) {
             className="w-full rounded-2xl border border-[#ddd4c1] bg-[#fcfbf7] px-4 py-3 text-sm outline-none transition focus:border-[#555d30]"
           >
             <option value="">اختر نوع الالتماس</option>
-            <option value="طلب إجازة">طلب إجازة</option>
-            <option value="تأجيل">تأجيل</option>
+            <option value="إلتماس داخلى">إلتماس داخلي </option>
+            <option value="إلتماس خارجي ">إلتماس خارجي </option>
           </select>
         </div>
 

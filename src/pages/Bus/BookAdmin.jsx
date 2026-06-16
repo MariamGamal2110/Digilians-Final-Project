@@ -1,5 +1,4 @@
-import { useState, useEffect } from "react";
-import { getToken } from "../../api/client";
+import client, { getToken } from "../../api/client";
 import { FiShield, FiTruck, FiCheck, FiX } from "react-icons/fi";
 
 export default function BookAdmin() {
@@ -14,8 +13,7 @@ export default function BookAdmin() {
 
   const fetchAllBookings = async () => {
     try {
-      const res = await fetch('http://localhost:5000/api/booking/all')
-      const data = await res.json()
+      const data = await client.apiRequest('/booking/all', {}, 'admin')
       if (data.success) {
         const bookingsArray = Array.isArray(data.data) ? data.data : []
         setBookings(bookingsArray)
@@ -33,16 +31,10 @@ export default function BookAdmin() {
 
   const handleUpdateStatus = async (id, status) => {
     try {
-      const token = getToken("admin");
-      const res = await fetch(`http://localhost:5000/api/booking/${id}/status`, {
+      const data = await client.apiRequest(`/booking/${id}/status`, {
         method: "PATCH",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
         body: JSON.stringify({ status }),
-      });
-      const data = await res.json();
+      }, 'admin');
       if (data.success) {
         setBookings(bookings.map((b) => (b._id === id ? { ...b, status } : b)));
       }

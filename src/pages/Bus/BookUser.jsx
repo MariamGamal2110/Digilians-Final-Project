@@ -576,7 +576,7 @@
 
 
 import { useState, useEffect } from 'react'
-import { getToken } from '../../api/client'
+import client, { getToken } from '../../api/client'
 import { FiTruck, FiMapPin, FiClock, FiHash } from 'react-icons/fi'
 
 const divisions = ['ماجستير العلوم 24 شهراً', 'الماجستير المهني 12 شهراً', 'الدبلوم المتخصص 9 أشهر', 'الدبلوم المكثف 4 أشهر']
@@ -613,11 +613,7 @@ useEffect(() => {
 
   const fetchMyBookings = async (studentId) => {
     try {
-      const token = getToken('user')
-      const res = await fetch(`http://localhost:5000/api/booking/my/${studentId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
-      const data = await res.json()
+      const data = await client.apiRequest(`/booking/my/${studentId}`)
       if (data.success && Array.isArray(data.data)) {
         setPreviousBookings(data.data)
       } else {
@@ -641,13 +637,10 @@ useEffect(() => {
     setLoading(true)
     setError('')
     try {
-      const token = getToken('user')
-      const res = await fetch('http://localhost:5000/api/booking', {
+      const data = await client.apiRequest('/booking', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
         body: JSON.stringify(form),
       })
-      const data = await res.json()
       if (data.success) {
         setSubmitted(true)
         fetchMyBookings(form.studentId)
