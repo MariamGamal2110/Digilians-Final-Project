@@ -83,7 +83,7 @@ export default function SearchInputsPanel({
         <input
           className="w-full bg-white h-9 border border-surface-dim rounded-lg px-3 py-2 text-xs text-on-surface focus:outline-none focus:ring-2 focus:ring-primary-container/40"
           onChange={(event) => setSearchValue(event.target.value)}
-          placeholder="بحث بالاسم أو الرقم العسكري أو البريد الإلكتروني"
+          placeholder="بحث أو الرقم العسكري أو البريد الإلكتروني"
           type="text"
           value={searchValue}
         />
@@ -101,11 +101,11 @@ export default function SearchInputsPanel({
 
       {searchNotFound && (
         <div className="rounded-lg bg-amber-50 border border-amber-200 text-amber-800 px-4 py-3 text-xs font-semibold text-center">
-          الطالب دا مش موجود
+          الطالب مش موجود
         </div>
       )}
 
-      {searchResults.length > 0 && (
+{searchResults.length > 0 && (
         <div className="space-y-2">
           {searchResults.map((student) => (
             <div
@@ -128,29 +128,14 @@ export default function SearchInputsPanel({
                   </button>
                 )}
               </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-secondary">
+              <div className="grid grid-cols-2 gap-2 text-secondary">
                 <p>
-                  <span className="font-bold text-on-surface">حالة الوصول: </span>
-                  <span
-                    className={
-                      student.arrivalStatus === 'في الموعد'
-                        ? 'text-green-600 font-bold'
-                        : student.arrivalStatus === 'متأخر'
-                          ? 'text-red-600 font-bold'
-                          : 'text-gray-500'
-                    }
-                  >
-                    {student.arrivalStatus}
-                  </span>
+                  <span className="font-bold text-on-surface">الرقم العسكري: </span>
+                  <span className="font-bold">{student.militaryId}</span>
                 </p>
                 <p>
-                  <span className="font-bold text-on-surface">حالة الطلب: </span>
-                  <span className="bg-gray-200 px-2 py-0.5 rounded">
-                    {student.requestStatus} {student.militaryId} 
-                  </span>
-                </p>
-                <p className="sm:col-span-2 text-[11px] opacity-70">
-                 
+                  <span className="font-bold text-on-surface">وقت الوصول: </span>
+                  <span className="font-bold">{student.time}</span>
                 </p>
               </div>
             </div>

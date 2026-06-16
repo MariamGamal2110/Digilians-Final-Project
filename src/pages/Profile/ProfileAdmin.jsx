@@ -8,7 +8,7 @@ import AdminActionsList from '../../components/adminProfileComponents/AdminActio
 import WarningSummaryModal from '../../components/adminProfileComponents/WarningSummaryModal'
 import SendStudentMessageModal from '../../components/adminProfileComponents/SendStudentMessageModal'
 import MessagesCenterModal from '../../components/profileComponents/MessagesCenterModal'
-import { getSavedUser } from '../../api/client'
+import { getSavedUser, getToken, saveAuthData } from '../../api/client'
 import {
   getAdminProfile,
   getAdminWarningSummary,
@@ -157,6 +157,27 @@ function createFallbackAdminProfile() {
   }
 }
 
+function persistAdminSnapshot(profile) {
+  const savedAdmin = getSavedUser('admin') || getSavedUser('user') || {}
+  const token = getToken('admin') || getToken('user')
+
+  if (!token) {
+    return
+  }
+
+  const mergedUser = {
+    ...savedAdmin,
+    ...(profile?.admin || {}),
+    role: savedAdmin.role || 'admin',
+  }
+
+  saveAuthData({
+    token,
+    user: mergedUser,
+    role: 'admin',
+  })
+}
+
 export default function ProfileAdmin() {
   const [adminProfile, setAdminProfile] = useState(() => createFallbackAdminProfile())
   const [students, setStudents] = useState([])
@@ -185,6 +206,14 @@ export default function ProfileAdmin() {
   const [inboxError, setInboxError] = useState('')
   const [sendMessageError, setSendMessageError] = useState('')
   const [recentActions, setRecentActions] = useState([])
+  const hasResolvedAdminSnapshot = Boolean(
+    adminProfile?.admin?.name &&
+    adminProfile?.admin?.militaryId &&
+    adminProfile.admin.militaryId !== 'غير متوفر' &&
+    adminProfile?.admin?.department &&
+    adminProfile.admin.department !== 'الإدارة'
+  )
+
   useEffect(() => {
     let isMounted = true
 
@@ -195,22 +224,40 @@ export default function ProfileAdmin() {
         const profile = await getAdminProfile()
 
         if (isMounted && profile) {
-          setAdminProfile((current) => ({
-            ...current,
+          const mergedProfile = {
+            ...createFallbackAdminProfile(),
             ...profile,
             admin: {
-              ...current.admin,
+              ...createFallbackAdminProfile().admin,
               ...(profile.admin || {}),
             },
             contacts: {
-              ...current.contacts,
+              ...createFallbackAdminProfile().contacts,
               ...(profile.contacts || {}),
             },
             stats: {
-              ...current.stats,
+              ...createFallbackAdminProfile().stats,
               ...(profile.stats || {}),
             },
+          }
+
+          setAdminProfile((current) => ({
+            ...current,
+            ...mergedProfile,
+            admin: {
+              ...current.admin,
+              ...mergedProfile.admin,
+            },
+            contacts: {
+              ...current.contacts,
+              ...mergedProfile.contacts,
+            },
+            stats: {
+              ...current.stats,
+              ...mergedProfile.stats,
+            },
           }))
+          persistAdminSnapshot(mergedProfile)
         }
       } catch (error) {
         if (isMounted) {
@@ -569,7 +616,7 @@ export default function ProfileAdmin() {
               ...adminProfile.contacts,
               studentEmail: selectedStudent?.email || adminProfile.contacts?.studentEmail,
             }}
-            isRefreshingProfile={isRefreshingProfile}
+            isRefreshingProfile={isRefreshingProfile && !hasResolvedAdminSnapshot}
             onContactStudent={openSendMessageModal}
           />
 

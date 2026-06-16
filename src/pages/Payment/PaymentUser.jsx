@@ -1,385 +1,241 @@
-// import React, { useState } from 'react';
-// import StatsGrid from '../../components/PaymentComponents/User/StatsGrid';
-
-// const SovereignLedger = () => {
-//   // بيانات تجريبية للسجل
-//   const [transactions] = useState([
-//     { month: 'مايو 2024', date: '15 مايو 2024', amount: '2,500', id: '12458', status: 'paid' },
-//     { month: 'أبريل 2024', date: '20 أبريل 2024', amount: '2,500', id: '32598', status: 'pending' },
-//     { month: 'مارس 2024', date: '10 مارس 2024', amount: '3,000', id: '45329', status: 'paid' },
-//   ]);
-
-//   return (
-//     <div className="bg-[rgb(var(--surface))] min-h-screen font-['Cairo'] flex flex-col items-center" dir="rtl">
-      
-//       <main className="w-full max-w-6xl pt-24 pb-12 px-6 lg:px-12">
-        
-//         {/* 1. Header Section */}
-//         <header className="flex justify-between items-end mb-12 border-r-4 border-[rgb(var(--primary-container))] pr-6">
-//           <div>
-//             <h1 className="text-4xl font-black tracking-tight text-[rgb(var(--primary-container))] mb-2">
-//               سجل المصاريف الشخصية
-//             </h1>
-//             <p className="text-[rgb(var(--on-surface))] opacity-70 font-medium italic">إدارة ومتابعة الالتزامات المالية والمدفوعات الخاصة بك</p>
-//           </div>
-//         </header>
-
-//         {/* 2. StatsGrid Component */}
-//         <div className="mb-12 w-full">
-//           <StatsGrid 
-//             totalAmount="12,500" 
-//             paidAmount="8,000" 
-//             remainingAmount="4,500" 
-//           />
-//         </div>
-
-//         {/* 3. Action Area (Upload & Instructions) */}
-//         <section className="bg-[rgb(var(--surface-container-high))] rounded-2xl p-1.5 gap-1.5 mb-12 flex flex-col md:flex-row shadow-sm">
-          
-//           {/* Upload Section (Main Content) */}
-//           <div className="flex-[2] bg-white rounded-xl p-8 flex flex-col items-center justify-center border-2 border-dashed border-[rgb(var(--outline-variant))/0.5] hover:border-[rgb(var(--primary-container))/0.5] transition-all group">
-//             <div className="w-14 h-14 bg-[rgb(var(--surface))] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
-//               <span className="material-symbols-outlined text-[rgb(var(--outline-variant))] text-3xl group-hover:text-[rgb(var(--primary-container))]">cloud_upload</span>
-//             </div>
-//             <h3 className="text-lg font-bold text-[rgb(var(--primary-container))] mb-1 font-['Cairo']">رفع إيصال دفع جديد</h3>
-//             <p className="text-xs opacity-60 text-center mb-5 max-w-xs font-medium">يرجى إرفاق صورة واضحة من إيصال السداد البنكي (PDF/JPG)</p>
-//             <input className="hidden" id="receipt-upload" type="file" />
-//             <label 
-//   htmlFor="receipt-upload" 
-//   className="satin-gradient text-[rgb(var(--on-primary-container))] px-8 py-3 rounded-xl font-bold text-xs cursor-pointer shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 border border-white/10"
-// >
-//   <span className="material-symbols-outlined text-sm text-[rgb(var(--primary-container))]">attach_file</span>
-//   <span className="tracking-wide text-[rgb(var(--primary-container))]">اختيار الملف</span>
-// </label>
-//           </div>
-
-//           {/* Instructions Section (Small Sidebar) */}
-//           <div className="w-full md:w-72 bg-[rgb(var(--primary-container))] p-6 rounded-xl flex flex-col justify-between text-[rgb(var(--on-primary-container))] relative overflow-hidden satin-gradient shadow-lg">
-//             <div>
-//               <h4 className="text-sm font-bold mb-4 z-10 flex items-center gap-2 border-b border-white/20 pb-2">
-//                 <span className="material-symbols-outlined text-sm">gavel</span>
-//                 تعليمات هامة
-//               </h4>
-//               <ul className="space-y-3 text-[11px] opacity-90 leading-relaxed z-10 font-medium">
-//                 <InstructionItem text="الرقم العسكري بوضوح على الإيصال." />
-//                 <InstructionItem text="تتم المراجعة خلال ٤٨ ساعة عمل." />
-//                 <InstructionItem text="يجب الاحتفاظ بأصل الإيصال الورقي." />
-//               </ul>
-//             </div>
-            
-//             <button className="mt-6 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-[9px] font-bold tracking-widest transition-colors z-10 uppercase">
-//               انظر جدول المصروفات
-//             </button>
-            
-//             <span className="material-symbols-outlined absolute -bottom-4 -left-4 text-white/5 text-7xl pointer-events-none select-none">info</span>
-//           </div>
-//         </section>
-
-//         {/* 4. Transactions History Table */}
-//         <section className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[rgb(var(--outline-variant))/0.3] glass-card">
-//           <div className="px-8 py-6 border-b border-[rgb(var(--outline-variant))/0.2] flex justify-between items-center bg-[rgb(var(--surface-container-low))/0.5]">
-//             <h3 className="text-lg font-bold text-[rgb(var(--primary-container))]">سجل العمليات السابقة</h3>
-            
-//           </div>
-//           <div className="overflow-x-auto">
-//             <table className="w-full text-right border-collapse">
-//               <thead>
-//                 <tr className="text-[rgb(var(--outline-variant))] text-[11px] font-bold uppercase tracking-widest border-b border-[rgb(var(--outline-variant))/0.2]">
-//                   <th className="px-8 py-5">الشهر المستحق</th>
-//                   <th className="px-8 py-5">تاريخ الدفع</th>
-//                   <th className="px-8 py-5">المبلغ</th>
-//                   <th className="px-8 py-5">الرقم المرجعي</th>
-//                   <th className="px-8 py-5 text-center">الحالة</th>
-//                   <th className="px-8 py-5 text-center">الإجراء</th>
-//                 </tr>
-//               </thead>
-//               <tbody className="divide-y divide-[rgb(var(--outline-variant))/0.1]">
-//                 {transactions.map((item, index) => (
-//                   <tr key={index} className="hover:bg-[rgb(var(--surface-container-low))/0.3] transition-colors group">
-//                     <td className="px-8 py-6 font-bold text-[rgb(var(--primary-container))]">{item.month}</td>
-//                     <td className="px-8 py-6 text-stone-500 text-sm">{item.date}</td>
-//                     <td className="px-8 py-6 font-black text-[rgb(var(--on-surface))]">{item.amount} ج.م</td>
-//                     <td className="px-8 py-6 font-mono text-xs text-stone-400">{item.id}</td>
-//                     <td className="px-8 py-6 text-center">
-//                       <StatusBadge status={item.status} />
-//                     </td>
-//                     <td className="px-8 py-6 text-center">
-//                       <button className="text-[rgb(var(--primary-container))] hover:underline text-[10px] font-black uppercase tracking-tighter">
-//                         عرض الإيصال
-//                       </button>
-//                     </td>
-//                   </tr>
-//                 ))}
-//               </tbody>
-//             </table>
-//           </div>
-//         </section>
-
-//         {/* 5. Footer Layout */}
-//         <footer className="mt-20 pt-10 border-t border-[rgb(var(--outline-variant))/0.3] flex flex-col items-center gap-6">
-//           <div className="text-[rgb(var(--primary-container))] text-lg font-black tracking-[0.3em] flex items-center gap-6 opacity-40 select-none">
-//             <span>الواجب</span>
-//             <span className="w-1.5 h-1.5 rounded-full bg-[rgb(var(--primary-container))]"></span>
-//             <span>الشرف</span>
-//             <span className="w-1.5 h-1.5 rounded-full bg-[rgb(var(--primary-container))]"></span>
-//             <span>الوطن</span>
-//           </div>
-//         </footer>
-//       </main>
-//     </div>
-//   );
-// };
-
-// // --- المكونات الفرعية (Sub-components) ---
-
-// const InstructionItem = ({ text }) => (
-//   <li className="flex gap-2 items-start">
-//     <span className="material-symbols-outlined text-[14px] mt-0.5 opacity-80">verified</span>
-//     <span>{text}</span>
-//   </li>
-// );
-
-// const TableActionIcon = ({ icon }) => (
-//   <button className="p-2 hover:bg-[rgb(var(--surface))] rounded-lg text-[rgb(var(--outline-variant))] hover:text-[rgb(var(--primary-container))] transition-colors border border-transparent hover:border-[rgb(var(--outline-variant))/0.3]">
-//     <span className="material-symbols-outlined text-xl">{icon}</span>
-//   </button>
-// );
-
-// const StatusBadge = ({ status }) => {
-//   const isPaid = status === 'paid';
-//   return (
-//     <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter border ${
-//       isPaid 
-//       ? 'bg-green-50 text-green-700 border-green-100' 
-//       : 'bg-amber-50 text-amber-700 border-amber-100'
-//     }`}>
-//       <span className={`w-1.5 h-1.5 rounded-full ${isPaid ? 'bg-green-600' : 'bg-amber-600 animate-pulse'}`}></span>
-//       {isPaid ? 'تم السداد' : 'تحت المراجعة'}
-//     </span>
-//   );
-// };
-
-// export default SovereignLedger;
-import React, { useState } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import StatsGrid from '../../components/PaymentComponents/User/StatsGrid';
+import client from '../../api/client';
+import axios from "axios";
+
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/payments`;
+const BACKEND_SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
+const STATIC_YEAR_MONTHS = [
+  { id: 1, name: 'يناير' }, { id: 2, name: 'فبراير' }, { id: 3, name: 'مارس' },
+  { id: 4, name: 'أبريل' }, { id: 5, name: 'مايو' }, { id: 6, name: 'يونيو' },
+  { id: 7, name: 'يوليو' }, { id: 8, name: 'أغسطس' }, { id: 9, name: 'سبتمبر' },
+  { id: 10, name: 'أكتوبر' }, { id: 11, name: 'نوفمبر' }, { id: 12, name: 'ديسمبر' }
+];
 
 const SovereignLedger = () => {
-  // بيانات تجريبية للسجل
-  const [transactions, setTransactions] = useState([
-    { month: 'مايو 2024', date: '15 مايو 2024', amount: '2,500', id: '12458', status: 'paid', receiptUrl: '/receipts/12458.pdf' },
-    { month: 'أبريل 2024', date: '20 أبريل 2024', amount: '2,500', id: '32598', status: 'pending', receiptUrl: null },
-    { month: 'مارس 2024', date: '10 مارس 2024', amount: '3,000', id: '45329', status: 'paid', receiptUrl: '/receipts/45329.pdf' },
-  ]);
+  const [serverPayments, setServerPayments] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  // حساب الإحصائيات بناءً على المعاملات الفعلية
-  const totalAmount = transactions.reduce((sum, t) => sum + parseInt(t.amount.replace(/,/g, '')), 0);
-  const paidAmount = transactions
-    .filter(t => t.status === 'paid')
-    .reduce((sum, t) => sum + parseInt(t.amount.replace(/,/g, '')), 0);
-  const remainingAmount = totalAmount - paidAmount;
+  const loadPaymentRecords = useCallback(async () => {
+    const token = client.getToken('user');
+    if (!token) {
+      console.warn("No token found");
+      return;
+    }
 
-  // دالة رفع الإيصال
-  const handleReceiptUpload = (transactionId, event) => {
+    try {
+      const response = await axios.get(`${API_BASE_URL}/my-payments`, { 
+        headers: { Authorization: `Bearer ${token}` } 
+      });
+      if (response.data && response.data.success) {
+        const fetchedMonths = response.data.data?.months || response.data.data || [];
+        setServerPayments(fetchedMonths);
+      }
+    } catch (err) {
+      console.error('Error loading payments:', err);
+      if (err.response?.status === 401 || err.response?.status === 403) {
+        client.clearAuthData('user');
+        window.location.href = '/login';
+      }
+    }
+  }, []);
+
+  useEffect(() => {
+    loadPaymentRecords();
+    const interval = setInterval(() => {
+      loadPaymentRecords();
+    }, 10000);
+    return () => clearInterval(interval);
+  }, [loadPaymentRecords]);
+
+  const transactions = STATIC_YEAR_MONTHS.map((staticMonth) => {
+    const serverMatch = Array.isArray(serverPayments)
+      ? serverPayments.find((sp) => sp.monthName.includes(staticMonth.name))
+      : null;
+
+    return {
+      _id: serverMatch?._id || `static-${staticMonth.id}`,
+      monthName: serverMatch?.monthName || `${staticMonth.name} ${new Date().getFullYear()}`,
+      amount: serverMatch?.amount || 2500,
+      status: serverMatch?.status || 'late',
+      receiptUrl: serverMatch?.receiptUrl || null
+    };
+  });
+
+  const paidAmount = transactions.reduce((sum, item) => item.status === 'paid' ? sum + item.amount : sum, 0);
+  const remainingAmount = transactions.reduce((sum, item) => (item.status === 'late' || item.status === 'pending') ? sum + item.amount : sum, 0);
+  const totalAmount = paidAmount + remainingAmount;
+
+  const handleReceiptUpload = async (monthId, event) => {
     const file = event.target.files[0];
-    if (file) {
-      // هنا يمكنك رفع الملف إلى الخادم
-      // هذا مثال باستخدام FileReader لعرض معاينة مؤقتة
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        // تحديث حالة المعاملة
-        setTransactions(prevTransactions =>
-          prevTransactions.map(trans =>
-            trans.id === transactionId
-              ? { 
-                  ...trans, 
-                  status: 'paid', 
-                  receiptUrl: reader.result // في التطبيق الحقيقي، استخدم URL من الخادم
-                }
-              : trans
-          )
-        );
-      };
-      reader.readAsDataURL(file);
-      
-      // في التطبيق الحقيقي، يمكنك استخدام fetch أو axios لرفع الملف
-      // const formData = new FormData();
-      // formData.append('receipt', file);
-      // formData.append('transactionId', transactionId);
-      // fetch('/api/upload-receipt', { method: 'POST', body: formData })
-      //   .then(res => res.json())
-      //   .then(data => {
-      //     if (data.success) {
-      //       // تحديث الحالة
-      //     }
-      //   });
+    if (!file) return;
+
+    if (String(monthId).startsWith('static-')) {
+      alert('يرجى الانتظار ثانية حتى يتم مزامنة الشهور مع السيرفر بشكل صحيح.');
+      return;
+    }
+
+    const token = client.getToken('user');
+    if (!token) {
+      alert('جلسة العمل انتهت. يرجى إعادة تسجيل الدخول.');
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('receipt', file);
+    formData.append('monthId', monthId);
+
+    try {
+      setLoading(true);
+      const response = await axios.post(`${API_BASE_URL}/upload-receipt`, formData, {
+        headers: { 
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'multipart/form-data' 
+        }
+      });
+
+      if (response.data && response.data.success) {
+        alert('تم رفع الإيصال بنجاح، وهو الآن قيد المراجعة.');
+        loadPaymentRecords();
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'حدث خطأ أثناء رفع الإيصال');
+    } finally {
+      setLoading(false);
     }
   };
 
-  // دالة عرض الإيصال
   const viewReceipt = (receiptUrl) => {
-    if (receiptUrl) {
-      window.open(receiptUrl, '_blank');
-    }
+    if (!receiptUrl) return;
+    window.open(`${BACKEND_SERVER_URL}${receiptUrl}`, '_blank', 'noreferrer');
   };
 
   return (
-    <div className="bg-[rgb(var(--surface))] min-h-screen font-['Cairo'] flex flex-col items-center" dir="rtl">
-      
-      <main className="w-full max-w-6xl pt-24 pb-12 px-6 lg:px-12">
-        
-        {/* 1. Header Section */}
-        <header className="flex justify-between items-end mb-12 border-r-4 border-[rgb(var(--primary-container))] pr-6">
-          <div>
-            <h1 className="text-4xl font-black tracking-tight text-[rgb(var(--primary-container))] mb-2">
-              سجل المصاريف الشخصية
-            </h1>
-            <p className="text-[rgb(var(--on-surface))] opacity-70 font-medium italic">إدارة ومتابعة الالتزامات المالية والمدفوعات الخاصة بك</p>
-          </div>
-        </header>
+    <section dir="rtl" className="bg-[#fafafa] min-h-screen px-6 py-8 font-['Cairo']">
+      <div className="max-w-6xl mx-auto bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+        <div className="p-8">
 
-        {/* 2. StatsGrid Component */}
-        <div className="mb-12 w-full">
-          <StatsGrid 
-            totalAmount={totalAmount.toLocaleString()} 
-            paidAmount={paidAmount.toLocaleString()} 
-            remainingAmount={remainingAmount.toLocaleString()} 
-          />
-        </div>
-
-        {/* 3. Action Area (Upload & Instructions) */}
-        <section className="bg-[rgb(var(--surface-container-high))] rounded-2xl p-1.5 gap-1.5 mb-12 flex flex-col md:flex-row shadow-sm">
-          
-          {/* Upload Section (Main Content) */}
-          <div className="flex-[2] bg-white rounded-xl p-8 flex flex-col items-center justify-center border-2 border-dashed border-[rgb(var(--outline-variant))/0.5] hover:border-[rgb(var(--primary-container))/0.5] transition-all group">
-            <div className="w-14 h-14 bg-[rgb(var(--surface))] rounded-full flex items-center justify-center mb-4 group-hover:scale-110 transition-transform shadow-inner">
-              <span className="material-symbols-outlined text-[rgb(var(--outline-variant))] text-3xl group-hover:text-[rgb(var(--primary-container))]">cloud_upload</span>
+          {/* ───── Header ───── */}
+          <div className="relative overflow-hidden bg-[#555d30] rounded-2xl p-8 mb-6">
+            <div className="absolute -left-10 -top-10 w-40 h-40 rounded-full bg-white/10" />
+            <div className="absolute left-16 bottom-[-45px] w-32 h-32 rounded-full bg-white/5" />
+            <div className="relative flex flex-col md:flex-row md:items-center md:justify-between gap-6">
+              <div className="text-right">
+                <div className="inline-flex items-center gap-2 bg-white/10 text-white rounded-full px-4 py-2 text-sm font-bold mb-4">
+                  <span className="material-symbols-outlined text-base">account_balance_wallet</span>
+                  الشئون المالية الشخصية
+                </div>
+                <h1 className="text-white text-3xl font-extrabold mb-3">
+                  سجل المصاريف الشخصية
+                </h1>
+                <p className="text-white/80 text-sm leading-7 max-w-xl">
+                  إدارة ومتابعة الالتزامات المالية والمدفوعات الخاصة بك
+                </p>
+              </div>
+              <div className="w-20 h-20 rounded-2xl bg-white/10 border border-white/20 flex items-center justify-center text-white">
+                <span className="material-symbols-outlined" style={{ fontSize: 36 }}>payments</span>
+              </div>
             </div>
-            <h3 className="text-lg font-bold text-[rgb(var(--primary-container))] mb-1 font-['Cairo']">رفع إيصال دفع جديد</h3>
-            <p className="text-xs opacity-60 text-center mb-5 max-w-xs font-medium">يرجى إرفاق صورة واضحة من إيصال السداد البنكي (PDF/JPG)</p>
-            <input className="hidden" id="receipt-upload" type="file" />
-            <label 
-              htmlFor="receipt-upload" 
-              className="satin-gradient text-[rgb(var(--on-primary-container))] px-8 py-3 rounded-xl font-bold text-xs cursor-pointer shadow-md hover:shadow-lg transition-all active:scale-95 flex items-center justify-center gap-2 border border-white/10"
-            >
-              <span className="material-symbols-outlined text-sm text-[rgb(var(--primary-container))]">attach_file</span>
-              <span className="tracking-wide text-[rgb(var(--primary-container))]">اختيار الملف</span>
-            </label>
           </div>
 
-          {/* Instructions Section (Small Sidebar) */}
-          <div className="w-full md:w-72 bg-[rgb(var(--primary-container))] p-6 rounded-xl flex flex-col justify-between text-[rgb(var(--on-primary-container))] relative overflow-hidden satin-gradient shadow-lg">
+          {/* ───── Stats ───── */}
+          <div className="mb-6">
+            <StatsGrid
+              totalAmount={totalAmount.toLocaleString()}
+              paidAmount={paidAmount.toLocaleString()}
+              remainingAmount={remainingAmount.toLocaleString()}
+            />
+          </div>
+
+          {/* ───── Table count bar ───── */}
+          <div className="flex justify-between items-center mb-4 bg-gray-50 px-4 py-3 rounded-xl border border-gray-100">
             <div>
-              <h4 className="text-sm font-bold mb-4 z-10 flex items-center gap-2 border-b border-white/20 pb-2">
-                <span className="material-symbols-outlined text-sm">gavel</span>
-                تعليمات هامة
-              </h4>
-              <ul className="space-y-3 text-[11px] opacity-90 leading-relaxed z-10 font-medium">
-                <InstructionItem text="الرقم العسكري بوضوح على الإيصال." />
-                <InstructionItem text="تتم المراجعة خلال ٤٨ ساعة عمل." />
-                <InstructionItem text="يجب الاحتفاظ بأصل الإيصال الورقي." />
-              </ul>
+              <span className="text-gray-500 font-bold text-sm">خطة السداد السنوية: </span>
+              <span className="bg-[#555d30]/10 text-[#555d30] px-2.5 py-0.5 rounded-md font-black text-xs">12 شهر</span>
             </div>
-            
-            <button className="mt-6 py-2.5 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-[9px] font-bold tracking-widest transition-colors z-10 uppercase">
-              انظر جدول المصروفات
-            </button>
-            
-            <span className="material-symbols-outlined absolute -bottom-4 -left-4 text-white/5 text-7xl pointer-events-none select-none">info</span>
           </div>
-        </section>
 
-        {/* 4. Transactions History Table */}
-        <section className="bg-white rounded-2xl overflow-hidden shadow-sm border border-[rgb(var(--outline-variant))/0.3] glass-card">
-          <div className="px-8 py-6 border-b border-[rgb(var(--outline-variant))/0.2] flex justify-between items-center bg-[rgb(var(--surface-container-low))/0.5]">
-            <h3 className="text-lg font-bold text-[rgb(var(--primary-container))]">سجل العمليات السابقة</h3>
-          </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-right border-collapse">
-              <thead>
-                <tr className="text-[rgb(var(--outline-variant))] text-[11px] font-bold uppercase tracking-widest border-b border-[rgb(var(--outline-variant))/0.2]">
-                  <th className="px-8 py-5">الشهر المستحق</th>
-                  <th className="px-8 py-5">تاريخ الدفع</th>
-                  <th className="px-8 py-5">المبلغ</th>
-                  <th className="px-8 py-5">الرقم المرجعي</th>
-                  <th className="px-8 py-5 text-center">الحالة</th>
-                  <th className="px-8 py-5 text-center">الإجراء</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[rgb(var(--outline-variant))/0.1]">
-                {transactions.map((item, index) => (
-                  <tr key={index} className="hover:bg-[rgb(var(--surface-container-low))/0.3] transition-colors group">
-                    <td className="px-8 py-6 font-bold text-[rgb(var(--primary-container))]">{item.month}</td>
-                    <td className="px-8 py-6 text-stone-500 text-sm">{item.date}</td>
-                    <td className="px-8 py-6 font-black text-[rgb(var(--on-surface))]">{item.amount} ج.م</td>
-                    <td className="px-8 py-6 font-mono text-xs text-stone-400">{item.id}</td>
-                    <td className="px-8 py-6 text-center">
-                      <StatusBadge status={item.status} />
-                    </td>
-                    <td className="px-8 py-6 text-center">
-                      {item.status === 'pending' ? (
-                        // زر رفع الإيصال للمعاملات المعلقة
-                        <label className="cursor-pointer inline-flex items-center gap-1 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-[11px] font-bold transition-all border border-blue-200">
-                          <span className="material-symbols-outlined text-sm">upload_file</span>
-                          <span>رفع الإيصال</span>
-                          <input
-                            type="file"
-                            className="hidden"
-                            accept=".pdf,.jpg,.jpeg,.png"
-                            onChange={(e) => handleReceiptUpload(item.id, e)}
-                          />
-                        </label>
-                      ) : (
-                        // زر عرض الإيصال للمعاملات المدفوعة
-                        <button
-                          onClick={() => viewReceipt(item.receiptUrl)}
-                          className="inline-flex items-center gap-1 px-3 py-1.5 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg text-[11px] font-bold transition-all border border-green-200"
-                        >
-                          <span className="material-symbols-outlined text-sm">visibility</span>
-                          <span>عرض الإيصال</span>
-                        </button>
-                      )}
-                    </td>
+          {/* ───── Table ───── */}
+          <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-inner">
+            <div className="overflow-x-auto">
+              <table className="w-full text-right border-collapse">
+                <thead>
+                  <tr className="bg-gray-50 text-gray-500 text-xs font-bold border-b border-gray-200">
+                    <th className="px-6 py-4">الشهر المستحق</th>
+                    <th className="px-6 py-4">المبلغ المطلوب</th>
+                    <th className="px-6 py-4 text-center">الحالة الحالية</th>
+                    <th className="px-6 py-4 text-center">الإجراء / رفع الإيصال</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        </section>
+                </thead>
+                <tbody className="divide-y divide-gray-100">
+                  {transactions.map((item) => (
+                    <tr key={item.monthName} className="hover:bg-gray-50/70 transition-colors">
 
-        {/* 5. Footer Layout */}
-        <footer className="mt-20 pt-10 border-t border-[rgb(var(--outline-variant))/0.3] flex flex-col items-center gap-6">
-          <div className="text-[rgb(var(--primary-container))] text-lg font-black tracking-[0.3em] flex items-center gap-6 opacity-40 select-none">
-            <span>الواجب</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[rgb(var(--primary-container))]"></span>
-            <span>الشرف</span>
-            <span className="w-1.5 h-1.5 rounded-full bg-[rgb(var(--primary-container))]"></span>
-            <span>الوطن</span>
+                      <td className="px-6 py-4 font-bold text-gray-800">{item.monthName}</td>
+
+                      <td className="px-6 py-4 font-black text-gray-900">{item.amount} ج.م</td>
+
+                      <td className="px-6 py-4 text-center">
+                        <StatusBadge status={item.status} />
+                      </td>
+
+                      <td className="px-6 py-4 text-center">
+                        {(item.status === 'late' || item.status === 'pending') && (
+                          <label className="cursor-pointer inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 hover:bg-blue-100 text-blue-600 rounded-lg text-xs font-bold border border-blue-200 transition-colors">
+                            <span className="material-symbols-outlined text-sm">upload_file</span>
+                            رفع الإيصال
+                            <input
+                              type="file"
+                              className="hidden"
+                              accept=".pdf,.jpg,.jpeg,.png"
+                              disabled={loading}
+                              onChange={(e) => handleReceiptUpload(item._id, e)}
+                            />
+                          </label>
+                        )}
+
+                        {item.status === 'under_review' && (
+                          <span className="inline-flex items-center gap-1.5 text-xs text-amber-600 font-bold bg-amber-50 px-3 py-1.5 rounded-lg border border-amber-200 animate-pulse">
+                            قيد المراجعة من الإدارة
+                          </span>
+                        )}
+
+                        {item.status === 'paid' && (
+                          <button
+                            onClick={() => viewReceipt(item.receiptUrl)}
+                            className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-green-50 hover:bg-green-100 text-green-700 rounded-lg text-xs font-bold border border-green-200 transition-colors"
+                          >
+                            <span className="material-symbols-outlined text-sm">verified</span>
+                            مقبول (عرض الإيصال)
+                          </button>
+                        )}
+                      </td>
+
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
-        </footer>
-      </main>
-    </div>
+
+        </div>
+      </div>
+    </section>
   );
 };
 
-// --- المكونات الفرعية (Sub-components) ---
-
-const InstructionItem = ({ text }) => (
-  <li className="flex gap-2 items-start">
-    <span className="material-symbols-outlined text-[14px] mt-0.5 opacity-80">verified</span>
-    <span>{text}</span>
-  </li>
-);
-
 const StatusBadge = ({ status }) => {
-  const isPaid = status === 'paid';
+  const config = {
+    paid:         { text: 'مقبول',             css: 'bg-green-50 text-green-700 border-green-200' },
+    under_review: { text: 'قيد المراجعة',       css: 'bg-amber-50 text-amber-700 border-amber-200 animate-pulse' },
+    late:         { text: 'متأخر',             css: 'bg-red-50 text-red-700 border-red-200' },
+    pending:      { text: 'قيد الانتظار',       css: 'bg-gray-50 text-gray-500 border-gray-200' },
+  };
+  const current = config[status] || config.late;
   return (
-    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter border ${
-      isPaid 
-      ? 'bg-green-50 text-green-700 border-green-100' 
-      : 'bg-amber-50 text-amber-700 border-amber-100'
-    }`}>
-      <span className={`w-1.5 h-1.5 rounded-full ${isPaid ? 'bg-green-600' : 'bg-amber-600 animate-pulse'}`}></span>
-      {isPaid ? 'تم السداد' : 'تحت المراجعة'}
+    <span className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold border ${current.css}`}>
+      {current.text}
     </span>
   );
 };
