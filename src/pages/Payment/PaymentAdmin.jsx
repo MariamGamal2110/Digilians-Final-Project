@@ -1,5 +1,16 @@
 import client, { getToken } from '../../api/client';
 import axios from 'axios';
+import { FiCheck, FiX, FiExternalLink, FiShield, FiCreditCard } from 'react-icons/fi';
+import { useEffect, useState } from 'react';
+import SearchBar from '../../components/SearchBar';
+
+
+
+
+const getAuthHeader = () => {
+  const token = localStorage.getItem('digilians_token');
+  return token ? { Authorization: `Bearer ${token}` } : null;
+};
 
 const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/payments`;
 const BACKEND_SERVER_URL = import.meta.env.VITE_SERVER_URL;

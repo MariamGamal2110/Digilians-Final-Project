@@ -5,22 +5,7 @@ import axios from "axios";
 const API_BASE_URL = 'http://localhost:5000/api/payments';
 const BACKEND_SERVER_URL = 'http://localhost:5000';
 
-
 const getAuthHeader = () => {
-  // تحقق إن المستخدم student مش admin
-  try {
-    const storedUser = localStorage.getItem('digilians_user');
-    if (storedUser) {
-      const parsed = JSON.parse(storedUser);
-      if (parsed?.role === 'admin') {
-        console.warn("Admin cannot access student payments");
-        return null;
-      }
-    }
-  } catch (e) {
-    console.error("Error parsing user data", e);
-  }
-
   let token = localStorage.getItem('digilians_token');
 
   if (!token) {
@@ -34,7 +19,6 @@ const getAuthHeader = () => {
       console.error("Error parsing auth data", e);
     }
   }
-
   return token ? { Authorization: `Bearer ${token}` } : null;
 };
 
@@ -52,7 +36,7 @@ const SovereignLedger = () => {
   const loadPaymentRecords = useCallback(async () => {
     const headers = getAuthHeader();
     if (!headers || !headers.Authorization) {
-      console.warn("No token found or user is admin");
+      console.warn("No token found");
       return;
     }
 
