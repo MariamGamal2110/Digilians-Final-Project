@@ -2,8 +2,9 @@ import React, { useState, useEffect, useCallback } from 'react';
 import StatsGrid from '../../components/PaymentComponents/User/StatsGrid';
 import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:5000/api/payments';
-const BACKEND_SERVER_URL = 'http://localhost:5000';
+const apiBase = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000/api';
+const API_BASE_URL = `${apiBase}/payments`;
+const BACKEND_SERVER_URL = apiBase.endsWith('/api') ? apiBase.slice(0, -4) : apiBase;
 
 const getAuthHeader = () => {
   let token = localStorage.getItem('digilians_token');
