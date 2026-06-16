@@ -580,14 +580,21 @@ import client, { getToken } from '../../api/client'
 import { FiTruck, FiMapPin, FiClock, FiHash } from 'react-icons/fi'
 
 const divisions = ['ماجستير العلوم 24 شهراً', 'الماجستير المهني 12 شهراً', 'الدبلوم المتخصص 9 أشهر', 'الدبلوم المكثف 4 أشهر']
-const stations = ['محطة الصعود', 'محطة الإسكندرية', 'محطة الكاندرد', 'محطة الهبوط']
+const boardingStations = ['بوابة 5']
+const alightingStations = ['موقف السلام', 'موقف رمسيس']
+
+const getBusNumber = (alightingStation) => {
+  if (alightingStation === 'موقف السلام') return 'اتوبيس موقف السلام (باص 1)';
+  if (alightingStation === 'موقف رمسيس') return 'اتوبيس موقف رمسيس (باص 2)';
+  return '—';
+};
 
 export default function BookUser() {
   const [form, setForm] = useState({
     studentId: '',
     studentName: '',
     division: '',
-    boardingStation: '',
+    boardingStation: 'بوابة 5',
     alightingStation: '',
   })
   const [submitted, setSubmitted] = useState(false)
@@ -743,18 +750,18 @@ useEffect(() => {
                     className={inputClass}
                   >
                     <option value="">اختر المحطة</option>
-                    {stations.map((s) => <option key={s} value={s}>{s}</option>)}
+                    {boardingStations.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
                 <div className="flex-1">
-                  <label className="text-gray-500 text-xs mb-1.5 block font-bold">وقت العودة المطلوب</label>
+                  <label className="text-gray-500 text-xs mb-1.5 block font-bold">محطة الهبوط</label>
                   <select
                     value={form.alightingStation}
                     onChange={(e) => handleChange('alightingStation', e.target.value)}
                     className={inputClass}
                   >
-                    <option value="">اختر الموعد</option>
-                    {stations.map((s) => <option key={s} value={s}>{s}</option>)}
+                    <option value="">اختر محطة الهبوط</option>
+                    {alightingStations.map((s) => <option key={s} value={s}>{s}</option>)}
                   </select>
                 </div>
               </div>
@@ -785,7 +792,7 @@ useEffect(() => {
                 </h3>
                 <div className="space-y-3 text-xs">
                   <div className="flex justify-between items-center">
-                    <span className="text-gray-800 font-black">AC-4427</span>
+                    <span className="text-gray-800 font-black">{getBusNumber(form.alightingStation)}</span>
                     <span className="text-gray-500 flex items-center gap-1"><FiHash size={11} /> رقم الحافلة</span>
                   </div>
                   <div className="flex justify-between items-center">
@@ -794,7 +801,7 @@ useEffect(() => {
                   </div>
                   <div className="flex justify-between items-center">
                     <span className="text-gray-800 font-black">{form.alightingStation || '—'}</span>
-                    <span className="text-gray-500 flex items-center gap-1"><FiMapPin size={11} /> وقت العودة</span>
+                    <span className="text-gray-500 flex items-center gap-1"><FiMapPin size={11} /> محطة الهبوط</span>
                   </div>
                   <hr className="border-gray-100" />
                   <div className="flex justify-between items-center">
@@ -826,7 +833,7 @@ useEffect(() => {
                             <td className="py-2 text-gray-400">
                               {new Date(b.createdAt).toLocaleDateString('ar-EG')}
                             </td>
-                            <td className="py-2 text-gray-800 font-bold">{b.boardingStation}</td>
+                            <td className="py-2 text-gray-800 font-bold">{b.alightingStation}</td>
                             <td className="py-2">
                               <span className={`text-[10px] font-bold px-2 py-0.5 rounded-full border ${statusInfo.css}`}>
                                 {statusInfo.text}

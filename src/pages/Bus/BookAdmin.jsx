@@ -46,7 +46,7 @@ export default function BookAdmin() {
   const getStats = () => {
     const stationCounts = {};
     bookings.forEach((b) => {
-      stationCounts[b.boardingStation] = (stationCounts[b.boardingStation] || 0) + 1;
+      stationCounts[b.alightingStation] = (stationCounts[b.alightingStation] || 0) + 1;
     });
     const absent = bookings.filter((b) => b.status === "rejected").length;
     return { stationCounts, absent };
@@ -157,7 +157,7 @@ export default function BookAdmin() {
                         <tr key={b._id} className="hover:bg-gray-50/70 transition-colors">
                           <td className="px-6 py-4 font-bold text-gray-800">{b.studentName}</td>
                           <td className="px-6 py-4 font-mono text-sm text-gray-600 font-bold">{b.studentId}</td>
-                          <td className="px-6 py-4 text-gray-700 font-medium">{b.boardingStation}</td>
+                          <td className="px-6 py-4 text-gray-700 font-medium">{b.alightingStation}</td>
                           <td className="px-6 py-4 text-center">
                             <span className={`inline-flex items-center px-3 py-1 rounded-full text-[11px] font-bold border ${statusInfo.css}`}>
                               {statusInfo.text}
