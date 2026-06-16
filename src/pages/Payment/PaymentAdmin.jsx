@@ -95,7 +95,7 @@ const PaymentAdmin = () => {
         monthName: month.monthName,
         amount: month.amount,
         status: month.status,
-        receiptImg: month.receiptUrl ? `${BACKEND_SERVER_URL}${month.receiptUrl}` : null
+        receiptImg: month.receiptUrl ? (month.receiptUrl.startsWith('data:') ? month.receiptUrl : `${BACKEND_SERVER_URL}${month.receiptUrl}`) : null
       });
     });
   });

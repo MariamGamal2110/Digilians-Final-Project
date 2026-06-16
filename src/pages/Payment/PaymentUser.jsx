@@ -97,31 +97,39 @@ const SovereignLedger = () => {
       return;
     }
 
-    const formData = new FormData();
-    formData.append('receipt', file);
-    formData.append('monthId', monthId);
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = async () => {
+      const base64Data = reader.result;
+      try {
+        setLoading(true);
+        const response = await axios.post(`${API_BASE_URL}/upload-receipt-base64`, {
+          monthId,
+          receiptBase64: base64Data
+        }, { headers });
 
-    try {
-      setLoading(true);
-      const response = await axios.post(`${API_BASE_URL}/upload-receipt`, formData, {
-        headers: { ...headers }
-      });
-
-      if (response.data && response.data.success) {
-        alert('تم رفع الإيصال بنجاح، وهو الآن قيد المراجعة.');
-        loadPaymentRecords();
+        if (response.data && response.data.success) {
+          alert('تم رفع الإيصال بنجاح، وهو الآن قيد المراجعة.');
+          loadPaymentRecords();
+        }
+      } catch (err) {
+        const errMsg = err.response?.data?.message || err.response?.data || err.message;
+        alert(`حدث خطأ أثناء رفع الإيصال: ${errMsg}`);
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      const errMsg = err.response?.data?.message || err.response?.data || err.message;
-      alert(`حدث خطأ أثناء رفع الإيصال: ${errMsg}`);
-    } finally {
-      setLoading(false);
-    }
+    };
   };
 
   const viewReceipt = (receiptUrl) => {
     if (!receiptUrl) return;
-    window.open(`${BACKEND_SERVER_URL}${receiptUrl}`, '_blank', 'noreferrer');
+    if (receiptUrl.startsWith('data:')) {
+      const newTab = window.open();
+      newTab.document.write(`<img src="${receiptUrl}" style="max-width:100%" />`);
+      newTab.document.title = "عرض إيصال الدفع";
+    } else {
+      window.open(`${BACKEND_SERVER_URL}${receiptUrl}`, '_blank', 'noreferrer');
+    }
   };
 
   return (
