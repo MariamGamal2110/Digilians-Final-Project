@@ -2,8 +2,12 @@ import React, { useState, useEffect, useCallback } from 'react';
 import StatsGrid from '../../components/PaymentComponents/User/StatsGrid';
 import axios from "axios";
 
-const API_BASE_URL = 'http://localhost:5000/api/payments';
-const BACKEND_SERVER_URL = 'http://localhost:5000';
+// const API_BASE_URL = 'http://localhost:5000/api/payments';
+// const BACKEND_SERVER_URL = 'http://localhost:5000';
+// ✅ صح
+const API_BASE_URL = `${import.meta.env.VITE_API_BASE_URL}/payments`;
+const BACKEND_SERVER_URL = import.meta.env.VITE_SERVER_URL;
+
 
 const getAuthHeader = () => {
   // تحقق إن المستخدم student مش admin
